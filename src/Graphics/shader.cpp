@@ -17,14 +17,14 @@
 namespace internal {
   decltype(shader_t::id) bound_shader = -1;  
 
-    void include_preprocess(std::string& code){
+    void include_preprocess(std::string& code, const std::string& asset_dir){
         static const std::regex r("(#include <)([a-zA-Z]+)(\.glsl>)");
         std::smatch m;
         while (std::regex_search(code, m, r))
         {
             std::ifstream file;
             std::stringstream code_stream;
-            file.open(fmt::format("{}shaders/{}.glsl", ASSETS_PATH, (std::string)m[2]));
+            file.open(fmt::format("{}shaders/{}.glsl", asset_dir, (std::string)m[2]));
             if (file.is_open())
             {
                 code_stream << file.rdbuf();
@@ -56,7 +56,7 @@ void shader_t::unbind() {
     }
 }
 
-shader_stage_t::shader_stage_t(const std::string& path) {
+shader_stage_t::shader_stage_t(const std::string& path, const std::string& asset_dir) {
     if (path.substr(path.find_last_of(".") + 1) == "vs")
     {
         type = GL_VERTEX_SHADER;
@@ -82,12 +82,12 @@ shader_stage_t::shader_stage_t(const std::string& path) {
     std::ifstream shader_file;
     shader_file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
     try {
-        shader_file.open(fmt::format("{}{}", ASSETS_PATH, path));
+        shader_file.open(fmt::format("{}{}", asset_dir, path));
         std::stringstream shader_stream;
         shader_stream << shader_file.rdbuf();
         shader_file.close();
         shader_code = shader_stream.str();
-        internal::include_preprocess(shader_code);
+        internal::include_preprocess(shader_code, asset_dir);
         //IncludePreprocess(shader_code);
     } catch (std::ifstream::failure & e) {
         throw runtime_error_x(fmt::format("Shader stage error: {} - {}\n", path, e.what()));
@@ -131,14 +131,14 @@ utl::vector<std::array<std::string, 7>> shader_stage_t::get_uniforms(){
 }
 
 
-shader_t::shader_t(const std::string& p_name, const std::vector<std::string>& p_files)
+shader_t::shader_t(const std::string& p_name, const std::vector<std::string>& p_files, const std::string& asset_dir)
     : name(p_name), files(p_files)
 {
     id = glCreateProgram();
     for (const auto& file : files)
     {
         // todo load from cache
-        stages.emplace_back(file);
+        stages.emplace_back(file, asset_dir);
         glAttachShader(id, stages.back().id);
     }
     int success;

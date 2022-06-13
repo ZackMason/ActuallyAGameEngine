@@ -12,6 +12,12 @@ struct aabb_t {
     T min;
     T max;
 
+
+    void expand(const T& p) {
+        min = glm::min(p, min);
+        max = glm::max(p, max);
+    }
+
     bool contains(const T& p) const {
         return min <= p && p <= max;
     }

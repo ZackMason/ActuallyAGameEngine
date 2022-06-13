@@ -38,7 +38,7 @@ struct uniform_variable_t {
 struct shader_stage_t {
     operator int() { return id; }
 
-    explicit shader_stage_t(const std::string& path);
+    explicit shader_stage_t(const std::string& path, const std::string& asset_dir);
     
     utl::vector<std::array<std::string, 7>> get_uniforms();
     GLint id;
@@ -57,7 +57,7 @@ struct shader_t : bindable_i {
         stages.clear();
         glDeleteProgram(id); 
     };
-    shader_t(const std::string& p_name, const utl::vector<std::string>& files);
+    shader_t(const std::string& p_name, const utl::vector<std::string>& files, const std::string& asset_dir);
 
 
 	operator int() { return id; }

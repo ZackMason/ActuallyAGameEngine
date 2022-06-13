@@ -19,7 +19,7 @@ struct script_vm_t {
     chaiscript::ChaiScript chai;
     
     void init(window_t& window, entt::registry& world, asset_loader_t& loader);
-    void eval_file(const std::string& f);
+    void eval_file(const std::string& f, const std::string& asset_dir);
 };
 
 struct script_t {
@@ -61,7 +61,7 @@ struct pipeline_script_t {
         //std::string class_name = p.stem().string();
 
         try {
-            script_object = chai.eval_file<chai_ptr_t>(ASSETS_PATH + filename);
+            script_object = chai.eval_file<chai_ptr_t>(filename);
 
             begin_pass = chaiscript::boxed_cast<decltype(begin_pass)>(script_object.get()->get_attr("begin_pass"));
             end_pass = chaiscript::boxed_cast<decltype(end_pass)>(script_object.get()->get_attr("end_pass"));

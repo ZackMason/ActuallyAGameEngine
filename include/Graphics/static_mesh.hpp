@@ -9,6 +9,8 @@
 
 #include "Util/vector.hpp"
 
+#include "Math/aabb.hpp"
+
 #include "Graphics/vertex_array.hpp"
 #include "Graphics/buffer.hpp"
 
@@ -22,15 +24,19 @@ struct static_mesh_t : drawable_i {
     buffer_t<static_vertex_t> buffer_object;
     vertex_array_t vertex_array;
 
+    aabb_t<v3f> aabb;
+
+    void update_aabb();
+
     void bind() override;
     void unbind() override;
     void draw() override;
 
-    static static_mesh_t from_gltf(const std::string& path);
-    static static_mesh_t from_obj(const std::string& path);
-    static void emplace_obj(const std::string& path, static_mesh_t* address);
+    static static_mesh_t from_gltf(const std::string& path,const std::string& asset_dir);
+    static static_mesh_t from_obj(const std::string& path,const std::string& asset_dir);
+    static void emplace_obj(const std::string& path, static_mesh_t* address,const std::string& asset_dir);
 
-    static_mesh_t(utl::vector<static_vertex_t>&& p_vertices) 
+    explicit static_mesh_t(utl::vector<static_vertex_t>&& p_vertices) 
         : buffer_object(std::move(p_vertices)), vertex_array(buffer_object.size())
     { 
         buffer_object.bind();

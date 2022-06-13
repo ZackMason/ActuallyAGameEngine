@@ -85,7 +85,7 @@ int main(int argc, char** argv) {
     });
 
     run_test("texture", [](){
-        texture2d_t texture{"textures/UVgrid.png"};
+        texture2d_t texture{"textures/UVgrid.png", ASSETS_PATH};
 //        TEST_ASSERT(texture.id != 0);
         TEST_ASSERT(texture.width != 0);
         TEST_ASSERT(texture.height != 0);
@@ -97,7 +97,7 @@ int main(int argc, char** argv) {
         bool passed = true;
 
         try {
-            shader_t shader("fail shader", {"not a real path"});
+            shader_t shader("fail shader", {"not a real path"}, ASSETS_PATH);
             passed = false;
         } catch (...) {
             passed = true;
@@ -107,7 +107,7 @@ int main(int argc, char** argv) {
     });
 
     run_test("mesh_load", [](){
-        static_mesh_t mesh = static_mesh_t::from_obj("models/sphere.obj");
+        static_mesh_t mesh = static_mesh_t::from_obj("models/sphere.obj", ASSETS_PATH);
     });
 
 

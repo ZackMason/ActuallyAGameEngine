@@ -32,7 +32,7 @@ void texture_compute_t::execute(unsigned int count) {
     shader_t::reset();
 }
 texture_compute_t::texture_compute_t(const std::string& file, int w, int h) 
-: shader(file, {file}), output(w,h) {
+: shader(file, {file}, ASSETS_PATH), output(w,h) {
 }
 #if 0
 auto foo(auto& file) {

@@ -33,7 +33,7 @@ struct texture2d_t : public texture_i {
 
     void set(const std::function<u32(int, int)>& fn);
     void set_data(const std::vector<u32>& data);
-    explicit texture2d_t(const std::string& path);
+    explicit texture2d_t(const std::string& path, const std::string& asset_dir);
     explicit texture2d_t(u32 w, u32 h);
 };
 

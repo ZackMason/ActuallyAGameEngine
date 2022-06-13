@@ -22,8 +22,8 @@
 
 #include "GLFW/glfw3.h"
 
-void script_vm_t::eval_file(const std::string& f) {
-    chai.eval_file(fmt::format("{}{}", ASSETS_PATH, f));
+void script_vm_t::eval_file(const std::string& f, const std::string& asset_dir) {
+    chai.eval_file(fmt::format("{}{}", asset_dir, f));
 }
 
 void script_vm_t::init(window_t& window, entt::registry& world, asset_loader_t& loader) {
@@ -191,11 +191,11 @@ void script_vm_t::init(window_t& window, entt::registry& world, asset_loader_t& 
 void script_t::load_function(chaiscript::ChaiScript& chai)
 {
     init = true;
-    std::filesystem::path p(ASSETS_PATH + filename);
+    std::filesystem::path p(filename);
     std::string class_name = p.stem().string();
 
     try {
-        chai.use(ASSETS_PATH + filename);
+        chai.use(filename);
         script_object = chai.eval<chai_ptr_t>(class_name + "()");
 
         on_update = chai.eval<std::function<void (chai_ptr_t, entt::entity& e, const f32)>>("on_update");

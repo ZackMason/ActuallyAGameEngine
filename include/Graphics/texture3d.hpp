@@ -19,7 +19,7 @@ struct texture3d_t : public texture_i {
     void destroy();
 
     void set_data(std::function<void(texture3d_t&)> func);
-    texture3d_t(const std::string& path);
+    explicit texture3d_t(const std::string& path);
     texture3d_t(u32 w, u32 h, u32 d);
 };
 

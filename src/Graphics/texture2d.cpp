@@ -78,7 +78,7 @@ void texture2d_t::set_filter(bool linear) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, linear ? GL_LINEAR : GL_NEAREST);
 }
 
-texture2d_t::texture2d_t(const std::string& path) {
+texture2d_t::texture2d_t(const std::string& path, const std::string& asset_dir) {
     internal_format = GL_RGBA8;
 	data_format = GL_RGBA;
     data_type = GL_UNSIGNED_BYTE;
@@ -97,7 +97,7 @@ texture2d_t::texture2d_t(const std::string& path) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	// load and generate the texture
     
-	unsigned char* data = stbi_load(fmt::format("{}{}", ASSETS_PATH, path).c_str(), &width, &height, &channels, 0);
+	unsigned char* data = stbi_load(fmt::format("{}{}", asset_dir, path).c_str(), &width, &height, &channels, 0);
 	if (data)
 	{
 		if (channels == 3)

@@ -90,6 +90,8 @@ struct asset_loader_t {
         return cache_resource_t<R>(reinterpret_cast<R*>(malloc(sizeof(R))), 1);
     }
 
+    std::string asset_dir = ASSETS_PATH;
+
     std::unordered_map<std::string, cache_resource_t<static_mesh_t>> static_mesh_cache;
     std::unordered_map<std::string, cache_resource_t<texture2d_t>> texture2d_cache;
     std::unordered_map<std::string, cache_resource_t<shader_t>> shader_cache;
@@ -112,7 +114,7 @@ struct asset_loader_t {
                 const auto files = v.resource->files;
                 v.resource->stages.clear();
                 v.resource->~shader_t();
-                new (v.resource) shader_t(k, files);
+                new (v.resource) shader_t(k, files, asset_dir);
             }
         }
         //return 0;
@@ -176,9 +178,9 @@ struct asset_loader_t {
         }
 
         static_mesh_cache[path] = create_cache_resource<static_mesh_t>();
-        static_mesh_t::emplace_obj(path, static_mesh_cache[path].resource);
+        static_mesh_t::emplace_obj(path, static_mesh_cache[path].resource, asset_dir);
         auto& [mesh, count] = static_mesh_cache[path];
-        
+        mesh->update_aabb();
         return resource_handle_t(*mesh, count);
     }
 
@@ -200,7 +202,7 @@ struct asset_loader_t {
             return resource_handle_t(*texture, ++count);
         }
         texture2d_cache[path] = create_cache_resource<texture2d_t>();
-        new (texture2d_cache[path].resource) texture2d_t(path);
+        new (texture2d_cache[path].resource) texture2d_t(path, asset_dir);
         auto& [texture, count] = texture2d_cache[path];
         return resource_handle_t(*texture, count);
     }
@@ -217,7 +219,7 @@ struct asset_loader_t {
             return resource_handle_t(*shader, ++count);
         }
         shader_cache[name] = create_cache_resource<shader_t>();
-        new (shader_cache[name].resource) shader_t(name, path);
+        new (shader_cache[name].resource) shader_t(name, path, asset_dir);
         auto& [shader, count] = shader_cache[name];
         return resource_handle_t(*shader, count);
     }

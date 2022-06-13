@@ -22,6 +22,11 @@ namespace internal{
     GLint bound_mesh = {-1};
 };
 
+void static_mesh_t::update_aabb() {
+    for (const auto& vertex: buffer_object.data) {
+        aabb.expand(vertex.position);
+    }
+}
 void static_mesh_t::bind() {
     vertex_array.bind();
 }
@@ -107,7 +112,7 @@ utl::vector<static_vertex_t> vertices_from_obj_mesh(
     return vertices;
 }
 
-utl::vector<static_vertex_t> load_obj(const std::string& path) {
+utl::vector<static_vertex_t> load_obj(const std::string& path, const std::string& asset_dir) {
     utl::vector<static_vertex_t> vertices;
     std::vector<unsigned int> indices;
     tinyobj::attrib_t attrib;
@@ -120,8 +125,8 @@ utl::vector<static_vertex_t> load_obj(const std::string& path) {
         &shapes, 
         &materials, 
         &err, 
-        fmt::format("{}{}", ASSETS_PATH, path).c_str(), 
-        ASSETS_PATH.c_str(), 
+        fmt::format("{}{}", asset_dir, path).c_str(), 
+        asset_dir.c_str(), 
         true);
 
     if (!ret) {
@@ -144,21 +149,21 @@ utl::vector<static_vertex_t> load_obj(const std::string& path) {
 
 
 
-static_mesh_t static_mesh_t::from_obj(const std::string& path) {
-    return static_mesh_t(std::move(load_obj(path)));
+static_mesh_t static_mesh_t::from_obj(const std::string& path,const std::string& asset_dir) {
+    return static_mesh_t(std::move(load_obj(path,asset_dir)));
 }
 
-void static_mesh_t::emplace_obj(const std::string& path, static_mesh_t* address) {
-    new (address) static_mesh_t(std::move(load_obj(path)));
+void static_mesh_t::emplace_obj(const std::string& path, static_mesh_t* address,const std::string& asset_dir) {
+    new (address) static_mesh_t(std::move(load_obj(path,asset_dir)));
 }
 
-static_mesh_t static_mesh_t::from_gltf(const std::string& path) {
+static_mesh_t static_mesh_t::from_gltf(const std::string& path, const std::string& asset_dir) {
     tinygltf::TinyGLTF loader;
     tinygltf::Model model;
     utl::vector<static_vertex_t> vertices;
 
     std::string err, warn;
-    bool ret = loader.LoadASCIIFromFile(&model, &err, &warn, fmt::format("{}{}", ASSETS_PATH, path));
+    bool ret = loader.LoadASCIIFromFile(&model, &err, &warn, fmt::format("{}{}", asset_dir, path));
 
     if (!warn.empty()) {
         fmt::print(fg(fmt::color::green) | fmt::emphasis::bold,
