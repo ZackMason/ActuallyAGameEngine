@@ -1,0 +1,78 @@
+
+def spawn_rock(v3f pos) {
+    auto e = world.create();
+    auto mesh = loader.get_static_mesh("models/sphere.obj");
+    auto shader = loader.get_shader("shaders/base.vs", "shaders/texture.fs");
+
+    auto texture = loader.get_texture2d("textures/UVgrid.png");
+
+    add_transform(world, e);
+    add_static_mesh(world, e, mesh);
+    add_shader(world, e, shader);
+    add_texture2d(world, e, texture);
+    
+    add_script(world, e, "scripts/Spin.chai");
+
+    auto& transform = entt_transform(world, e);
+    transform.set_position(pos);
+}
+
+def spawn(static_mesh_handle_t mesh, shader_handle_t shader, v3f position) {
+    auto e = world.create();
+    add_transform(world, e);
+    add_static_mesh(world, e, mesh);
+    add_shader(world, e, shader);
+    add_script(world, e, "scripts/Boat.chai");
+    auto texture = loader.get_texture2d("textures/wood_01.jpg");
+    add_texture2d(world, e, texture);
+    auto& transform = entt_transform(world, e);
+    transform.set_position(position);
+}
+
+def init {
+    auto e = world.create();
+    auto mesh = loader.get_static_mesh("models/hills_01.obj");
+    auto shader = loader.get_shader("shaders/base.vs", "shaders/texture.fs");
+    //auto texture = loader.get_texture2d("textures/grass_01.jpg");
+    auto texture = loader.create_texture2d("test.img", 400, 400);
+
+
+
+    texture.get().set(fun(x,y){
+        var v = (sin(x/3.1415/3.14) > 0 ? 1 : -1) * (sin(y/3.1415/3.14) > 0 ? 1 : -1) * 255
+        v = v < 0 ? 0 : v;
+        var r = v;
+        var g = v;
+        var b = v;
+        var a = 255;
+        (r << 0) | (g << 8) | (b << 16) | (a << 24)
+    })
+    texture.get().mipmap();
+
+    add_transform(world, e);
+    add_static_mesh(world, e, mesh);
+    add_shader(world, e, shader);
+    add_texture2d(world, e, texture);
+    
+    //add_script(world, e, "scripts/Spin.chai");
+
+    auto& transform = entt_transform(world, e);
+    transform.set_position(v3f(0,-10,0));
+}
+
+print("Running chai init")
+
+for (var i = 0; i < 1000; ++i) {
+    spawn_rock(v3f(randn() * 1000.0, randn() * 1000.0, randn() * 1000.0))
+}
+init();
+
+auto player_mesh = loader.get_static_mesh("models/boat.obj");
+auto tex_shader = loader.get_shader("shaders/base.vs", "shaders/texture.fs");
+
+spawn(player_mesh, tex_shader, v3f(-20, 10, 20));
+spawn(player_mesh, tex_shader, v3f(20, 10, 10));
+
+
+
+print("Finished chai init")

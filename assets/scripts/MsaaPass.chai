@@ -1,0 +1,55 @@
+global MsaaPass = fun() {
+    var MsaaPass = Dynamic_Object();
+    MsaaPass.init = fun(){
+        this.screen_shader = loader.get_shader("shaders/screen.vs", "shaders/tonemap.fs");
+        this.screen = screen_t();
+        this.msaa_buffer = framebuffer_t(window_width, window_height, true);
+        this.float_buffer = framebuffer_t(window_width, window_height, false);
+        this.output = loader.get_framebuffer("msaa_out", window_width, window_height, false); //framebuffer_t(window_width, window_height, false);
+        this.time = 0.0;
+    }
+    MsaaPass.begin_pass = fun(this, dt) { 
+        this.output.get().resize(window_width, window_height);
+        this.msaa_buffer.resize(window_width, window_height);
+        this.float_buffer.resize(window_width, window_height);
+        this.msaa_buffer.bind();
+
+        this.time += dt * 0.25;
+
+        var light = v3f(cos(this.time),sin(this.time)*4.0,sin(this.time));
+
+        auto sky_shader = loader.get_shader("shaders/skybox.vs", "shaders/skybox.fs");
+        sky_shader.get().bind();
+        sky_shader.get().set_vec3("uSunDir", light);
+
+        auto texture_shader = loader.get_shader("shaders/base.vs", "shaders/texture.fs");
+        texture_shader.get().bind();
+        texture_shader.get().set_float("uAO", 0.7610);
+        texture_shader.get().set_float("uMetallic", 0.0);
+        texture_shader.get().set_float("uRoughness", 0.95);
+        texture_shader.get().set_vec3("uLightDir", light);
+        texture_shader.get().set_vec3("uLightColor", 0.8, 0.8, 0.7);
+
+    }
+    MsaaPass.end_pass = fun(this, dt) { 
+        this.msaa_buffer.unbind();
+        this.float_buffer.blit(this.msaa_buffer);
+        this.float_buffer.mode(1); // texture mode
+        this.screen_shader.get().bind();
+        this.float_buffer.slot = 0;
+        this.float_buffer.bind();
+        this.screen_shader.get().set_int("uTexture", 0);
+        this.screen_shader.get().set_int("uTonemap", 0);
+        this.screen_shader.get().set_float("uExposure", .50);
+
+        this.output.get().mode(0);
+        this.output.get().bind();
+        clear();
+        
+        this.screen.draw();
+    }
+
+    MsaaPass.init()
+    return MsaaPass
+}
+MsaaPass()

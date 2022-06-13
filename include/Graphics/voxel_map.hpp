@@ -1,0 +1,11 @@
+// Author: Zackery Mason-Blaug
+// Date: 2022-06-06
+//////////////////////////////////////////////////////////
+
+
+#pragma once
+
+struct voxel_map_t {
+
+};
+
