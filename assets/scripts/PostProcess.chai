@@ -1,0 +1,92 @@
+global PostProcess = fun() {
+    var PostProcess = Dynamic_Object();
+    PostProcess.init = fun(){
+        this.screen_shader = loader.get_shader("shaders/screen.vs", "shaders/screen.fs");
+        this.blend_shader = loader.get_shader("shaders/screen.vs", "shaders/blend.fs");
+        this.screen = screen_t();
+        this.input = loader.get_framebuffer("msaa_out", window_width, window_height, false); 
+        this.ping = framebuffer_t(window_width, window_height, false);
+        this.pong = framebuffer_t(window_width, window_height, false);
+    }
+    PostProcess.begin_pass = fun(this, dt) { 
+        if (true) {
+            this.input.get().mode(0);
+            this.input.get().unbind();
+            this.screen_shader.get().bind();
+            this.screen_shader.get().set_int("uTexture", 0);
+            this.input.get().mode(1);
+            this.input.get().slot = 0;
+            this.input.get().bind();
+
+            clear();
+
+            this.screen.draw();
+        } else {
+            this.screen_shader.get().bind();
+            this.screen_shader.get().set_int("uTexture", 0);
+            clear();
+            this.screen.draw();
+        }
+    }
+    PostProcess.end_pass = fun(this, dt) { }
+    PostProcess.end_pass_slow = fun(this, dt) {
+        var w = window_width / 2;
+        var h = window_height / 2;
+
+        this.blend_shader.get().bind();
+        this.blend_shader.get().set_int("uTexture1", 0);
+        this.blend_shader.get().set_int("uTexture2", 1);
+        this.screen_shader.get().bind();
+        this.screen_shader.get().set_int("uTexture", 0);
+        this.input.get().slot = 0;
+        this.ping.slot = 0;
+        this.pong.blit(this.input.get());
+
+        for (var i = 0; i < 3; ++i) {
+            glViewport(0,0,w/2, h/2);
+            this.ping.resize(w/2, h/2);
+            this.ping.mode(0);
+            this.ping.bind();
+            this.pong.mode(1);
+            this.pong.slot = 0
+            //this.input.get().mipmap();
+            this.pong.bind();
+
+            clear();
+            this.screen.draw();
+
+            this.pong.mode(0);
+            glViewport(0,0,w/4, h/4);
+            this.pong.resize(w/4, h/4);
+            this.pong.bind();
+            this.ping.slot = 0
+            this.ping.mode(1);
+            //this.ping.mipmap();
+            this.ping.bind();
+
+            clear();
+            this.screen.draw();
+
+            w = w/4;
+            h = h/4;
+        }
+        glViewport(0,0,window_width, window_height);
+
+        this.blend_shader.get().bind();
+        this.pong.unbind();
+        this.pong.mode(1);
+        this.pong.slot = 1
+        this.pong.bind();
+        this.input.get().mode(1);
+        this.input.get().slot = 0
+        this.input.get().bind();
+
+        clear();
+        this.screen.draw();
+
+    }
+
+    PostProcess.init()
+    return PostProcess
+}
+PostProcess()

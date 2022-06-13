@@ -1,0 +1,37 @@
+
+class Boat {
+    attr velocity;
+
+    def Boat(){
+        this.velocity = v3f(0,0,0);
+    }
+
+    def on_update(entity, dt) { 
+        auto& transform = entt_transform(world, entity);
+
+        var move_speed = 2.0;
+        if (is_key_pressed('W')) {
+            this.velocity.z += dt * move_speed;
+        }
+        if (is_key_pressed('S')) {
+            this.velocity.z -= dt * move_speed;
+        }
+        if (is_key_pressed('A')) {
+            this.velocity.x -= dt * move_speed;
+        }
+        if (is_key_pressed('D')) {
+            this.velocity.x += dt * move_speed;
+        }
+        
+        this.velocity.y += (transform.origin.y < 0 ? 9.8 : -9.8) * dt;
+
+
+        transform.origin.x += (this.velocity.x * dt);
+        transform.origin.y += (this.velocity.y * dt);
+        transform.origin.z += (this.velocity.z * dt);
+
+        this.velocity.x = damp(this.velocity.x, 0, 0.5, dt);
+        this.velocity.y = damp(this.velocity.y, 0, 0.5, dt);
+        this.velocity.z = damp(this.velocity.z, 0, 0.5, dt);
+    }
+}

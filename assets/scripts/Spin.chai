@@ -1,0 +1,10 @@
+
+class Spin{
+    def Spin(){
+    }
+
+    def on_update(entity, dt) { 
+        auto& transform = try_transform(world, entity);
+        transform.rotate(v3f(0, -0.1 * dt, 0));
+    }
+}
