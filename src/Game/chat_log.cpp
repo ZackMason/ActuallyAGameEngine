@@ -1,7 +1,0 @@
-// Author: Zackery Mason-Blaug
-// Date: 2022-06-09
-//////////////////////////////////////////////////////////
-
-
-#include "Game/chat_log.hpp"
-
