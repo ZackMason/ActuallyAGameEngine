@@ -61,7 +61,7 @@ struct pipeline_script_t {
         //std::string class_name = p.stem().string();
 
         try {
-            script_object = chai.eval_file<chai_ptr_t>(filename);
+            script_object = chai.eval_file<chai_ptr_t>(fmt::format("{}{}", asset_dir, filename));
 
             begin_pass = chaiscript::boxed_cast<decltype(begin_pass)>(script_object.get()->get_attr("begin_pass"));
             end_pass = chaiscript::boxed_cast<decltype(end_pass)>(script_object.get()->get_attr("end_pass"));
@@ -81,8 +81,9 @@ struct pipeline_script_t {
     std::function<void (chai_ptr_t, const f32)> begin_pass = [](auto state, const f32 t){};
     std::function<void (chai_ptr_t, const f32)> end_pass = [](auto state, const f32 t){};
     std::string filename = "";
-    explicit pipeline_script_t(const std::string& p_filename, Draw p_draw) 
-        : filename(p_filename), draw(p_draw)
+    std::string asset_dir = "";
+    explicit pipeline_script_t(const std::string& p_filename, const std::string& dir, Draw p_draw) 
+        : filename(p_filename), asset_dir(dir), draw(p_draw)
     {}
     explicit pipeline_script_t() = default;
     bool init = false;

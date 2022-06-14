@@ -11,6 +11,26 @@
 
 #include "Graphics/texture.hpp"
 
+
+// TODO: allow of async access
+// std::future??
+// call back?? 
+// delay timer trick?
+struct texture2d_accessor_t {
+    GLubyte* data{nullptr};
+    GLuint pbo{0};
+    int width{0}, height{0};
+    GLenum format;
+
+    // texture needs to be bound first
+    explicit texture2d_accessor_t(GLuint id, int w, int h, GLenum f);
+    virtual ~texture2d_accessor_t()// = default;
+    {
+        glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
+        glDeleteBuffers(1, &pbo);
+    }
+};
+
 struct texture2d_t : public texture_i {
     int width{0}, height{0};
     GLenum data_format;
@@ -26,6 +46,8 @@ struct texture2d_t : public texture_i {
     void set_filter(bool linear);
     void set_wrap(bool wrap);
     void mipmap();
+
+    texture2d_accessor_t map_buffer();
 
     ~texture2d_t(){ 
         if (id) destroy();

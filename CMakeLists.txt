@@ -16,7 +16,6 @@ add_library(${PROJECT_NAME} ${lib_files})
 
 target_include_directories(${PROJECT_NAME} PUBLIC include)
 target_include_directories(${PROJECT_NAME} PUBLIC include/imgui)
-target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 
 
 add_compile_options(/bigobj)

@@ -93,6 +93,31 @@ int main(int argc, char** argv) {
         TEST_ASSERT(texture.id == 0);
     });
 
+    run_test("texture_read", [](){
+        texture2d_t texture{"textures/UVgrid.png", ASSETS_PATH};
+        {
+            auto texture_accessor = texture.map_buffer();
+            fmt::print("buffer mapped\n");
+        
+            auto size = texture_accessor.format == GL_RGB ? 3 : 4;
+            const auto line_size = size*texture_accessor.width;
+
+
+            for(int y = 0; y < texture_accessor.height; y++){
+                for(int x = 0; x < texture_accessor.width; x++){
+
+                    const auto r = texture_accessor.data[(y*line_size+x*size)+0];
+                    const auto g = texture_accessor.data[(y*line_size+x*size)+1];
+                    const auto b = texture_accessor.data[(y*line_size+x*size)+2];
+                    //const auto a = texture_accessor.buffer[(y*line_size+x*size)+3];
+                    //fmt::print("{} ", (texture_accessor.buffer[(y*texture_accessor.width+x)]));
+
+                }
+                //fmt::print("\n");
+            }
+        }
+    });
+
     run_test("shader_bad_load", [](){
         bool passed = true;
 
@@ -128,6 +153,8 @@ int main(int argc, char** argv) {
                 auto m4(std::move(m3));
                 TEST_ASSERT(loader.get_count<static_mesh_t>(sphere_path) == 4);
             }
+            auto m2 = loader.get_static_mesh(sphere_path);
+            TEST_ASSERT(loader.get_count<static_mesh_t>(sphere_path) == 2   );
         }
         //fmt::print("count: {}\n",loader.get_count<static_mesh_t>(sphere_path));
         TEST_ASSERT(loader.get_count<static_mesh_t>(sphere_path) == 0);

@@ -7,11 +7,19 @@
 
 #include "Engine/orbit_camera.hpp"
 
+
+v3f orbit_camera_t::get_direction() const {
+    return {
+        cos(glm::radians(yaw)) * cos(glm::radians(pitch)),
+        sin(glm::radians(pitch)),
+        sin(glm::radians(yaw)) * cos(glm::radians(pitch))
+    };
+}
 void orbit_camera_t::update(const window_t& window, f32 dt) {
     width = (f32)window.width;
     height = (f32)window.height;
 
-    constexpr f32 move_speed = 15.0f;
+    constexpr f32 move_speed = 75.0f;
     constexpr f32 camera_look_speed = 5.0f;
     if (window.is_key_pressed(GLFW_KEY_W)) {
         position += forward() * dt * move_speed;
@@ -39,17 +47,14 @@ void orbit_camera_t::update(const window_t& window, f32 dt) {
     auto [sx,sy] = window.get_scroll();
     auto [dx, dy] = std::array<f32,2>{lastx-x, lasty-y};
 
-    dist = std::max(dist + -sy * dt, 1.0f);
+    dist = std::max(dist + -sy * dt * 10.0f, 1.0f);
 
     if (window.is_button_pressed(GLFW_MOUSE_BUTTON_2)) {
         yaw += -dx * dt  * camera_look_speed;
         pitch += dy * dt * camera_look_speed;
     }
-    v3f direction{0,0,-1};
-    direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-    direction.y = sin(glm::radians(pitch));
-    direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
 
+    v3f direction = get_direction();
     const auto temp = position;
     position += direction * -dist;
     look_at(temp);

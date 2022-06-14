@@ -10,6 +10,8 @@
 #include <fmt/core.h>
 #include <fmt/color.h>
 
+#include "Engine/heightmap.hpp"
+
 #include "Graphics/texture2d.hpp"
 #include "Graphics/shader.hpp"
 #include "Graphics/static_mesh.hpp"
@@ -38,7 +40,7 @@ struct resource_handle_t {
     {
         count++;
     }
-    resource_handle_t& operator=(resource_handle_t& o) {
+    resource_handle_t& operator=(const resource_handle_t& o) {
         resource = o.resource;
         count++;
         return *this;
@@ -71,12 +73,12 @@ struct asset_loader_t {
             resource(p), count(c)
         {
             fmt::print(fg(fmt::color::orange) | fmt::emphasis::underline,
-                "asset_loader_t: Allocating resource {}\n", (void*)resource);
+                "asset_loader_t: Allocating resource {}\n", reinterpret_cast<void*>(resource));
         }
         ~cache_resource_t() {
             if (count == 0) {
                 fmt::print(fg(fmt::color::orange) | fmt::emphasis::underline,
-                    "asset_loader_t: Freeing resource {}\n", (void*)resource);
+                    "asset_loader_t: Freeing resource {}\n", reinterpret_cast<void*>(resource));
                 resource->~R();
                 free(resource);
             }
@@ -167,6 +169,22 @@ struct asset_loader_t {
         return 0;
     }
 
+    resource_handle_t<static_mesh_t> get_heightmap(const std::string& path) {
+        if (static_mesh_cache.count(path)) { 
+            auto& [mesh, count] = static_mesh_cache[path];
+            if (count == 0){
+                static_mesh_cache.erase(path);
+                return get_static_mesh(path);
+            }
+            return resource_handle_t(*mesh, ++count);
+        }
+
+        static_mesh_cache[path] = create_cache_resource<static_mesh_t>();
+        auto& [mesh, count] = static_mesh_cache[path];
+        new (mesh) static_mesh_t(heightmap_t::load_vertices(this, path, 300.0f, 2.0f, 2.0f));
+        mesh->update_aabb();
+        return resource_handle_t(*mesh, count);
+    }
     resource_handle_t<static_mesh_t> get_static_mesh(const std::string& path) {
         if (static_mesh_cache.count(path)) { 
             auto& [mesh, count] = static_mesh_cache[path];

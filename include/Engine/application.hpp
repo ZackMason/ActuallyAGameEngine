@@ -11,6 +11,7 @@
 #include "Engine/asset_loader.hpp"
 #include "Scripting/script.hpp"
 
+
 struct application_i {
     window_t window;
     asset_loader_t asset_loader;
@@ -22,7 +23,7 @@ struct application_i {
         init();
 
         while(!window.should_close()) {
-            update();
+            update(0.0f);
 
             pre_render_pass();
             main_render_pass();
@@ -38,7 +39,7 @@ struct application_i {
     virtual void pre_render_pass(){};
     virtual void main_render_pass(){};
     virtual void post_process_pass(){};
-    virtual void update(){};
+    virtual void update(f32 dt){};
 
     virtual void close(){};
 };

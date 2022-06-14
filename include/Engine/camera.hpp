@@ -41,7 +41,7 @@ struct camera_t {
 		return -up();
 	}
     
-	auto get_position()const {
+	virtual v3f get_position() const {
 		return position;
 	}
     

@@ -43,6 +43,21 @@ void texture2d_t::unbind() {
 		glBindTexture(GL_TEXTURE_2D, 0);
 	//}
 }
+texture2d_accessor_t::texture2d_accessor_t(GLuint id, int w, int h, GLenum f)
+: width(w), height(h), format(f)
+{
+	glGenBuffers(1, &pbo);
+	glBindBuffer(GL_PIXEL_PACK_BUFFER, pbo);
+	glBufferData(GL_PIXEL_PACK_BUFFER, w*h*4, nullptr, GL_STATIC_READ);
+
+	glBindTexture(GL_TEXTURE_2D, id);
+	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, (void*)0);
+	data = (GLubyte*)glMapBuffer(GL_PIXEL_PACK_BUFFER, GL_READ_ONLY);
+}
+
+texture2d_accessor_t texture2d_t::map_buffer() {
+	return texture2d_accessor_t(id, width, height, GL_RGBA);
+}
 void texture2d_t::destroy() {
     glDeleteTextures(1, &id);
     id = 0;
@@ -100,8 +115,10 @@ texture2d_t::texture2d_t(const std::string& path, const std::string& asset_dir) 
 	unsigned char* data = stbi_load(fmt::format("{}{}", asset_dir, path).c_str(), &width, &height, &channels, 0);
 	if (data)
 	{
-		if (channels == 3)
+		if (channels == 3){
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, data_type, data);
+			data_format = GL_RGB;
+		}
 		else if (channels == 4)
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, data_type, data);
 		glGenerateMipmap(GL_TEXTURE_2D);

@@ -31,7 +31,11 @@ struct buffer_t : bindable_i {
         glBindBuffer(GL_ARRAY_BUFFER, id);
         
         glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(T), data.data(), GL_STATIC_DRAW);
-        
+    }
+
+    // only call if you are going to create a new buffer
+    void destroy() {
+        glDeleteBuffers(1, &id);
     }
 
     explicit buffer_t(utl::vector<T>&& p_data)
@@ -44,6 +48,10 @@ struct buffer_t : bindable_i {
         : data(p_data)
     {
         create();
+    }
+
+    virtual ~buffer_t() {
+        destroy();
     }
 
     buffer_t(buffer_t&) = delete;
