@@ -98,6 +98,7 @@ struct asset_loader_t {
     std::unordered_map<std::string, cache_resource_t<texture2d_t>> texture2d_cache;
     std::unordered_map<std::string, cache_resource_t<shader_t>> shader_cache;
     std::unordered_map<std::string, cache_resource_t<framebuffer_t>> framebuffer_cache;
+    std::unordered_map<std::string, utl::vector<f32>> heightmap_cache;
 
     template <typename T>
     void reload() {
@@ -169,7 +170,15 @@ struct asset_loader_t {
         return 0;
     }
 
-    resource_handle_t<static_mesh_t> get_heightmap(const std::string& path) {
+    utl::vector<f32> get_heightmap(const std::string& path) {
+        if (heightmap_cache.count(path)) { 
+            auto& heightmap = heightmap_cache[path];
+            return heightmap;
+        }
+        get_heightmap_mesh(path);
+        return get_heightmap(path);
+    }
+    resource_handle_t<static_mesh_t> get_heightmap_mesh(const std::string& path) {
         if (static_mesh_cache.count(path)) { 
             auto& [mesh, count] = static_mesh_cache[path];
             if (count == 0){
@@ -181,10 +190,14 @@ struct asset_loader_t {
 
         static_mesh_cache[path] = create_cache_resource<static_mesh_t>();
         auto& [mesh, count] = static_mesh_cache[path];
-        new (mesh) static_mesh_t(heightmap_t::load_vertices(this, path, 300.0f, 2.0f, 2.0f));
+        auto [vertices, heightmap] = heightmap_t::load_vertices(this, path, 700.0f, 2.0f, 2.0f);
+        new (mesh) static_mesh_t(std::move(vertices));
+        heightmap_cache[path] = heightmap;
         mesh->update_aabb();
         return resource_handle_t(*mesh, count);
     }
+
+
     resource_handle_t<static_mesh_t> get_static_mesh(const std::string& path) {
         if (static_mesh_cache.count(path)) { 
             auto& [mesh, count] = static_mesh_cache[path];

@@ -13,7 +13,6 @@ struct GLFWwindow;
 struct window_t {
     u32 width{640}, height{480};
     std::array<f32, 2> scroll;
-    const char* title = "TheGame";
 
     ~window_t();
 
@@ -23,6 +22,7 @@ struct window_t {
     void poll_events();
     const bool should_close() const;
     const bool is_open() const;
+    void set_title(const char* t);
 
     bool is_key_pressed(int key) const;
     bool is_key_released(int key) const;
@@ -31,5 +31,7 @@ struct window_t {
     decltype(scroll) get_scroll() const;
 
     GLFWwindow *window{nullptr};
+private:
+    const char* title = "TheGame";
 };
 

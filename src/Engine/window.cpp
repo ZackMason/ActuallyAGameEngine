@@ -31,6 +31,9 @@ window_t::~window_t(){
     }
 }
 
+void window_t::set_title(const char* t) {
+    glfwSetWindowTitle(window, t);
+}
 void window_t::poll_events() {
     glfwPollEvents();            
 }

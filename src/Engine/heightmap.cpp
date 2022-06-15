@@ -6,7 +6,7 @@
 #include "Engine/heightmap.hpp"
 #include "Engine/asset_loader.hpp"
 
-utl::vector<static_vertex_t> heightmap_t::load_vertices(
+std::pair<utl::vector<static_vertex_t>, utl::vector<f32>>  heightmap_t::load_vertices(
     asset_loader_t* loader_ptr, 
     const std::string& heightmap_path, 
     f32 max_height, f32 texel_width, f32 texel_height)
@@ -21,6 +21,7 @@ utl::vector<static_vertex_t> heightmap_t::load_vertices(
 
     utl::vector<static_vertex_t> indexed_verts;
     utl::vector<static_vertex_t> vertices;
+    utl::vector<f32> heightmap;
     utl::vector<u32> indices;
     const v3f tangent = v3f(1,0,0);
     const v3f bitangent = v3f(0,0,1);
@@ -43,6 +44,7 @@ utl::vector<static_vertex_t> heightmap_t::load_vertices(
             vert.tex_coord = v2f(px+0.5f,py+0.5f);
             vert.tex_coord.y = 1.0f-vert.tex_coord.y;
             indexed_verts.push_back(vert);
+            heightmap.push_back(vert.position.y);
             int id = (y) * texture_accessor.width + (x);
             if (x != texture_accessor.width - 1 && y != texture_accessor.height - 1)
             {
@@ -109,8 +111,24 @@ utl::vector<static_vertex_t> heightmap_t::load_vertices(
         const auto& v7 = indexed_verts[i-w-1];
         const auto& v8 = indexed_verts[i-w];
 
-        v0.position = ((v0.position+v1.position+v2.position+v3.position+v4.position+v5.position+v6.position+v7.position+v8.position)/9.0f);
-        v0.normal = glm::normalize((v0.normal+v1.normal+v2.normal+v3.normal+v4.normal+v5.normal+v6.normal+v7.normal+v8.normal)/9.0f);
+        v0.position = ((v0.position+
+                        v1.position+
+                        v2.position+
+                        v3.position+
+                        v4.position+
+                        v5.position+
+                        v6.position+
+                        v7.position+
+                        v8.position)/9.0f);
+        v0.normal = glm::normalize((v0.normal+
+                                    v1.normal+
+                                    v2.normal+
+                                    v3.normal+
+                                    v4.normal+
+                                    v5.normal+
+                                    v6.normal+
+                                    v7.normal+
+                                    v8.normal)/9.0f);
     }
 
 
@@ -119,5 +137,5 @@ utl::vector<static_vertex_t> heightmap_t::load_vertices(
         indices.end(), 
         std::back_inserter(vertices),
         [&](auto i) {return indexed_verts[i];});
-    return vertices;
+    return {vertices, heightmap };
 }
