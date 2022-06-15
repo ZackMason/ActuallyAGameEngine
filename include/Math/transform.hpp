@@ -17,7 +17,7 @@ struct transform_t {
 	{
 		set_position(position);
 		set_scale(scale);
-		set_rotation(position);
+		set_rotation(rotation);
 	}
     
 	m44 to_matrix() const;
