@@ -46,6 +46,8 @@ struct scale_keyframe_t {
     float timestamp{};
 };
 
+using bone_id_t = int;
+
 struct aiNodeAnim;
 struct bone_t {
     utl::vector<position_keyframe_t> positions;
@@ -53,10 +55,12 @@ struct bone_t {
     utl::vector<scale_keyframe_t>    scales;
 
     m44 transform;
+    m44 local_to_bone;
     std::string name;
-    int id;
+    bone_id_t id;
 
-    void update(float anim);
+
+    const m44& update(float anim);
     int get_position_index(float anim);
     int get_rotation_index(float anim);
     int get_scale_index(float anim);
@@ -66,10 +70,10 @@ struct bone_t {
     glm::mat4 interpolate_rotation(float anim);
     glm::mat4 interpolate_scale(float anim);
 
-    explicit bone_t(const std::string& pname, int pID, const aiNodeAnim* channel);
+    explicit bone_t(const std::string& pname, bone_id_t pID, const aiNodeAnim* channel);
 };
 
 struct bone_info_t {
-    int id{-1};
+    bone_id_t id{-1};
     m44 offset{1.0f};
 };
