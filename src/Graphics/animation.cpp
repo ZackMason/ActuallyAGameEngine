@@ -43,7 +43,6 @@ void animation_t::read_animations(const aiAnimation* animation, skeletal_model_t
             {
                 return (bone_name == *node_name);
             });
-        if (it == node_names.end()) continue;
         assert(it != node_names.end() && "No node matching a bone.");
         const bone_id_t bone_index = bone_id_t(std::distance(node_names.cbegin(), it));
 
@@ -78,12 +77,12 @@ std::vector<const aiString*> animation_t::read_heirarchy_data(const aiNode* src,
         node.transform =  AssimpGLMHelpers::ConvertMatrixToGLMFormat(n.s->mTransformation);
         assert(node.parent < int(anim_nodes.size()) && "Invalid parent");
         bone_id_t parent_index = bone_id_t(anim_nodes.size());
-        if (model.bone_info.count(n.s->mName.data) > 0) {
+        //if (model.bone_info.count(n.s->mName.data) > 0) {
             node_names.push_back(&n.s->mName);
             anim_nodes.push_back(node);
-        } else {
-            parent_index = -1;
-        }
+        //} else {
+        //    parent_index = -1;
+        //}
         for (size_t i = 0; i < n.s->mNumChildren; i++)
         {
             stack.push({n.s->mChildren[i], parent_index});
