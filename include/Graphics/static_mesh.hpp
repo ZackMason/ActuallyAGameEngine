@@ -32,7 +32,6 @@ struct static_mesh_t : drawable_i {
     void unbind() override;
     void draw() override;
 
-    static static_mesh_t from_gltf(const std::string& path,const std::string& asset_dir);
     static static_mesh_t from_obj(const std::string& path,const std::string& asset_dir);
     static void emplace_obj(const std::string& path, static_mesh_t* address,const std::string& asset_dir);
 

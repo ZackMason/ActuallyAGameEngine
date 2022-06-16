@@ -88,6 +88,7 @@ struct shader_t : bindable_i {
 	void set_mat2  (const std::string &name, const m22 &mat) const;
 	void set_mat3  (const std::string &name, const m33 &mat) const;
 	void set_mat4  (const std::string &name, const m44 &mat) const;
+    void set_mat4v (const std::string &name, const m44& mat, int count) const;
 	
     static void reset();
 };

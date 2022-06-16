@@ -8,12 +8,12 @@
 #include "Graphics/buffer.hpp"
 
 struct vertex_array_t : drawable_i {
-    size_t size;
+    GLsizei size;
     GLenum topology = GL_TRIANGLES;
 
     void draw() override {
         bind();
-        glDrawArrays(topology, 0, static_cast<GLsizei>(size));
+        glDrawArrays(topology, 0, (size));
         unbind();
     }
     void unbind();
@@ -26,16 +26,22 @@ struct vertex_array_t : drawable_i {
         return *this;
     }
 
-    vertex_array_t& set_attrib(int index, int count, GLenum type, int size, size_t offset) {
+    vertex_array_t& set_attrib(int index, int count, GLenum type, GLsizei s, size_t offset) {
         glEnableVertexAttribArray(index);
-        glVertexAttribPointer(index, count, type, GL_FALSE, size, (void*)offset);
+        glVertexAttribPointer(index, count, type, GL_FALSE, s, reinterpret_cast<void*>(offset));
+        return *this;
+    }
+
+    vertex_array_t& set_attribi(int index, int count, GLenum type, GLsizei s, size_t offset) {
+        glEnableVertexAttribArray(index);
+        glVertexAttribIPointer(index, count, type, s, reinterpret_cast<void*>(offset));
         return *this;
     }
 
     virtual ~vertex_array_t() {
         glDeleteVertexArrays(1, &id);
     }
-    vertex_array_t(size_t s) : size(s) {
+    explicit vertex_array_t(size_t s) : size(static_cast<GLsizei>(s)) {
         glGenVertexArrays(1, &id);
     }
 

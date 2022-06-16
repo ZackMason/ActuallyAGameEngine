@@ -10,10 +10,6 @@
 #include <fmt/core.h>
 #include <fmt/color.h>
 
-#define TINYGLTF_IMPLEMENTATION
-#define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "tiny_gltf.h"
-
 #define TINYOBJLOADER_IMPLEMENTATION
 #include "tiny_obj_loader.h"
 
@@ -147,36 +143,10 @@ utl::vector<static_vertex_t> load_obj(const std::string& path, const std::string
     return vertices;
 }
 
-
-
 static_mesh_t static_mesh_t::from_obj(const std::string& path,const std::string& asset_dir) {
     return static_mesh_t(std::move(load_obj(path,asset_dir)));
 }
 
 void static_mesh_t::emplace_obj(const std::string& path, static_mesh_t* address,const std::string& asset_dir) {
     new (address) static_mesh_t(std::move(load_obj(path,asset_dir)));
-}
-
-static_mesh_t static_mesh_t::from_gltf(const std::string& path, const std::string& asset_dir) {
-    tinygltf::TinyGLTF loader;
-    tinygltf::Model model;
-    utl::vector<static_vertex_t> vertices;
-
-    std::string err, warn;
-    bool ret = loader.LoadASCIIFromFile(&model, &err, &warn, fmt::format("{}{}", asset_dir, path));
-
-    if (!warn.empty()) {
-        fmt::print(fg(fmt::color::green) | fmt::emphasis::bold,
-            "Static mesh warning: {}\n", warn.c_str());
-    }
-
-    if (!err.empty()) {
-        throw runtime_error_x(fmt::format("Static mesh: parse error {}", err));
-    }
-
-    if (!ret) {
-        throw runtime_error_x(fmt::format("Static mesh: failed to parse {}", path));
-    }
-
-    return static_mesh_t(std::move(vertices));
 }

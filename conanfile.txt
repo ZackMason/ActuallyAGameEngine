@@ -7,8 +7,8 @@ glm/0.9.9.8
 entt/3.10.1
 imgui/1.87
 chaiscript/6.1.0
-tinygltf/2.5.0
 tinyobjloader/1.0.6
+assimp/5.2.2
 
 [generators]
 cmake

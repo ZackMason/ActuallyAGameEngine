@@ -17,14 +17,15 @@ using f64 = double;
 
 #include <glm/glm.hpp>
 #include "glm/gtc/matrix_transform.hpp"
+#include<glm/gtc/quaternion.hpp>
 
 using v2f = glm::vec2;
 using v3f = glm::vec3;
 using v4f = glm::vec4;
 
-using v2i = glm::vec<2, i32>;
-using v3i = glm::vec<3, i32>;
-using v4i = glm::vec<4, i32>;
+using v2i = glm::ivec2;
+using v3i = glm::ivec3;
+using v4i = glm::ivec4;
 
 using v2u = glm::vec<2, u32>;
 using v3u = glm::vec<3, u32>;

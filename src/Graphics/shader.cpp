@@ -345,6 +345,10 @@ void shader_t::set_mat3(const std::string &name, const m33 &mat) const
 	glUniformMatrix3fv(get_uniform_location(name), 1, GL_FALSE, &mat[0][0]);
 }
 // ------------------------------------------------------------------------
+void shader_t::set_mat4v(const std::string &name, const m44& mat, int count) const{
+	glUniformMatrix4fv(get_uniform_location(name), count, GL_FALSE, &mat[0][0]);
+
+}
 void shader_t::set_mat4(const std::string &name, const m44 &mat) const
 {
 	glUniformMatrix4fv(get_uniform_location(name), 1, GL_FALSE, &mat[0][0]);

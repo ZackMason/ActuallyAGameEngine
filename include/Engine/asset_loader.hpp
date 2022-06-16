@@ -201,10 +201,10 @@ struct asset_loader_t {
     resource_handle_t<static_mesh_t> get_static_mesh(const std::string& path) {
         if (static_mesh_cache.count(path)) { 
             auto& [mesh, count] = static_mesh_cache[path];
-            if (count == 0){
-                static_mesh_cache.erase(path);
-                return get_static_mesh(path);
-            }
+            //if (count == 0){
+            //    static_mesh_cache.erase(path);
+            //    return get_static_mesh(path);
+            //}
             return resource_handle_t(*mesh, ++count);
         }
 

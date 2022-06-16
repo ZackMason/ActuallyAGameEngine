@@ -16,7 +16,7 @@ std::pair<utl::vector<static_vertex_t>, utl::vector<f32>>  heightmap_t::load_ver
     texture.get().mipmap();
     auto texture_accessor = texture.get().map_buffer();
     
-    auto size = texture_accessor.format == GL_RGB ? 3 : 4;
+    auto size = 4;
     const auto line_size = size*texture_accessor.width;
 
     utl::vector<static_vertex_t> indexed_verts;
@@ -28,8 +28,8 @@ std::pair<utl::vector<static_vertex_t>, utl::vector<f32>>  heightmap_t::load_ver
 
     const f32 map_width = texel_width   * static_cast<f32>(texture_accessor.width);
     const f32 map_height = texel_height * static_cast<f32>(texture_accessor.height);
-    for(int y = 0; y < texture_accessor.height; y++){
-        for(int x = 0; x < texture_accessor.width; x++){
+    for(int y = 0; y < texture_accessor.height; y+=1){
+        for(int x = 0; x < texture_accessor.width; x+=1){
             const f32 height = texture_accessor.data[(y*line_size+x*size)+0]/256.0f;
             static_vertex_t vert;
 
@@ -96,6 +96,7 @@ std::pair<utl::vector<static_vertex_t>, utl::vector<f32>>  heightmap_t::load_ver
 
     // smooth vertices
     const auto w = texture_accessor.width;
+    for (size_t c = 0; c < 2; c++) 
     for (size_t i = texture_accessor.width; i < indexed_verts.size() - texture_accessor.width; i++) {
         if ((i % texture_accessor.width) == texture_accessor.width - 1) // is not the right edge
             continue;
@@ -111,15 +112,17 @@ std::pair<utl::vector<static_vertex_t>, utl::vector<f32>>  heightmap_t::load_ver
         const auto& v7 = indexed_verts[i-w-1];
         const auto& v8 = indexed_verts[i-w];
 
-        v0.position = ((v0.position+
-                        v1.position+
-                        v2.position+
-                        v3.position+
-                        v4.position+
-                        v5.position+
-                        v6.position+
-                        v7.position+
-                        v8.position)/9.0f);
+        v0.position.y = ((v0.position.y+
+                        v1.position.y+
+                        v2.position.y+
+                        v3.position.y+
+                        v4.position.y+
+                        v5.position.y+
+                        v6.position.y+
+                        v7.position.y+
+                        v8.position.y)/9.0f);
+        heightmap[i] = v0.position.y;
+        
         v0.normal = glm::normalize((v0.normal+
                                     v1.normal+
                                     v2.normal+

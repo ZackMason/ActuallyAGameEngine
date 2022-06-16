@@ -16,6 +16,8 @@
 #include "Graphics/shader.hpp"
 #include "Graphics/static_mesh.hpp"
 
+#include "Util/random.hpp"
+
 static size_t tests_run = 0;
 static size_t tests_passed = 0;
 
@@ -69,6 +71,17 @@ int main(int argc, char** argv) {
 
     run_test("equal", [](){
         TEST_ASSERT(1 == 1);
+    });
+
+    run_test("random", [](){
+        random_t<xor64_random_t> random;
+        random.randomize();
+        for (auto i{0}; i < 1000; i++) {
+            auto rf = random.randf();
+            auto rn = random.randn();
+            TEST_ASSERT(0.0f <= rf && rf <= 1.0f);
+            TEST_ASSERT(-1.0f <= rn && rn <= 1.0f);
+        }
     });
 
     run_test("window_create", [](){
