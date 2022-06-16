@@ -33,7 +33,7 @@ namespace AssimpGLMHelpers {
 
 
 
-bone_t::bone_t(const std::string& pname, int pID, const aiNodeAnim* channel)
+bone_t::bone_t(const std::string& pname, bone_id_t pID, const aiNodeAnim* channel)
     : name(pname),
     id(pID),
     transform(1.0f)
@@ -69,12 +69,12 @@ bone_t::bone_t(const std::string& pname, int pID, const aiNodeAnim* channel)
     }
 }
 
-void bone_t::update(float animationTime)
+const m44& bone_t::update(float animationTime)
 {
     glm::mat4 translation = interpolate_position(animationTime);
     glm::mat4 rotation = interpolate_rotation(animationTime);
     glm::mat4 scale = interpolate_scale(animationTime);
-    transform = translation * rotation * scale;
+    return transform = translation * rotation * scale;
 }
 int bone_t::get_position_index(float animationTime)
 {

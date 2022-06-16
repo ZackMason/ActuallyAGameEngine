@@ -11,6 +11,8 @@
 #include "assimp/Scene.h"
 #include "assimp/Postprocess.h"
 
+#include <stack>
+
 void skeletal_mesh_t::update_aabb() {
     for (const auto& vertex: buffer_object.data) {
         aabb.expand(vertex.position);
@@ -40,15 +42,24 @@ void skeletal_model_t::load_model(const std::string& path, const std::string& as
 
     process_node(scene->mRootNode, scene);
 }
-void skeletal_model_t::process_node(aiNode *node, const aiScene *scene){
-    for(unsigned int i = 0; i < node->mNumMeshes; i++)
-    {
-        aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-        meshes.push_back(process_mesh(mesh, scene));
-    }
-    for(unsigned int i = 0; i < node->mNumChildren; i++)
-    {
-        process_node(node->mChildren[i], scene);
+void skeletal_model_t::process_node(aiNode *start, const aiScene *scene){
+
+    std::stack<const aiNode*> stack;
+    stack.push(scene->mRootNode);
+    while (!stack.empty()) {
+
+        const aiNode* node = stack.top();
+        stack.pop();
+
+        for(unsigned int i = 0; i < node->mNumMeshes; i++)
+        {
+            aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
+            meshes.push_back(process_mesh(mesh, scene));
+        }
+        for(unsigned int i = 0; i < node->mNumChildren; i++)
+        {
+            stack.push(node->mChildren[i]);
+        }
     }
 }
 void skeletal_model_t::set_bone_default(skinned_vertex_t& vertex){
