@@ -32,7 +32,7 @@ void skeletal_mesh_t::draw() {
 
 void skeletal_model_t::load_model(const std::string& path, const std::string& asset_dir) {
     Assimp::Importer importer;
-    const aiScene* scene = importer.ReadFile(fmt::format("{}{}", asset_dir, path), aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_CalcTangentSpace);
+    const aiScene* scene = importer.ReadFile(fmt::format("{}{}", asset_dir, path), aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_CalcTangentSpace | aiProcess_GlobalScale);
     // check for errors
     if(!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) // if is Not Zero
     {

@@ -43,20 +43,20 @@ void texture2d_t::unbind() {
 		glBindTexture(GL_TEXTURE_2D, 0);
 	//}
 }
-texture2d_accessor_t::texture2d_accessor_t(GLuint id, int w, int h, GLenum f)
-: width(w), height(h), format(f)
+texture2d_accessor_t::texture2d_accessor_t(GLuint id, int w, int h, GLenum f, GLuint mip_level)
+: width(w >> mip_level), height(h >> mip_level), format(f)
 {
 	glGenBuffers(1, &pbo);
 	glBindBuffer(GL_PIXEL_PACK_BUFFER, pbo);
-	glBufferData(GL_PIXEL_PACK_BUFFER, w*h*4, nullptr, GL_STATIC_READ);
+	glBufferData(GL_PIXEL_PACK_BUFFER, width*height*4, nullptr, GL_STATIC_READ);
 
 	glBindTexture(GL_TEXTURE_2D, id);
-	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, (void*)0);
+	glGetTexImage(GL_TEXTURE_2D, mip_level, GL_RGBA, GL_UNSIGNED_BYTE, (void*)0);
 	data = (GLubyte*)glMapBuffer(GL_PIXEL_PACK_BUFFER, GL_READ_ONLY);
 }
 
 texture2d_accessor_t texture2d_t::map_buffer() {
-	return texture2d_accessor_t(id, width, height, GL_RGBA);
+	return texture2d_accessor_t(id, width, height, GL_RGBA, 1);
 }
 void texture2d_t::destroy() {
     glDeleteTextures(1, &id);

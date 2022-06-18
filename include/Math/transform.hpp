@@ -11,7 +11,7 @@
 
 struct transform_t {
     transform_t() = default;
-	transform_t(const m44& mat) : basis(mat), origin(mat[3]) {};
+	explicit transform_t(const m44& mat) : basis(mat), origin(mat[3]) {};
 	transform_t(const v3f& position, const v3f& scale = {1,1,1}, const v3f& rotation = {0,0,0})
 	: basis(m33(1.0f))
 	{

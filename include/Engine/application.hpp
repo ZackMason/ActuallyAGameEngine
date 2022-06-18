@@ -41,6 +41,8 @@ struct application_i {
     virtual void post_process_pass(){};
     virtual void update(f32 dt){};
 
-    virtual void close(){};
+    virtual void close(){
+        world.clear();
+    };
 };
 

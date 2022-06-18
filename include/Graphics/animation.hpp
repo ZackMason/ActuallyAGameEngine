@@ -32,17 +32,19 @@ struct animation_t {
     animation_t(const std::string& animationPath, const std::string& asset_dir, skeletal_model_t& model);
     virtual ~animation_t() = default;
 
-    //bone_t* find_bone(const std::string& name)
-    //{
-    //    auto iter = std::find_if(bones.begin(), bones.end(),
-    //        [&](const bone_t& bone)
-    //        {
-    //            return bone.name == name;
-    //        }
-    //    );
-    //    if (iter == bones.end()) return nullptr;
-    //    else return &(*iter);
-    //}
+    std::optional<bone_t> find_bone(const std::string& name)
+    {
+        auto iter = std::find_if(anim_nodes.begin(), anim_nodes.end(),
+            [&](const anim_node_t& node) {   
+                if (node.bone) {
+                    return node.bone->name == name;
+                }
+                return false;
+            }
+        );
+        if (iter == anim_nodes.end()) return std::nullopt;
+        else return iter->bone;
+    }
 
     void read_animations(const aiAnimation* animation, skeletal_model_t& model, const std::vector<const aiString*>& node_names);
     std::vector<const aiString*> read_heirarchy_data(const aiNode* src, skeletal_model_t& model);
@@ -73,7 +75,6 @@ struct animator_t {
                     matrices[index] =  node.transform * node.offset;
                 }
             }
-            //calculate_bone_transform(&animation->root, m44(1.0f));
         }
     }
 
@@ -83,32 +84,4 @@ struct animator_t {
 		time = 0.0f;
 	}
 
-#if 0
-    void calculate_bone_transform(const assimp_node_data_t* node, glm::mat4 parentTransform)
-	{
-		std::string nodeName = node->name;
-		glm::mat4 nodeTransform = node->transform;
-
-		bone_t* bone = animation->find_bone(nodeName);
-
-		if (bone)
-		{
-			bone->update(time);
-			nodeTransform = bone->transform;
-		}
-
-		glm::mat4 globalTransformation = parentTransform * nodeTransform;
-
-		auto& boneInfoMap = animation->bone_info;
-		if (boneInfoMap.find(nodeName) != boneInfoMap.end())
-		{
-			int index = boneInfoMap[nodeName].id;
-			glm::mat4 offset = boneInfoMap[nodeName].offset;
-			matrices[index] = globalTransformation * offset;
-		}
-
-		for (int i = 0; i < node->children.size(); i++)
-			calculate_bone_transform(&node->children[i], globalTransformation);
-	}
-#endif
 };

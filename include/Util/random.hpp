@@ -9,9 +9,10 @@
 #include <time.h>  
 
 #include <cstdint>
+#include <array>
 
 struct xoshiro256_random_t {
-    uint64_t state[4];
+    std::array<uint64_t, 4> state;
     inline static uint64_t max = ~0;
 
     void randomize() {
@@ -30,7 +31,7 @@ struct xoshiro256_random_t {
     };
 
     uint64_t rand() {
-        uint64_t *s = state;
+        uint64_t *s = state.data();
         uint64_t const result = rol64(s[1] * 5, 7) * 9;
         uint64_t const t = s[1] << 17;
 
@@ -97,12 +98,24 @@ struct random_t {
         rng.randomize();
     };
 
+    void seed(const decltype(Generator::state)& x) {
+        rng.state = x;
+    }
+
+
+
+
     float randf() {
         return float(rng.rand()) / float(Generator::max);
     }
 
     float randn() {
         return randf() * 2.0f - 1.0f;
+    }
+
+    template <typename T>
+    auto choice(const T& indexable) -> const typename T::value_type& {
+        return indexable[rng.rand()%indexable.size()];
     }
 
     template <typename AABB>

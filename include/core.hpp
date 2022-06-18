@@ -19,6 +19,7 @@
 #include <fmt/core.h>
 #include <fmt/color.h>
 
+
 #ifndef CMAKE_ASSETS_PATH
 #define CMAKE_ASSETS_PATH "./"
 #endif

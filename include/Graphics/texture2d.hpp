@@ -23,7 +23,7 @@ struct texture2d_accessor_t {
     GLenum format;
 
     // texture needs to be bound first
-    explicit texture2d_accessor_t(GLuint id, int w, int h, GLenum f);
+    explicit texture2d_accessor_t(GLuint id, int w, int h, GLenum f, GLuint mip_level=0);
     virtual ~texture2d_accessor_t()// = default;
     {
         glUnmapBuffer(GL_PIXEL_PACK_BUFFER);

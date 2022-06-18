@@ -20,7 +20,7 @@
 animation_t::animation_t(const std::string& animationPath, const std::string& asset_dir, skeletal_model_t& model)
 {
     Assimp::Importer importer;
-    const aiScene* scene = importer.ReadFile(fmt::format("{}{}", asset_dir, animationPath), aiProcess_Triangulate);
+    const aiScene* scene = importer.ReadFile(fmt::format("{}{}", asset_dir, animationPath), aiProcess_Triangulate | aiProcess_GlobalScale);
     assert(scene && scene->mRootNode);
     auto animation = scene->mAnimations[0];
     duration = (float)animation->mDuration;
@@ -74,15 +74,15 @@ std::vector<const aiString*> animation_t::read_heirarchy_data(const aiNode* src,
 
         anim_node_t node;
         node.parent = n.parent;
-        node.transform =  AssimpGLMHelpers::ConvertMatrixToGLMFormat(n.s->mTransformation);
+        node.transform = AssimpGLMHelpers::ConvertMatrixToGLMFormat(n.s->mTransformation);
         assert(node.parent < int(anim_nodes.size()) && "Invalid parent");
         bone_id_t parent_index = bone_id_t(anim_nodes.size());
-        //if (model.bone_info.count(n.s->mName.data) > 0) {
+        if (model.bone_info.count(n.s->mName.data) > 0) {
             node_names.push_back(&n.s->mName);
             anim_nodes.push_back(node);
-        //} else {
-        //    parent_index = -1;
-        //}
+        } else {
+            parent_index = -1;
+        }
         for (size_t i = 0; i < n.s->mNumChildren; i++)
         {
             stack.push({n.s->mChildren[i], parent_index});

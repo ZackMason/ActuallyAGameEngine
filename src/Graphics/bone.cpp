@@ -30,9 +30,6 @@ namespace AssimpGLMHelpers {
     }
 }
 
-
-
-
 bone_t::bone_t(const std::string& pname, bone_id_t pID, const aiNodeAnim* channel)
     : name(pname),
     id(pID),
