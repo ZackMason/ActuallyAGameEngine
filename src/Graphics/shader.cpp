@@ -6,6 +6,7 @@
 #include "Graphics/shader.hpp"
 
 #include "Util/exceptions.hpp"
+#include "Util/logger.hpp"
 
 #include "core.hpp"
 
@@ -13,6 +14,7 @@
 
 #include <fmt/core.h>
 #include <fmt/color.h>
+
 
 namespace internal {
   decltype(shader_t::id) bound_shader = -1;  
@@ -90,7 +92,7 @@ shader_stage_t::shader_stage_t(const std::string& path, const std::string& asset
         internal::include_preprocess(shader_code, asset_dir);
         //IncludePreprocess(shader_code);
     } catch (std::ifstream::failure & e) {
-        throw runtime_error_x(fmt::format("Shader stage error: {} - {}\n", path, e.what()));
+        throw runtime_error_x(fmt::format("Shader stage error: {} - {}", path, e.what()));
     }
 
     const char* vShaderCode = shader_code.c_str();
@@ -106,7 +108,7 @@ shader_stage_t::shader_stage_t(const std::string& path, const std::string& asset
     {
         char infoLog[512];
         glGetShaderInfoLog(shader_slot, 512, NULL, infoLog);
-        throw runtime_error_x(fmt::format("Shader stage error: {} - {} - {}\n", path, type, infoLog));
+        throw runtime_error_x(fmt::format("Shader stage error: {} - {} - {}", path, type, infoLog));
     }
     else
     {
@@ -154,8 +156,7 @@ shader_t::shader_t(const std::string& p_name, const std::vector<std::string>& p_
     }
     else
     {
-        fmt::print(fg(fmt::color::green) | fmt::emphasis::bold,
-            "Shader loaded: {}\n", name);
+        logger_t::info(fmt::format("Shader loaded: {}", name));
     }
 }
 
@@ -268,89 +269,89 @@ void shader_t::set_uniforms(utl::vector<uniform_variable_t>& uniforms)
         switch (uniform.type)
         {
             case uniform_variable_e::BOOL:
-            set_bool(uniform.name, *(bool*)uniform.data.get());
-            break;
+                set_bool(uniform.name, *(bool*)uniform.data.get());
+                break;
             case uniform_variable_e::INT:
-            set_int(uniform.name, *(int*)uniform.data.get());
-            break;
+                set_int(uniform.name, *(int*)uniform.data.get());
+                break;
             case uniform_variable_e::FLOAT:
-            set_float(uniform.name, *(f32*)uniform.data.get());
-            break;
+                set_float(uniform.name, *(f32*)uniform.data.get());
+                break;
             case uniform_variable_e::VEC3:
-            set_vec3(uniform.name, *(glm::vec3*)uniform.data.get());
-            break;
+                set_vec3(uniform.name, *(glm::vec3*)uniform.data.get());
+                break;
             case uniform_variable_e::VEC4:
-            set_vec4(uniform.name, *(glm::vec4*)uniform.data.get());
-            break;
+                set_vec4(uniform.name, *(glm::vec4*)uniform.data.get());
+                break;
             default:
-            break;
+                break;
         }
     }
 }
 
-void shader_t::set_bool(const std::string &name, bool value) const
+void shader_t::set_bool(const std::string &n, bool value) const
 {
-	glUniform1i(get_uniform_location(name), (int)value);
+	glUniform1i(get_uniform_location(n), (int)value);
 }
 // ------------------------------------------------------------------------
-void shader_t::set_int(const std::string &name, int value) const
+void shader_t::set_int(const std::string &n, int value) const
 {
-	glUniform1i(get_uniform_location(name), value);
+	glUniform1i(get_uniform_location(n), value);
 }
 // ------------------------------------------------------------------------
-void shader_t::set_uint(const std::string& name, unsigned int value) const
+void shader_t::set_uint(const std::string& n, unsigned int value) const
 {
-	glUniform1ui(get_uniform_location(name), value);
+	glUniform1ui(get_uniform_location(n), value);
 }
 // ------------------------------------------------------------------------
-void shader_t::set_float(const std::string &name, float value) const
+void shader_t::set_float(const std::string &n, float value) const
 {
-	glUniform1f(get_uniform_location(name), value);
+	glUniform1f(get_uniform_location(n), value);
 }
 // ------------------------------------------------------------------------
-void shader_t::set_vec2(const std::string &name, const v2f &value) const
+void shader_t::set_vec2(const std::string &n, const v2f &value) const
 {
-	glUniform2fv(get_uniform_location(name), 1, &value[0]);
+	glUniform2fv(get_uniform_location(n), 1, &value[0]);
 }
-void shader_t::set_vec2(const std::string &name, float x, float y) const
+void shader_t::set_vec2(const std::string &n, float x, float y) const
 {
-	glUniform2f(get_uniform_location(name), x, y);
-}
-// ------------------------------------------------------------------------
-void shader_t::set_vec3(const std::string &name, const v3f &value) const
-{
-	glUniform3fv(get_uniform_location(name), 1, &value[0]);
-}
-void shader_t::set_vec3(const std::string &name, float x, float y, float z) const
-{
-	glUniform3f(get_uniform_location(name), x, y, z);
+	glUniform2f(get_uniform_location(n), x, y);
 }
 // ------------------------------------------------------------------------
-void shader_t::set_vec4(const std::string &name, const v4f &value) const
+void shader_t::set_vec3(const std::string &n, const v3f &value) const
 {
-	glUniform4fv(get_uniform_location(name), 1, &value[0]);
+	glUniform3fv(get_uniform_location(n), 1, &value[0]);
 }
-void shader_t::set_vec4(const std::string &name, float x, float y, float z, float w)
+void shader_t::set_vec3(const std::string &n, float x, float y, float z) const
 {
-	glUniform4f(get_uniform_location(name), x, y, z, w);
-}
-// ------------------------------------------------------------------------
-void shader_t::set_mat2(const std::string &name, const m22 &mat) const
-{
-	glUniformMatrix2fv(get_uniform_location(name), 1, GL_FALSE, &mat[0][0]);
+	glUniform3f(get_uniform_location(n), x, y, z);
 }
 // ------------------------------------------------------------------------
-void shader_t::set_mat3(const std::string &name, const m33 &mat) const
+void shader_t::set_vec4(const std::string &n, const v4f &value) const
 {
-	glUniformMatrix3fv(get_uniform_location(name), 1, GL_FALSE, &mat[0][0]);
+	glUniform4fv(get_uniform_location(n), 1, &value[0]);
+}
+void shader_t::set_vec4(const std::string &n, float x, float y, float z, float w)
+{
+	glUniform4f(get_uniform_location(n), x, y, z, w);
 }
 // ------------------------------------------------------------------------
-void shader_t::set_mat4v(const std::string &name, const m44& mat, int count) const{
-	glUniformMatrix4fv(get_uniform_location(name), count, GL_FALSE, &mat[0][0]);
+void shader_t::set_mat2(const std::string &n, const m22 &mat) const
+{
+	glUniformMatrix2fv(get_uniform_location(n), 1, GL_FALSE, &mat[0][0]);
+}
+// ------------------------------------------------------------------------
+void shader_t::set_mat3(const std::string &n, const m33 &mat) const
+{
+	glUniformMatrix3fv(get_uniform_location(n), 1, GL_FALSE, &mat[0][0]);
+}
+// ------------------------------------------------------------------------
+void shader_t::set_mat4v(const std::string &n, const m44& mat, int count) const{
+	glUniformMatrix4fv(get_uniform_location(n), count, GL_FALSE, &mat[0][0]);
 
 }
-void shader_t::set_mat4(const std::string &name, const m44 &mat) const
+void shader_t::set_mat4(const std::string &n, const m44 &mat) const
 {
-	glUniformMatrix4fv(get_uniform_location(name), 1, GL_FALSE, &mat[0][0]);
+	glUniformMatrix4fv(get_uniform_location(n), 1, GL_FALSE, &mat[0][0]);
 }
 

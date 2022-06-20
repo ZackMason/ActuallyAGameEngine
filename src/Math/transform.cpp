@@ -6,6 +6,7 @@
 #include "Math/transform.hpp"
 
 #include "Util/exceptions.hpp"
+#include <glm/gtx/quaternion.hpp>
 
 m44 transform_t::to_matrix() const
 {
@@ -36,7 +37,7 @@ void transform_t::rotate(const v3f& delta)
 
 void transform_t::rotate_quat(const glm::quat& delta)
 {
-    throw not_implemented_x();
+	set_rotation(glm::quat(basis) * delta);
 }
 
 v3f transform_t::get_origin() const
@@ -89,5 +90,5 @@ void transform_t::set_rotation(const v3f& rotation)
 
 void transform_t::set_rotation(const glm::quat& quat)
 {
-    throw not_implemented_x();
+	basis = glm::toMat3(glm::normalize(quat));
 }

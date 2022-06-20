@@ -129,9 +129,6 @@ utl::vector<static_vertex_t> load_obj(const std::string& path, const std::string
         throw runtime_error_x(fmt::format("Static mesh: {} - {}", path, err));
     }
 
-    int size = 0;
-    
-    
     for (size_t s = 0; s < shapes.size(); s++)
     {
         // Loop over faces(polygon)

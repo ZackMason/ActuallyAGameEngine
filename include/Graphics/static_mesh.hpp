@@ -35,8 +35,22 @@ struct static_mesh_t : drawable_i {
     static static_mesh_t from_obj(const std::string& path,const std::string& asset_dir);
     static void emplace_obj(const std::string& path, static_mesh_t* address,const std::string& asset_dir);
 
+    explicit static_mesh_t(const utl::vector<static_vertex_t>& p_vertices)
+        : buffer_object(p_vertices), vertex_array(buffer_object.size()), aabb{ v3f{0.0f}, v3f{0.0f} }
+    {
+        buffer_object.bind();
+        vertex_array.bind_ref()
+            .set_attrib(0, 3, GL_FLOAT, sizeof(static_vertex_t), offsetof(static_vertex_t, position))
+            .set_attrib(1, 3, GL_FLOAT, sizeof(static_vertex_t), offsetof(static_vertex_t, normal))
+            .set_attrib(2, 2, GL_FLOAT, sizeof(static_vertex_t), offsetof(static_vertex_t, tex_coord))
+            .unbind();
+        buffer_object.unbind();
+
+        update_aabb();
+    }
+
     explicit static_mesh_t(utl::vector<static_vertex_t>&& p_vertices) 
-        : buffer_object(std::move(p_vertices)), vertex_array(buffer_object.size())
+        : buffer_object(std::move(p_vertices)), vertex_array(buffer_object.size()), aabb{v3f{0.0f}, v3f{0.0f}}
     { 
         buffer_object.bind();
         vertex_array.bind_ref()
@@ -45,6 +59,13 @@ struct static_mesh_t : drawable_i {
             .set_attrib(2, 2, GL_FLOAT, sizeof(static_vertex_t), offsetof(static_vertex_t, tex_coord))
             .unbind();
         buffer_object.unbind();
+
+        update_aabb();
     }
+
+    static_mesh_t(static_mesh_t&) = delete;
+    static_mesh_t(static_mesh_t&&) = delete;
+    static_mesh_t& operator=(static_mesh_t&) = delete;
+    static_mesh_t& operator=(static_mesh_t&&) = delete;
 };
 

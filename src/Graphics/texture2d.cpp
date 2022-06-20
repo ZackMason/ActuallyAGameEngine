@@ -6,6 +6,7 @@
 
 #include "Graphics/texture2d.hpp"
 #include "Util/exceptions.hpp"
+#include "Util/logger.hpp"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "vendor/stb_image.h"
@@ -56,7 +57,7 @@ texture2d_accessor_t::texture2d_accessor_t(GLuint id, int w, int h, GLenum f, GL
 }
 
 texture2d_accessor_t texture2d_t::map_buffer() {
-	return texture2d_accessor_t(id, width, height, GL_RGBA, 1);
+	return texture2d_accessor_t(id, width, height, GL_RGBA, 0);
 }
 void texture2d_t::destroy() {
     glDeleteTextures(1, &id);
@@ -122,19 +123,19 @@ texture2d_t::texture2d_t(const std::string& path, const std::string& asset_dir) 
 		else if (channels == 4)
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, data_type, data);
 		glGenerateMipmap(GL_TEXTURE_2D);
-        fmt::print(fg(fmt::color::green)|fmt::emphasis::bold, "Texture loaded: {}\n", path);
+		logger_t::info(fmt::format("Texture loaded: {}", path));
 	}
 	else
 	{
         throw runtime_error_x("Texture2d: Failed to load");
 
-		data = stbi_load("./assets/UVgrid.png", &width, &height, &channels, 0);
+		data = stbi_load(fmt::format("{}{}", asset_dir, "textures/UVgrid.png").c_str(), &width, &height, &channels, 0);
 		if (data)
         {
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, data_type, data);
             glGenerateMipmap(GL_TEXTURE_2D);
         }
-        fmt::print(fg(fmt::color::crimson)|fmt::emphasis::bold, "Texture failed to load: {}\n", path);
+		logger_t::warn(fmt::format("Texture failed to load: {}", path));
 	}
 	stbi_image_free(data);
 }

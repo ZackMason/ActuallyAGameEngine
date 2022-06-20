@@ -133,8 +133,6 @@ std::pair<utl::vector<static_vertex_t>, utl::vector<f32>>  heightmap_t::load_ver
         }
     } 
     
-    
-    fmt::print("indices: {}\n", indices.size());
     std::transform(indices.begin(), 
                    indices.end(), 
                    std::back_inserter(vertices),

@@ -17,6 +17,9 @@
 #include "Graphics/static_mesh.hpp"
 
 #include "Util/random.hpp"
+#include "Util/string.hpp"
+#include "Util/profile.hpp"
+#include "Util/allocators.hpp"
 
 static size_t tests_run = 0;
 static size_t tests_passed = 0;
@@ -43,21 +46,16 @@ constexpr auto throw_assert(const bool b) -> auto {
 
 #define TEST_ASSERT( x ) throw_assert(x, fmt::format("TEST FAILED: " #x "\n{}:{}", __FILE__, __LINE__));
 
-constexpr auto foo(const auto& list) -> auto {
-    for (const auto& i: list) {
-        fmt::print("{}\n", i);
-        foo(i);
-    }
-}
-
 template <typename Fn>
 auto run_test(const char* name, const Fn& test) -> auto {
     ++tests_run;
     try {
+        profile_t t(name);
         test();
-        ++tests_passed;
         fmt::print(fg(fmt::color::cyan) | fmt::emphasis::bold,
-            "{} - Passed\n", name);
+            "{} - Passed - {}us\n", name, t.end());
+
+        ++tests_passed;
     } catch (std::exception & e) {
         fmt::print(fg(fmt::color::yellow) | fmt::emphasis::bold,
             "{} - Failed\n\n", name);
@@ -73,8 +71,30 @@ int main(int argc, char** argv) {
         TEST_ASSERT(1 == 1);
     });
 
+    run_test("allocators", [](){
+        stack_allocator_t stack(sizeof(int) * 1000);
+
+        auto mark = stack.get_marker();
+        int* a = stack.alloc<int>(100);
+
+        for (int i = 0; i < 100; i++) {
+            a[i] = i;
+        }
+        stack.pop(mark);
+
+        for (int i = 0; i < 100; i++) {
+            int* t = stack.alloc<int>(1);
+            TEST_ASSERT(*t == i);
+        }
+        stack.clear();
+        for (int i = 0; i < 1000; i++) {
+            int* t = stack.alloc<int>(1);
+        }
+    });
+
     run_test("random", [](){
-        random_t<xor64_random_t> random;
+        //random_t<xor32_random_t> random;
+        random_t<xoshiro256_random_t> random;
         random.randomize();
         for (auto i{0}; i < 1000; i++) {
             auto rf = random.randf();
@@ -83,6 +103,22 @@ int main(int argc, char** argv) {
             TEST_ASSERT(-1.0f <= rn && rn <= 1.0f);
         }
     });
+
+    
+    run_test("string_hash", [](){
+        auto hash1 = "Test"_sid;
+        switch (hash1) {
+            case "Test"_sid:
+                break;
+            case "Tets"_sid:
+            case "Tset"_sid:
+            case "eTst"_sid:
+            default:
+                TEST_ASSERT(false);
+                break;
+        }
+    });
+
 
     run_test("window_create", [](){
         window_t window;

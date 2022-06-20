@@ -11,12 +11,14 @@
 #include <cstdint>
 #include <array>
 
+#include "Math/aabb.hpp"
+
 struct xoshiro256_random_t {
     std::array<uint64_t, 4> state;
-    inline static uint64_t max = ~0;
+    inline static uint64_t max = static_cast<uint64_t>(~0);
 
     void randomize() {
-        if (sizeof(time_t) >= 8) {
+        if constexpr (sizeof(time_t) >= 8) {
             state[3] = static_cast<uint64_t>(time(0));
             state[2] = static_cast<uint64_t>(time(0));
             state[1] = static_cast<uint64_t>(time(0));
@@ -53,10 +55,10 @@ struct xoshiro256_random_t {
 
 struct xor64_random_t {
     uint64_t state;
-    inline static uint64_t max = ~0;
+    inline static uint64_t max = static_cast<uint64_t>(~0);
 
     void randomize() {
-        if (sizeof(time_t) >= 8) {
+        if constexpr (sizeof(time_t) >= 8) {
             state = static_cast<uint64_t>(time(0));
         }
         else {
@@ -75,7 +77,7 @@ struct xor64_random_t {
 
 struct xor32_random_t {
     uint32_t state;
-    inline static uint32_t max = ~0;
+    inline static uint32_t max = static_cast<uint32_t>(~0);
 
     void randomize() {
         state = static_cast<uint32_t>(time(0));
@@ -102,9 +104,6 @@ struct random_t {
         rng.state = x;
     }
 
-
-
-
     float randf() {
         return float(rng.rand()) / float(Generator::max);
     }
@@ -118,13 +117,11 @@ struct random_t {
         return indexable[rng.rand()%indexable.size()];
     }
 
-    template <typename AABB>
-    auto aabb(const AABB& box) -> decltype(box.min) {
-        const auto size = box.max - box.min;
-        return decltype(box.min){
-            randf() * size.x + box.min.x,
-            randf() * size.y + box.min.y,
-            randf() * size.z + box.min.z
+    v3f aabb(const aabb_t<v3f>& box) {
+        return v3f{
+            (this->randf() * (box.max.x - box.min.x)) + box.min.x,
+            (this->randf() * (box.max.y - box.min.y)) + box.min.y,
+            (this->randf() * (box.max.z - box.min.z)) + box.min.z
         };
     }
 };

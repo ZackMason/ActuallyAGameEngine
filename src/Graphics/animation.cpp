@@ -43,7 +43,7 @@ void animation_t::read_animations(const aiAnimation* animation, skeletal_model_t
             {
                 return (bone_name == *node_name);
             });
-        assert(it != node_names.end() && "No node matching a bone.");
+        //assert(it != node_names.end() && "No node matching a bone.");
         const bone_id_t bone_index = bone_id_t(std::distance(node_names.cbegin(), it));
 
         if (model.bone_info.count(bone_name.C_Str()) == 0) continue;

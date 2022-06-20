@@ -6,6 +6,7 @@
 #pragma once
 
 #include <vector>
+
 namespace utl {
     template <typename T>
     using vector = std::vector<T>;

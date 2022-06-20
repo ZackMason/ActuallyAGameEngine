@@ -20,7 +20,11 @@
 #include "Graphics/framebuffer.hpp"
 #include "Graphics/screen.hpp"
 
+#include "Util/random.hpp"
+#include "Util/logger.hpp"
+
 #include "GLFW/glfw3.h"
+
 
 void script_vm_t::eval_file(const std::string& f, const std::string& asset_dir) {
     chai.eval_file(fmt::format("{}{}", asset_dir, f));
@@ -33,11 +37,11 @@ void script_vm_t::init(window_t& window, entt::registry& world, asset_loader_t& 
     chai.add(chaiscript::fun(rand), "rand");
 
     chai.add(chaiscript::fun([](const std::string& s){
-        fmt::print(fg(fmt::color::purple) | fmt::emphasis::bold, "{}\n", s);
+        logger_t::info(s);
     }), "print");
     chai.add(chaiscript::fun([](){return 1.0f/ImGui::GetIO().Framerate;}), "delta_time" );
-    chai.add(chaiscript::fun([](){return f32(rand())/f32(RAND_MAX);}), "randf");
-    chai.add(chaiscript::fun([](){return (f32(rand())/f32(RAND_MAX)) * 2.0f - 1.0f;}), "randn");
+    chai.add(chaiscript::fun([](){return random_s::randf();}), "randf");
+    chai.add(chaiscript::fun([](){return random_s::randn();}), "randn");
     chai.add(chaiscript::fun(cosf), "cos");
     chai.add(chaiscript::fun(sinf), "sin");
     chai.add(chaiscript::fun([](){glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);}), "clear");
@@ -50,6 +54,12 @@ void script_vm_t::init(window_t& window, entt::registry& world, asset_loader_t& 
     chai.add(chaiscript::fun([](f32 a, f32 b, f32 lambda){return lerp(a,b,lambda);}), "lerp");
     
     chai.add(chaiscript::fun(glViewport), "glViewport");
+
+    chai.add(chaiscript::user_type<glm::quat>(), "quat");
+    chai.add(chaiscript::fun(&glm::quat::x), "x");
+    chai.add(chaiscript::fun(&glm::quat::y), "y");
+    chai.add(chaiscript::fun(&glm::quat::z), "z");
+    chai.add(chaiscript::fun(&glm::quat::w), "w");
 
     chai.add(chaiscript::user_type<v3f>(), "v3f");
     chai.add(chaiscript::constructor<v3f()>(), "v3f");
@@ -83,28 +93,30 @@ void script_vm_t::init(window_t& window, entt::registry& world, asset_loader_t& 
     chai.add(chaiscript::fun(&vertex_array_t::draw), "draw");
     chai.add(chaiscript::fun(&vertex_array_t::set_attrib), "set_attrib");
 
-
-
     chai.add(chaiscript::user_type<asset_loader_t>(), "asset_loader_t");
     chai.add(chaiscript::user_type<resource_handle_t<shader_t>>(), "shader_handle_t");
     chai.add(chaiscript::user_type<resource_handle_t<static_mesh_t>>(), "static_mesh_handle_t");
     chai.add(chaiscript::user_type<resource_handle_t<texture2d_t>>(), "texture2d_handle_t");
     chai.add(chaiscript::user_type<resource_handle_t<framebuffer_t>>(), "framebuffer_handle_t");
+
     chai.add(chaiscript::fun(&resource_handle_t<shader_t>::get), "get");
     chai.add(chaiscript::fun(&resource_handle_t<static_mesh_t>::get), "get");
     chai.add(chaiscript::fun(&resource_handle_t<texture2d_t>::get), "get");
     chai.add(chaiscript::fun(&resource_handle_t<framebuffer_t>::get), "get");
+    
     chai.add(chaiscript::fun(&asset_loader_t::get_shader_nameless), "get_shader");
     chai.add(chaiscript::fun(&asset_loader_t::get_shader_vs_fs), "get_shader");
     chai.add(chaiscript::fun(&asset_loader_t::get_texture2d), "get_texture2d");
     chai.add(chaiscript::fun(&asset_loader_t::create_texture2d), "create_texture2d");
     chai.add(chaiscript::fun(&asset_loader_t::get_static_mesh), "get_static_mesh");
     chai.add(chaiscript::fun(&asset_loader_t::get_framebuffer), "get_framebuffer");
+    
     chai.add(chaiscript::fun(&texture2d_t::set_data), "set_data");
     chai.add(chaiscript::fun(&texture2d_t::set), "set");
     chai.add(chaiscript::fun(&texture2d_t::mipmap), "mipmap");
     chai.add(chaiscript::fun(&texture2d_t::set_filter), "set_filter");
     chai.add(chaiscript::fun(&texture2d_t::set_wrap), "set_wrap");
+    
     chai.add(chaiscript::vector_conversion<std::vector<u32>>());
     chai.add(chaiscript::vector_conversion<std::vector<int>>());
 
@@ -199,16 +211,12 @@ void script_t::load_function(chaiscript::ChaiScript& chai)
         script_object = chai.eval<chai_ptr_t>(class_name + "()");
 
         on_update = chai.eval<std::function<void (chai_ptr_t, entt::entity& e, const f32)>>("on_update");
-    } catch (chaiscript::exception::eval_error &e) {
-        fmt::print(fg(fmt::color::crimson) | fmt::emphasis::bold,
-            "Chai Exception caught - {}\n", e.pretty_print());
-    }
-    catch (chaiscript::exception::dispatch_error &e) {
-        fmt::print(fg(fmt::color::crimson) | fmt::emphasis::bold,
-            "Chai Dispatch Error - {}\n", e.what());
+    }  catch (chaiscript::exception::eval_error &e) {
+        logger_t::chai_exception(e.pretty_print());
+    } catch (chaiscript::exception::dispatch_error &e) {
+        logger_t::chai_exception(e.what());
     } catch (std::exception & e) {
-        fmt::print(fg(fmt::color::crimson) | fmt::emphasis::bold,
-            "Exception caught - {}\n", e.what());
+        logger_t::exception(e.what());
     }
 }
 
