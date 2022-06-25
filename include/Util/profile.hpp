@@ -28,14 +28,14 @@ struct profile_t {
     {
         if (stopped) return;
         auto stop = std::chrono::high_resolution_clock::now();
-        fmt::print("Profiling - {}: {}us\n", name, std::chrono::duration_cast<std::chrono::microseconds>(stop - start).count());
+        fmt::print("Profiling - {}: {}ns\n", name, std::chrono::duration_cast<std::chrono::nanoseconds>(stop - start).count());
     }
     
     auto end()
     {
         stopped = true;
         auto stop = std::chrono::high_resolution_clock::now();
-        return std::chrono::duration_cast<std::chrono::microseconds>(stop - start).count();
+        return std::chrono::duration_cast<std::chrono::nanoseconds>(stop - start).count();
     }
 };
 

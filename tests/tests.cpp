@@ -53,7 +53,7 @@ auto run_test(const char* name, const Fn& test) -> auto {
         profile_t t(name);
         test();
         fmt::print(fg(fmt::color::cyan) | fmt::emphasis::bold,
-            "{} - Passed - {}us\n", name, t.end());
+            "{} - Passed - {}ns\n", name, t.end());
 
         ++tests_passed;
     } catch (std::exception & e) {
@@ -106,13 +106,10 @@ int main(int argc, char** argv) {
 
     
     run_test("string_hash", [](){
-        auto hash1 = "Test"_sid;
+        auto hash1 = sid("Test");
         switch (hash1) {
             case "Test"_sid:
                 break;
-            case "Tets"_sid:
-            case "Tset"_sid:
-            case "eTst"_sid:
             default:
                 TEST_ASSERT(false);
                 break;

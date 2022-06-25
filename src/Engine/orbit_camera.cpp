@@ -21,6 +21,7 @@ void orbit_camera_t::update(const window_t& window, f32 dt) {
 
     constexpr f32 move_speed = 75.0f;
     constexpr f32 camera_look_speed = 5.0f;
+    constexpr f32 camera_zoom_speed = 50.0f;
     if (window.is_key_pressed(GLFW_KEY_W)) {
         position += forward() * dt * move_speed;
     }
@@ -47,7 +48,7 @@ void orbit_camera_t::update(const window_t& window, f32 dt) {
     auto [sx,sy] = window.get_scroll();
     auto [dx, dy] = std::array<f32,2>{lastx-x, lasty-y};
 
-    dist = std::max(dist + -sy * dt * 10.0f, 1.0f);
+    dist = std::max(dist + -sy * dt * camera_zoom_speed, 1.0f);
 
     if (window.is_button_pressed(GLFW_MOUSE_BUTTON_3)) {
         yaw += -dx * dt  * camera_look_speed;
