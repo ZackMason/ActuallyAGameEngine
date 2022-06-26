@@ -13,7 +13,7 @@ std::pair<utl::vector<static_vertex_t>, utl::vector<f32>>  heightmap_t::load_ver
 {
     auto& loader = *loader_ptr;
     auto texture = loader.get_texture2d(heightmap_path);
-    texture.get().mipmap();
+//    texture.get().mipmap();
     auto texture_accessor = texture.get().map_buffer();
     
     auto size = 4;

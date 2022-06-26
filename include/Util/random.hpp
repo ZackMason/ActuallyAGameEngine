@@ -9,13 +9,14 @@
 #include <time.h>  
 
 #include <cstdint>
+#include <limits>
 #include <array>
 
 #include "Math/aabb.hpp"
 
 struct xoshiro256_random_t {
     std::array<uint64_t, 4> state;
-    inline static uint64_t max = static_cast<uint64_t>(~0);
+    inline static uint64_t max = std::numeric_limits<uint64_t>::max();
 
     void randomize() {
         if constexpr (sizeof(time_t) >= 8) {
@@ -55,7 +56,7 @@ struct xoshiro256_random_t {
 
 struct xor64_random_t {
     uint64_t state;
-    inline static uint64_t max = static_cast<uint64_t>(~0);
+    inline static uint64_t max = std::numeric_limits<uint64_t>::max();
 
     void randomize() {
         if constexpr (sizeof(time_t) >= 8) {
@@ -77,7 +78,7 @@ struct xor64_random_t {
 
 struct xor32_random_t {
     uint32_t state;
-    inline static uint32_t max = static_cast<uint32_t>(~0);
+    inline static uint32_t max = std::numeric_limits<uint32_t>::max();
 
     void randomize() {
         state = static_cast<uint32_t>(time(0));

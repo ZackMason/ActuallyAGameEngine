@@ -81,6 +81,7 @@ struct animator_t {
     void play_animation(animation_t* pAnimation)
 	{
 		animation = pAnimation;
+        std::fill(matrices.begin(), matrices.end(), m44(1.0f));
 		time = 0.0f;
 	}
 

@@ -106,7 +106,7 @@ int main(int argc, char** argv) {
 
     
     run_test("string_hash", [](){
-        auto hash1 = sid("Test");
+        auto hash1 = sid("Test"s);
         switch (hash1) {
             case "Test"_sid:
                 break;
