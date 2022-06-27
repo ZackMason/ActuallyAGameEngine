@@ -13,6 +13,7 @@
 
 struct logger_t {
     enum log_level_e {
+        PROFILE,
         INFO,
         ALLOC,
         WARN,
@@ -25,6 +26,7 @@ struct logger_t {
     inline static log_level_e level = log_level_e::INFO;
 
     inline static std::array<fmt::v8::text_style, log_level_e::SIZE> log_color = {
+        fg(fmt::color::light_green) | fmt::emphasis::bold,
         fg(fmt::color::white) | fmt::emphasis::bold,
         fg(fmt::color::orange) | fmt::emphasis::underline,
         fg(fmt::color::green) | fmt::emphasis::bold,
@@ -35,6 +37,7 @@ struct logger_t {
     };
 
     inline static std::array<std::string, log_level_e::SIZE> level_to_string = {
+        "Profile",
         "Info",
         "Alloc",
         "Warning",
@@ -47,6 +50,9 @@ struct logger_t {
     inline static std::string output{};
     inline static bool console{true};
 
+    static void profile(const std::string& message) {
+        log(message, log_level_e::PROFILE);
+    }
     static void info(const std::string& message) {
         log(message, log_level_e::INFO);
     }

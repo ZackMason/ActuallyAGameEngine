@@ -12,6 +12,7 @@
 #include "fmt/color.h"
 #include "fmt/core.h"
 
+#include "Util/logger.hpp"
 
 struct profile_t {
     std::string name;
@@ -28,7 +29,7 @@ struct profile_t {
     {
         if (stopped) return;
         auto stop = std::chrono::high_resolution_clock::now();
-        fmt::print("Profiling - {}: {}ns\n", name, std::chrono::duration_cast<std::chrono::nanoseconds>(stop - start).count());
+        logger_t::profile(fmt::format("{}: {}ns\n", name, std::chrono::duration_cast<std::chrono::nanoseconds>(stop - start).count()));
     }
     
     auto end()

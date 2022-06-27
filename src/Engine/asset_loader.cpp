@@ -60,7 +60,7 @@ resource_handle_t<static_mesh_t> asset_loader_t::get_heightmap_mesh(const std::s
 
     static_mesh_cache[path] = create_cache_resource<static_mesh_t>();
     auto& [mesh, count] = static_mesh_cache[path];
-    const auto [vertices, heightmap] = heightmap_t::load_vertices(this, path, 700.0f, 2.0f, 2.0f);
+    const auto [vertices, heightmap] = heightmap_t::load_vertices(this, path, 700.0f, 8.0f, 8.0f);
     new (mesh) static_mesh_t(vertices);
     heightmap_cache[path] = heightmap;
     mesh->update_aabb();

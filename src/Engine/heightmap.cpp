@@ -96,7 +96,7 @@ std::pair<utl::vector<static_vertex_t>, utl::vector<f32>>  heightmap_t::load_ver
     
     // smooth vertices
     const auto w = texture_accessor.width;
-    for (size_t smooth_count = 0; smooth_count <2; smooth_count++) {
+    for (size_t smooth_count = 0; smooth_count <1; smooth_count++) {
         for (size_t y = w; y < indexed_verts.size() - w; y += w) {
             for (size_t x = 1; x < w-1; x++) {
                 auto& v0 = indexed_verts[x+y];
