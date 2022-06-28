@@ -52,11 +52,12 @@ struct shader_t : bindable_i {
 	mutable std::unordered_map<std::string, GLint> uniform_location_cache;
     utl::vector<std::string> files;
 
-    shader_t() = delete;
+    //shader_t() = delete;
     virtual ~shader_t() { 
         stages.clear();
         glDeleteProgram(id); 
     };
+    shader_t(){};
     shader_t(const std::string& p_name, const utl::vector<std::string>& files, const std::string& asset_dir);
 
 

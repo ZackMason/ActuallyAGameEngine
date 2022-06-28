@@ -13,7 +13,7 @@ struct vertex_array_t : drawable_i {
 
     void draw() override {
         bind();
-        glDrawArrays(topology, 0, (size));
+            glDrawArrays(topology, 0, (size));
         unbind();
     }
     void unbind();
@@ -45,6 +45,7 @@ struct vertex_array_t : drawable_i {
         glGenVertexArrays(1, &id);
     }
 
+    vertex_array_t() = default;
     vertex_array_t(vertex_array_t&) = delete;
     vertex_array_t(vertex_array_t&&) = delete;
     vertex_array_t& operator=(vertex_array_t&) = delete;

@@ -5,6 +5,8 @@
 
 #pragma once
 
+#include <tuple>
+
 #include <entt/entt.hpp>
 
 #include "Graphics/static_mesh.hpp"
@@ -31,7 +33,7 @@ struct heightmap_t {
         return tile_width * f32(width);
     }
 
-    static std::pair<utl::vector<static_vertex_t>, utl::vector<f32>> load_vertices(
+    static std::tuple<utl::vector<static_vertex_t>, utl::vector<unsigned int>, utl::vector<f32>> load_vertices(
         asset_loader_t* loader, 
         const std::string& heightmap_path, 
         f32 max_height, f32 p_w = 1.0f, f32 p_h = 1.0f);

@@ -12,6 +12,7 @@
 
 template <typename T>
 struct buffer_t : bindable_i {
+    GLenum type = GL_ARRAY_BUFFER;
     utl::vector<T> data;
 
     auto size() const {
@@ -19,23 +20,35 @@ struct buffer_t : bindable_i {
     }
 
     void bind() override {
-        glBindBuffer(GL_ARRAY_BUFFER, id);
+        glBindBuffer(type, id);
     }
 
     void unbind() override {
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glBindBuffer(type, 0);
     }
 
     void create() {
         glGenBuffers(1, &id);
-        glBindBuffer(GL_ARRAY_BUFFER, id);
+        glBindBuffer(type, id);
         
-        glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(T), data.data(), GL_STATIC_DRAW);
+        glBufferData(type, data.size() * sizeof(T), data.data(), GL_STATIC_DRAW);
     }
 
     // only call if you are going to create a new buffer
     void destroy() {
         glDeleteBuffers(1, &id);
+    }
+
+    explicit buffer_t(utl::vector<T>&& p_data, GLenum p_type)
+        : type(p_type), data(std::move(p_data))
+    {
+        create();
+    }
+
+    explicit buffer_t(const utl::vector<T>& p_data, GLenum p_type)
+        : type(p_type), data(p_data)
+    {
+        create();
     }
 
     explicit buffer_t(utl::vector<T>&& p_data)
@@ -54,6 +67,7 @@ struct buffer_t : bindable_i {
         destroy();
     }
 
+    buffer_t() = default;
     buffer_t(buffer_t&) = delete;
     buffer_t(buffer_t&&) = delete;
     buffer_t& operator=(buffer_t&) = delete;

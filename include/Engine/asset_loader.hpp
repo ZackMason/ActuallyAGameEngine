@@ -23,6 +23,21 @@
 // idk about this.....
 template <typename T>
 struct resource_handle_t {
+private:
+    static T& get_dummy() {
+        static T dummy;
+        return dummy;
+    }
+
+    static u32& get_dummy_count() {
+        static u32 dummy_count{0};
+        return dummy_count;
+    }
+public:
+    resource_handle_t() : resource(get_dummy()), count(get_dummy_count()) {
+    }
+
+
     resource_handle_t(T& p_res, u32& p_count) 
     : resource(p_res), count(p_count) 
     {

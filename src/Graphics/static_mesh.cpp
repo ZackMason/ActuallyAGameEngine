@@ -32,7 +32,13 @@ void static_mesh_t::unbind() {
 }
 
 void static_mesh_t::draw() {
-    vertex_array.draw();
+    if(index_buffer) {
+        vertex_array.bind();
+            glDrawElements(vertex_array.topology, index_buffer->data.size(), GL_UNSIGNED_INT, 0);
+        vertex_array.unbind();
+    } else {
+        vertex_array.draw();
+    }
 }
 
 utl::vector<static_vertex_t> vertices_from_obj_mesh(

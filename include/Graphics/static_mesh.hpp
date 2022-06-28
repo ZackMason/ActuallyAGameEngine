@@ -14,6 +14,8 @@
 #include "Graphics/vertex_array.hpp"
 #include "Graphics/buffer.hpp"
 
+#include <optional>
+
 struct static_vertex_t {
     v3f position;
     v3f normal;
@@ -21,6 +23,7 @@ struct static_vertex_t {
 };
 
 struct static_mesh_t : drawable_i {
+    std::optional<buffer_t<unsigned int>> index_buffer;
     buffer_t<static_vertex_t> buffer_object;
     vertex_array_t vertex_array;
 
@@ -63,6 +66,27 @@ struct static_mesh_t : drawable_i {
         update_aabb();
     }
 
+    explicit static_mesh_t(utl::vector<unsigned int>&& p_indices, utl::vector<static_vertex_t>&& p_vertices) 
+        :  buffer_object(std::move(p_vertices)), 
+        vertex_array(buffer_object.size()), aabb{v3f{0.0f}, v3f{0.0f}}
+    { 
+        vertex_array.bind();
+        buffer_object.bind();
+        index_buffer.emplace(std::move(p_indices), GL_ELEMENT_ARRAY_BUFFER);
+        index_buffer->bind();
+        vertex_array.bind_ref()
+            .set_attrib(0, 3, GL_FLOAT, sizeof(static_vertex_t), offsetof(static_vertex_t, position))
+            .set_attrib(1, 3, GL_FLOAT, sizeof(static_vertex_t), offsetof(static_vertex_t, normal))
+            .set_attrib(2, 2, GL_FLOAT, sizeof(static_vertex_t), offsetof(static_vertex_t, tex_coord))
+            .unbind();
+        buffer_object.unbind();
+        index_buffer->unbind();
+
+        update_aabb();
+    }
+
+    static_mesh_t() = default;
+    
     static_mesh_t(static_mesh_t&) = delete;
     static_mesh_t(static_mesh_t&&) = delete;
     static_mesh_t& operator=(static_mesh_t&) = delete;

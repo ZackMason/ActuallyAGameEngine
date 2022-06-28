@@ -6,7 +6,7 @@
 #include "Engine/heightmap.hpp"
 #include "Engine/asset_loader.hpp"
 
-std::pair<utl::vector<static_vertex_t>, utl::vector<f32>>  heightmap_t::load_vertices(
+std::tuple<utl::vector<static_vertex_t>, utl::vector<unsigned int>, utl::vector<f32>>  heightmap_t::load_vertices(
                                                                                       asset_loader_t* loader_ptr, 
                                                                                       const std::string& heightmap_path, 
                                                                                       f32 max_height, f32 texel_width, f32 texel_height)
@@ -133,9 +133,9 @@ std::pair<utl::vector<static_vertex_t>, utl::vector<f32>>  heightmap_t::load_ver
         }
     } 
     
-    std::transform(indices.begin(), 
-                   indices.end(), 
-                   std::back_inserter(vertices),
-                   [&](auto i) {return indexed_verts[i];});
-    return {vertices, heightmap };
+    //std::transform(indices.begin(), 
+    //               indices.end(), 
+    //               std::back_inserter(vertices),
+    //               [&](auto i) {return indexed_verts[i];});
+    return {indexed_verts, indices, heightmap };
 }
