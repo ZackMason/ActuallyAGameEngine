@@ -292,6 +292,11 @@ void shader_t::set_uniforms(utl::vector<uniform_variable_t>& uniforms)
     }
 }
 
+void shader_t::set_uniform_block(const std::string &name, int loc) const {
+    auto index = glGetUniformBlockIndex(id, name.c_str());
+    if (index != GL_INVALID_INDEX)
+        glUniformBlockBinding(id, index, loc);
+}
 void shader_t::set_bool(const std::string &n, bool value) const
 {
 	glUniform1i(get_uniform_location(n), (int)value);

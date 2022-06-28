@@ -31,6 +31,14 @@ window_t::~window_t(){
     }
 }
 
+void window_t::set_width(int w) {
+    width = w;
+    glfwSetWindowSize(window, width, height);
+}
+void window_t::set_height(int h) {
+    height = h;
+    glfwSetWindowSize(window, width, height);
+}
 void window_t::set_title(const char* t) {
     glfwSetWindowTitle(window, t);
 }
@@ -64,14 +72,18 @@ void window_t::open_window() {
     glfwSetFramebufferSizeCallback(window,
         [](GLFWwindow* window, int w, int h) {
             window_t& self = *static_cast<window_t*>(glfwGetWindowUserPointer(window));
+            
+            if (!w||!h) return;
+
             self.width = w;
             self.height = h;
             glViewport(0,0,w,h);
-        });
+    });
     glfwSetScrollCallback(window, [](GLFWwindow* window, double x, double y) {
-            window_t& self = *static_cast<window_t*>(glfwGetWindowUserPointer(window));
-            self.scroll = {(f32)x, (f32)y};
-        });
+        window_t& self = *static_cast<window_t*>(glfwGetWindowUserPointer(window));
+        self.scroll = {(f32)x, (f32)y};
+    });
+
 
 }
 
@@ -93,6 +105,10 @@ bool window_t::is_key_pressed(int key) const {
 }
 bool window_t::is_key_released(int key) const {
     return glfwGetKey(window, key) == GLFW_RELEASE;
+}
+
+void window_t::set_fullscreen(bool full) {
+    glfwSetWindowMonitor(window, full ? glfwGetPrimaryMonitor() : nullptr, GLFW_DONT_CARE, GLFW_DONT_CARE, width, height, GLFW_DONT_CARE);
 }
 
 const bool window_t::should_close() const {

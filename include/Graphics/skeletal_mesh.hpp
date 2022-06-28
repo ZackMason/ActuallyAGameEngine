@@ -30,7 +30,7 @@ struct skinned_vertex_t {
 
 
 struct skeletal_mesh_t : drawable_i {
-    buffer_t<skinned_vertex_t> buffer_object;
+    buffer_t<utl::vector<skinned_vertex_t>> buffer_object;
     vertex_array_t vertex_array;
     utl::vector<resource_handle_t<texture2d_t>> textures;
 

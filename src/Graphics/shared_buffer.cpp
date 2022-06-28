@@ -4,4 +4,3 @@
 
 
 #include "Graphics/shared_buffer.hpp"
-

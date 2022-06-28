@@ -16,6 +16,11 @@ struct window_t {
 
     ~window_t();
 
+    void set_width(int);
+    void set_height(int);
+
+    void set_fullscreen(bool full);
+
     void open_window();
     void close_window();
     void swap_buffers();

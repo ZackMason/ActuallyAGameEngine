@@ -84,10 +84,10 @@ void script_vm_t::init(window_t& window, entt::registry& world, asset_loader_t& 
     chai.add(chaiscript::user_type<vertex_array_t>(), "vertex_array_t");
     chai.add(chaiscript::user_type<buffer_t<v3f>>(), "vec3_buffer_t");
 
-    chai.add(chaiscript::fun(&buffer_t<v3f>::bind), "bind");
-    chai.add(chaiscript::fun(&buffer_t<v3f>::unbind), "unbind");
-    chai.add(chaiscript::fun(&buffer_t<v3f>::create), "create");
-    chai.add(chaiscript::fun(&buffer_t<v3f>::data), "data");
+    chai.add(chaiscript::fun(&buffer_t<utl::vector<v3f>>::bind), "bind");
+    chai.add(chaiscript::fun(&buffer_t<utl::vector<v3f>>::unbind), "unbind");
+    chai.add(chaiscript::fun(&buffer_t<utl::vector<v3f>>::create), "create");
+    chai.add(chaiscript::fun(&buffer_t<utl::vector<v3f>>::data), "data");
     chai.add(chaiscript::fun(&vertex_array_t::bind), "bind");
     chai.add(chaiscript::fun(&vertex_array_t::unbind), "unbind");
     chai.add(chaiscript::fun(&vertex_array_t::draw), "draw");

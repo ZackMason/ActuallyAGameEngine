@@ -13,7 +13,7 @@
 template <typename T>
 struct buffer_t : bindable_i {
     GLenum type = GL_ARRAY_BUFFER;
-    utl::vector<T> data;
+    T data;
 
     auto size() const {
         return data.size();
@@ -31,7 +31,7 @@ struct buffer_t : bindable_i {
         glGenBuffers(1, &id);
         glBindBuffer(type, id);
         
-        glBufferData(type, data.size() * sizeof(T), data.data(), GL_STATIC_DRAW);
+        glBufferData(type, data.size() * sizeof(T::value_type), data.data(), GL_STATIC_DRAW);
     }
 
     // only call if you are going to create a new buffer
@@ -39,25 +39,25 @@ struct buffer_t : bindable_i {
         glDeleteBuffers(1, &id);
     }
 
-    explicit buffer_t(utl::vector<T>&& p_data, GLenum p_type)
+    explicit buffer_t(T&& p_data, GLenum p_type)
         : type(p_type), data(std::move(p_data))
     {
         create();
     }
 
-    explicit buffer_t(const utl::vector<T>& p_data, GLenum p_type)
+    explicit buffer_t(const T& p_data, GLenum p_type)
         : type(p_type), data(p_data)
     {
         create();
     }
 
-    explicit buffer_t(utl::vector<T>&& p_data)
+    explicit buffer_t(T&& p_data)
         : data(std::move(p_data))
     {
         create();
     }
 
-    explicit buffer_t(const utl::vector<T>& p_data)
+    explicit buffer_t(const T& p_data)
         : data(p_data)
     {
         create();

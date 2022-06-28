@@ -31,7 +31,7 @@ struct screen_t {
         vertex_array.draw();
     }
 
-    buffer_t<vertex_t> buffer{{
+    buffer_t<utl::vector<vertex_t>> buffer{{
         {{-1,-1}, {0,0}},
         {{1,-1}, {1,0}},
         {{-1,1}, {0,1}},

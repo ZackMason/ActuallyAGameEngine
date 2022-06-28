@@ -23,8 +23,8 @@ struct static_vertex_t {
 };
 
 struct static_mesh_t : drawable_i {
-    std::optional<buffer_t<unsigned int>> index_buffer;
-    buffer_t<static_vertex_t> buffer_object;
+    std::optional<buffer_t<utl::vector<unsigned int>>> index_buffer;
+    buffer_t<utl::vector<static_vertex_t>> buffer_object;
     vertex_array_t vertex_array;
 
     aabb_t<v3f> aabb;
@@ -86,7 +86,7 @@ struct static_mesh_t : drawable_i {
     }
 
     static_mesh_t() = default;
-    
+
     static_mesh_t(static_mesh_t&) = delete;
     static_mesh_t(static_mesh_t&&) = delete;
     static_mesh_t& operator=(static_mesh_t&) = delete;

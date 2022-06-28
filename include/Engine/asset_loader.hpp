@@ -24,21 +24,16 @@
 template <typename T>
 struct resource_handle_t {
 private:
-    static T& get_dummy() {
-        static T dummy;
-        return dummy;
-    }
-
     static u32& get_dummy_count() {
-        static u32 dummy_count{0};
-        return dummy_count;
+        static u32 d{0};
+        return d;
     }
+
 public:
-    resource_handle_t() : resource(get_dummy()), count(get_dummy_count()) {
+    resource_handle_t() : resource(nullptr), count(get_dummy_count()) {
     }
 
-
-    resource_handle_t(T& p_res, u32& p_count) 
+    resource_handle_t(T* p_res, u32& p_count) 
     : resource(p_res), count(p_count) 
     {
     }
@@ -67,9 +62,12 @@ public:
         return *this;
     };
     operator int() {
-        return resource.id;
+        return resource->id;
     }
-    T& get() const { return resource.get(); }
+
+    [[nodiscard]] bool valid() const { return resource != nullptr; }
+
+    T& get() const { return *resource; }
 
     const int get_count() const {
         return count;
@@ -77,7 +75,7 @@ public:
 
 private:
     u32& count;
-    std::reference_wrapper<T> resource;
+    T* resource;
 };
 
 struct asset_loader_t {
