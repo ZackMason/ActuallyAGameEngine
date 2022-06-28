@@ -15,6 +15,9 @@
 #include <fmt/core.h>
 #include <fmt/color.h>
 
+#include "imgui.h"
+#include <glm/gtc/type_ptr.hpp>
+
 
 namespace internal {
   decltype(shader_t::id) bound_shader = -1;  
@@ -77,7 +80,7 @@ shader_stage_t::shader_stage_t(const std::string& path, const std::string& asset
     }
     else
     {
-        throw not_implemented_x();
+        throw runtime_error_x("Unknown shader type");
     }
 
     std::string shader_code;
@@ -121,7 +124,8 @@ utl::vector<std::array<std::string, 7>> shader_stage_t::get_uniforms(){
     static std::regex e(R"rgx(^uniform (\w+) (\w+);\s*\/\/\s*(?:auto|export)\s*(\[\s*([-+]?[0-9]*\.?[0-9]+)\s*,\s*([-+]?[0-9]*\.?[0-9]+)\s*,\s*([-+]?[0-9]*\.?[0-9]+)\s*\])?\s*([-+]?[0-9]*\.?[0-9]+)?)rgx");
     utl::vector<std::array<std::string, 7>> res;
     
-    auto code_copy = code;
+    std::string code_copy = code;
+    //logger_t::info(fmt::format("Parsing shader for uniforms: {}", code_copy));
     
     while (std::regex_search(code_copy, m, e))
     {
@@ -187,6 +191,7 @@ utl::vector<uniform_variable_t> shader_t::get_uniform_variables()
     for(const auto& uniform_array : get_uniforms())
     {
         const auto& [full, type, name, min, step, max, start] = uniform_array;
+
         uniform_variable_t var;
         var.name = name;
         
@@ -200,7 +205,6 @@ utl::vector<uniform_variable_t> shader_t::get_uniform_variables()
         if (type == "bool") {
             var.data = std::make_shared<bool>(start != "" ? std::stoi(start) : false);
             var.type = uniform_variable_e::BOOL;
-            
         }
         else if (type == "int") {
             var.data = std::make_shared<int>(start != "" ? std::stoi(start) : 1);
@@ -224,7 +228,6 @@ utl::vector<uniform_variable_t> shader_t::get_uniform_variables()
         }
         else {
             var.type = uniform_variable_e::INVALID;
-            
         }
         
         result.push_back(var);
@@ -232,31 +235,31 @@ utl::vector<uniform_variable_t> shader_t::get_uniform_variables()
     return result;
 }
 
-#if 0
-void shader_t::uniform_edit(std::vector<UniformVariable>& uniforms)
+#if 1
+void shader_t::uniform_edit(std::vector<uniform_variable_t>& uniforms)
 {
     for (auto& uniform : uniforms)
     {
         switch (uniform.type)
         {
             case uniform_variable_e::BOOL:
-            ImGui::Checkbox(uniform.name.c_str(), (bool*)uniform.data.get());
-            break;
+                ImGui::Checkbox(uniform.name.c_str(), (bool*)uniform.data.get());
+                break;
             case uniform_variable_e::INT:
-            ImGui::DragInt(uniform.name.c_str(), (int*)uniform.data.get(), uniform.step, uniform.min, uniform.max );
-            break;
+                ImGui::DragInt(uniform.name.c_str(), (int*)uniform.data.get(), uniform.step, uniform.min, uniform.max );
+                break;
             case uniform_variable_e::FLOAT:
-            ImGui::DragFloat(uniform.name.c_str(), (f32*)uniform.data.get(), uniform.step, uniform.min, uniform.max);
-            break;
+                ImGui::DragFloat(uniform.name.c_str(), (f32*)uniform.data.get(), uniform.step, uniform.min, uniform.max);
+                break;
             case uniform_variable_e::VEC3:
-            ImGui::DragFloat3(uniform.name.c_str(), glm::value_ptr(*(glm::vec3*)uniform.data.get()));
-            break;
+                ImGui::DragFloat3(uniform.name.c_str(), glm::value_ptr(*(glm::vec3*)uniform.data.get()));
+                break;
             case uniform_variable_e::VEC4:
-            ImGui::ColorEdit4(uniform.name.c_str(), glm::value_ptr(*(glm::vec4*)uniform.data.get()));
-            break;
+                ImGui::ColorEdit4(uniform.name.c_str(), glm::value_ptr(*(glm::vec4*)uniform.data.get()));
+                break;
             default:
-            ImGui::Text("Unimplemented uniform: %s", uniform.name.c_str());
-            break;
+                ImGui::Text("Unimplemented uniform: %s", uniform.name.c_str());
+                break;
         }
     }
 }

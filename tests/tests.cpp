@@ -53,7 +53,7 @@ auto run_test(const char* name, const Fn& test) -> auto {
         profile_t t(name);
         test();
         fmt::print(fg(fmt::color::cyan) | fmt::emphasis::bold,
-            "{} - Passed - {}ns\n", name, t.end());
+            "{} - Passed - {}ms\n", name, t.end());
 
         ++tests_passed;
     } catch (std::exception & e) {
