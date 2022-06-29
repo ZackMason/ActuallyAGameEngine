@@ -104,7 +104,9 @@ struct random_t {
     void seed(const decltype(Generator::state)& x) {
         rng.state = x;
     }
-
+    auto rand() {
+        return rng.rand();
+    }
     float randf() {
         return float(rng.rand()) / float(Generator::max);
     }
@@ -136,6 +138,9 @@ struct random_s {
     //random float
     static float randf() {
         return state.randf();
+    }
+    static uint64_t rand() {
+        return state.rand();
     }
     // random normal
     static float randn() {

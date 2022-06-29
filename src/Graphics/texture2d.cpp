@@ -123,7 +123,7 @@ texture2d_t::texture2d_t(const std::string& path, const std::string& asset_dir) 
 		else if (channels == 4)
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, data_type, data);
 		glGenerateMipmap(GL_TEXTURE_2D);
-		logger_t::info(fmt::format("Texture loaded: {}", path));
+		logger_t::info(fmt::format("Texture loaded: {}, {} x {} - channels: {}", path, width, height, channels));
 	}
 	else
 	{
@@ -158,7 +158,7 @@ texture2d_t::texture2d_t(u32 w, u32 h)
 	glTexStorage2D(GL_TEXTURE_2D, 1, internal_format, width, height);
     
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);

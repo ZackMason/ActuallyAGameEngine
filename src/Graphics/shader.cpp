@@ -296,6 +296,8 @@ void shader_t::set_uniform_block(const std::string &name, int loc) const {
     auto index = glGetUniformBlockIndex(id, name.c_str());
     if (index != GL_INVALID_INDEX)
         glUniformBlockBinding(id, index, loc);
+    //else
+    //    logger_t::graphics_error(fmt::format("{}: Invalid Uniform block index", this->name));
 }
 void shader_t::set_bool(const std::string &n, bool value) const
 {

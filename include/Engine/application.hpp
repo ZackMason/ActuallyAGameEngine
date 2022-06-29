@@ -22,8 +22,12 @@ struct application_i {
         window.open_window();
         init();
 
+        auto last_time = window.get_ticks();
         while(!window.should_close()) {
-            update(0.0f);
+            auto time = window.get_ticks();
+            auto dt = (time - last_time);
+            last_time = time;
+            update(dt);
 
             pre_render_pass();
             main_render_pass();

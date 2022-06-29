@@ -7,6 +7,8 @@
 
 #include "Engine/window.hpp"
 
+#include "imgui.h"
+
 #include <exception>
 #include <stdexcept>
 
@@ -31,6 +33,9 @@ window_t::~window_t(){
     }
 }
 
+void window_t::set_position(const v2i& p) {
+    glfwSetWindowPos(window, p.x, p.y);
+}
 void window_t::set_width(int w) {
     width = w;
     glfwSetWindowSize(window, width, height);
@@ -81,6 +86,7 @@ void window_t::open_window() {
     });
     glfwSetScrollCallback(window, [](GLFWwindow* window, double x, double y) {
         window_t& self = *static_cast<window_t*>(glfwGetWindowUserPointer(window));
+        if (ImGui::GetIO().WantCaptureMouse) return;
         self.scroll = {(f32)x, (f32)y};
     });
 
@@ -92,6 +98,9 @@ decltype(window_t::scroll) window_t::get_scroll() const {
     return scroll;
 }
 
+f32 window_t::get_ticks() const {
+    return static_cast<f32>(glfwGetTime());
+}
 std::array<f32, 2> window_t::get_mouse() const {
     double x,y;
     glfwGetCursorPos(window, &x, &y);

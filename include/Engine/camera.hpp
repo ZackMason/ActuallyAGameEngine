@@ -8,6 +8,7 @@
 #include "core.hpp"
 
 #include "Math/ray.hpp"
+#include "Util/vector.hpp"
 
 struct camera_t {
 
@@ -41,6 +42,31 @@ struct camera_t {
 		return -up();
 	}
     
+	utl::vector<glm::vec4> get_frustum_corners()
+	{
+		const auto inv = glm::inverse(view_projection());
+		
+		std::vector<glm::vec4> frustumCorners;
+		for (unsigned int x = 0; x < 2; ++x)
+		{
+			for (unsigned int y = 0; y < 2; ++y)
+			{
+				for (unsigned int z = 0; z < 2; ++z)
+				{
+					const glm::vec4 pt = 
+						inv * glm::vec4(
+							2.0f * x - 1.0f,
+							2.0f * y - 1.0f,
+							2.0f * z - 1.0f,
+							1.0f);
+					frustumCorners.push_back(pt / pt.w);
+				}
+			}
+		}
+		
+		return frustumCorners;
+	}
+
 	virtual v3f get_position() const {
 		return position;
 	}

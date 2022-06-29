@@ -21,6 +21,7 @@ struct window_t {
 
     void set_fullscreen(bool full);
 
+    void set_position(const v2i& pos);
     void open_window();
     void close_window();
     void swap_buffers();
@@ -34,6 +35,8 @@ struct window_t {
     std::array<f32, 2> get_mouse() const;
     bool is_button_pressed(int button) const;
     decltype(scroll) get_scroll() const;
+
+    f32 get_ticks() const;
 
     GLFWwindow *window{nullptr};
 private:
