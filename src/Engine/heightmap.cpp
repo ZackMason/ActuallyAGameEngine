@@ -96,7 +96,7 @@ std::tuple<utl::vector<static_vertex_t>, utl::vector<unsigned int>, utl::vector<
     
     // smooth vertices
     const auto w = texture_accessor.width;
-    for (size_t smooth_count = 0; smooth_count <1; smooth_count++) {
+    for (size_t smooth_count = 0; smooth_count <2; smooth_count++) {
         for (size_t y = w; y < indexed_verts.size() - w; y += w) {
             for (size_t x = 1; x < w?w-1:0; x++) {
                 auto& v0 = indexed_verts[x+y];

@@ -43,6 +43,17 @@ struct transform_t {
 	void set_rotation(const v3f& rotation);
 	void set_rotation(const glm::quat& quat);
     
+	void affine_invert() {
+		basis = glm::inverse(basis);
+		origin = basis * -origin;
+	}
+
+	v3f inv_xform(const v3f& vector) const
+	{
+		const v3f v = vector - origin;
+		return glm::transpose(basis) * v;
+	}
+
 	v3f xform(const v3f& vector)const
 	{
 		return v3f(basis * vector) + origin;

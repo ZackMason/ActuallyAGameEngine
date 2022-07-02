@@ -25,7 +25,7 @@ framebuffer_t::framebuffer_t(int w, int h, bool aa)
 	{
 		glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, tbo);
 		glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_RGBA16F, width, height, GL_TRUE);
-		glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0);
+		glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0); // bug ??
 	}
 	else
 	{
@@ -134,6 +134,7 @@ void framebuffer_t::resize(int w, int h)
 {
 	if (w == width && h == height) return;
 	
+	this->~framebuffer_t();
 	new (this) framebuffer_t(w, h, msaa);
 
 	//throw not_implemented_x();

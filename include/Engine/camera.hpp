@@ -42,7 +42,7 @@ struct camera_t {
 		return -up();
 	}
     
-	utl::vector<glm::vec4> get_frustum_corners()
+	utl::vector<glm::vec4> get_frustum_corners() const
 	{
 		const auto inv = glm::inverse(view_projection());
 		

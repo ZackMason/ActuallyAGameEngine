@@ -10,6 +10,7 @@
 #include "fmt/os.h"
 
 #include <array>
+#include <source_location>
 
 struct logger_t {
     enum log_level_e {
@@ -50,39 +51,43 @@ struct logger_t {
     inline static std::string output{};
     inline static bool console{true};
 
-    static void profile(const std::string& message) {
-        log(message, log_level_e::PROFILE);
+    static void profile(const std::string& message, std::source_location s = std::source_location::current()) {
+        log(message, log_level_e::PROFILE, s);
     }
-    static void info(const std::string& message) {
-        log(message, log_level_e::INFO);
+    static void info(const std::string& message, std::source_location s = std::source_location::current()) {
+        log(message, log_level_e::INFO, s);
     }
-    static void allocation(const std::string& message) {
-        log(message, log_level_e::ALLOC);
+    static void allocation(const std::string& message, std::source_location s = std::source_location::current()) {
+        log(message, log_level_e::ALLOC, s);
     }
-    static void warn(const std::string& message) {
-        log(message, log_level_e::WARN);
+    static void warn(const std::string& message, std::source_location s = std::source_location::current()) {
+        log(message, log_level_e::WARN, s);
     }
-    static void error(const std::string& message) {
-        log(message, log_level_e::ERR);
+    static void error(const std::string& message, std::source_location s = std::source_location::current()) {
+        log(message, log_level_e::ERR, s);
     }
-    static void exception(const std::string& message) {
-        log(message, log_level_e::EXCEPTION);
+    static void exception(const std::string& message, std::source_location s = std::source_location::current()) {
+        log(message, log_level_e::EXCEPTION, s);
     }
-    static void chai_exception(const std::string& message) {
-        log(message, log_level_e::CHAI_EXCEPTION);
+    static void chai_exception(const std::string& message, std::source_location s = std::source_location::current()) {
+        log(message, log_level_e::CHAI_EXCEPTION, s);
     }
-    static void graphics_error(const std::string& message) {
-        log(message, log_level_e::GRAPHICS_ERROR);
+    static void graphics_error(const std::string& message, std::source_location s = std::source_location::current()) {
+        log(message, log_level_e::GRAPHICS_ERROR, s);
     }
 
-    static void log(const std::string& message, log_level_e l) {
+    static void log(const std::string& message, log_level_e l, std::source_location s = std::source_location::current()) {
         if (level <= l) {
             if (console) {
-                fmt::print(log_color[l], "{} - {}\n", level_to_string[l], message);
+                fmt::print(log_color[l], "{} - {}:{} {} - {}\n", level_to_string[l], 
+                    s.file_name(), s.line(), s.function_name(), 
+                    message);
             }
             if (!output.empty()) {
                 auto out = fmt::output_file(output, fmt::file::APPEND | fmt::file::WRONLY | fmt::file::CREATE);
-                out.print("{} - {}\n", level_to_string[l], message);
+                out.print("{} - {}:{} {} - {}\n", level_to_string[l], 
+                    s.file_name(), s.line(), s.function_name(), 
+                    message);
             }
         }
     }

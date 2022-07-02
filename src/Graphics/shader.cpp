@@ -14,13 +14,15 @@
 
 #include <fmt/core.h>
 #include <fmt/color.h>
+#include <fmt/os.h>
 
 #include "imgui.h"
 #include <glm/gtc/type_ptr.hpp>
 
 
 namespace internal {
-  decltype(shader_t::id) bound_shader = -1;  
+    bool first_constant{true};
+    decltype(shader_t::id) bound_shader = -1;  
 
     void include_preprocess(std::string& code, const std::string& asset_dir){
         static const std::regex r("(#include <)([a-zA-Z]+)(\.glsl>)");
@@ -44,6 +46,12 @@ namespace internal {
 
 };
 
+void shader_t::add_glsl_constant(const std::string& str, const std::string& asset_dir) {
+    auto out = fmt::output_file(fmt::format("{}shaders/engine.glsl", asset_dir), 
+        (internal::first_constant ? fmt::file::TRUNC : fmt::file::APPEND) | fmt::file::WRONLY | fmt::file::CREATE);
+    internal::first_constant = false;
+    out.print("#define {}\n", str);
+}
 void shader_t::reset() {
     internal::bound_shader = -1;
 }
@@ -135,6 +143,7 @@ utl::vector<std::array<std::string, 7>> shader_stage_t::get_uniforms(){
     }
     return res;
 }
+
 
 
 shader_t::shader_t(const std::string& p_name, const std::vector<std::string>& p_files, const std::string& asset_dir)
@@ -363,5 +372,9 @@ void shader_t::set_mat4v(const std::string &n, const m44& mat, int count) const{
 void shader_t::set_mat4(const std::string &n, const m44 &mat) const
 {
 	glUniformMatrix4fv(get_uniform_location(n), 1, GL_FALSE, &mat[0][0]);
+}
+void shader_t::set_floatv(const std::string &n, const float* v, int count) const
+{
+	glUniform1fv(get_uniform_location(n), count, v);
 }
 
