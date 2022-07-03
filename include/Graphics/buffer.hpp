@@ -19,11 +19,11 @@ struct buffer_t : bindable_i {
         return data.size();
     }
 
-    void bind() override {
+    void bind() {
         glBindBuffer(type, id);
     }
 
-    void unbind() override {
+    void unbind() {
         glBindBuffer(type, 0);
     }
 

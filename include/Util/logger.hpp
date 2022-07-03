@@ -79,15 +79,13 @@ struct logger_t {
     static void log(const std::string& message, log_level_e l, std::source_location s = std::source_location::current()) {
         if (level <= l) {
             if (console) {
-                fmt::print(log_color[l], "{} - {}:{} {} - {}\n", level_to_string[l], 
-                    s.file_name(), s.line(), s.function_name(), 
-                    message);
+                fmt::print(log_color[l], "{} - {} - {}:{} {}\n", level_to_string[l], 
+                    message, s.file_name(), s.line(), s.function_name());
             }
             if (!output.empty()) {
                 auto out = fmt::output_file(output, fmt::file::APPEND | fmt::file::WRONLY | fmt::file::CREATE);
-                out.print("{} - {}:{} {} - {}\n", level_to_string[l], 
-                    s.file_name(), s.line(), s.function_name(), 
-                    message);
+                out.print("{} - {} - {}:{} {}\n", level_to_string[l], 
+                    message, s.file_name(), s.line(), s.function_name());
             }
         }
     }

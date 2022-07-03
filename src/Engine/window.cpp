@@ -110,9 +110,11 @@ bool window_t::is_button_pressed(int button) const {
     return glfwGetMouseButton(window, button) == GLFW_PRESS;
 }
 bool window_t::is_key_pressed(int key) const {
+    if (ImGui::GetIO().WantCaptureKeyboard) return false;
     return glfwGetKey(window, key) == GLFW_PRESS;
 }
 bool window_t::is_key_released(int key) const {
+    if (ImGui::GetIO().WantCaptureKeyboard) return true;
     return glfwGetKey(window, key) == GLFW_RELEASE;
 }
 
