@@ -67,21 +67,46 @@ resource_handle_t<static_mesh_t> asset_loader_t::get_heightmap_mesh(const std::s
     return resource_handle_t(mesh, count);
 }
 
-resource_handle_t<static_mesh_t> asset_loader_t::get_static_mesh(const std::string& path) {
+bool asset_loader_t::has_static_mesh(const std::string& name) {
+    return static_mesh_cache.count(name) != 0;
+}
+
+resource_handle_t<static_mesh_t> asset_loader_t::create_static_mesh(
+    const std::string& path, 
+    utl::vector<static_vertex_t>&& vertices,
+    utl::vector<unsigned>&& indices
+) {
     if (static_mesh_cache.count(path)) { 
         auto& [mesh, count] = static_mesh_cache[path];
-        //if (count == 0){
-        //    static_mesh_cache.erase(path);
-        //    return get_static_mesh(path);
-        //}
         return resource_handle_t(mesh, ++count);
     }
-
     static_mesh_cache[path] = create_cache_resource<static_mesh_t>();
-    static_mesh_t::emplace_obj(path, static_mesh_cache[path].resource, asset_dir);
+    new (static_mesh_cache[path].resource) static_mesh_t(std::move(indices), std::move(vertices));
     auto& [mesh, count] = static_mesh_cache[path];
     mesh->update_aabb();
     return resource_handle_t(mesh, count);
+}
+
+resource_handle_t<static_mesh_t> asset_loader_t::create_static_mesh(const std::string& path, utl::vector<static_vertex_t>&& vertices) {
+    if (static_mesh_cache.count(path)) { 
+        auto& [mesh, count] = static_mesh_cache[path];
+        return resource_handle_t(mesh, ++count);
+    }
+    static_mesh_cache[path] = create_cache_resource<static_mesh_t>();
+    new (static_mesh_cache[path].resource) static_mesh_t(std::move(vertices));
+    auto& [mesh, count] = static_mesh_cache[path];
+    mesh->update_aabb();
+    return resource_handle_t(mesh, count);
+}
+
+resource_handle_t<static_mesh_t> asset_loader_t::get_static_mesh(const std::string& path) {
+    if (static_mesh_cache.count(path)) { 
+        auto& [mesh, count] = static_mesh_cache[path];
+        return resource_handle_t(mesh, ++count);
+    }
+    
+    throw not_implemented_x();
+    return resource_handle_t<static_mesh_t>();
 }
 
 resource_handle_t<texture2d_t> asset_loader_t::create_texture2d(const std::string& name, u32 w, u32 h){

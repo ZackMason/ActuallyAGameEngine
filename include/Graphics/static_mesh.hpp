@@ -35,11 +35,8 @@ struct static_mesh_t : drawable_i {
     void unbind() override;
     void draw() override;
 
-    static static_mesh_t from_obj(const std::string& path,const std::string& asset_dir);
-    static void emplace_obj(const std::string& path, static_mesh_t* address,const std::string& asset_dir);
-
     explicit static_mesh_t(const utl::vector<static_vertex_t>& p_vertices)
-        : buffer_object(p_vertices), vertex_array(buffer_object.size()), aabb{ v3f{0.0f}, v3f{0.0f} }
+        : buffer_object(p_vertices), vertex_array(buffer_object.size()), aabb{}
     {
         buffer_object.bind();
         vertex_array.bind_ref()
@@ -53,7 +50,7 @@ struct static_mesh_t : drawable_i {
     }
 
     explicit static_mesh_t(utl::vector<static_vertex_t>&& p_vertices) 
-        : buffer_object(std::move(p_vertices)), vertex_array(buffer_object.size()), aabb{v3f{0.0f}, v3f{0.0f}}
+        : buffer_object(std::move(p_vertices)), vertex_array(buffer_object.size()), aabb{}
     { 
         buffer_object.bind();
         vertex_array.bind_ref()
@@ -68,7 +65,7 @@ struct static_mesh_t : drawable_i {
 
     explicit static_mesh_t(utl::vector<unsigned int>&& p_indices, utl::vector<static_vertex_t>&& p_vertices) 
         :  buffer_object(std::move(p_vertices)), 
-        vertex_array(buffer_object.size()), aabb{v3f{0.0f}, v3f{0.0f}}
+        vertex_array(buffer_object.size()), aabb{}
     { 
         vertex_array.bind();
         buffer_object.bind();

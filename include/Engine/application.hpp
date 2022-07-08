@@ -18,16 +18,23 @@ struct application_i {
     script_vm_t script_vm;
     entt::registry world;
 
+    f32 tick_rate = 1.0f / 60.0f;
+
     void run() {
         window.open_window();
         init();
 
         auto last_time = window.get_ticks();
+        auto accum_time = 0.0f;
         while(!window.should_close()) {
             auto time = window.get_ticks();
-            auto dt = (time - last_time);
+            auto dt = (time - last_time) / tick_rate;
+            accum_time += dt;
             last_time = time;
-            update(dt);
+            if (accum_time >= 1.0f) {
+                update(tick_rate);
+                accum_time -= 1.0f;
+            }
 
             pre_render_pass();
             main_render_pass();

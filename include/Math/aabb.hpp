@@ -8,11 +8,12 @@
 #include "types.hpp"
 
 #include <type_traits>
+#include <limits>
 
 template <typename T = v3f>
 struct aabb_t {
-    T min;
-    T max;
+    T min{std::numeric_limits<float>::max()};
+    T max{-std::numeric_limits<float>::max()};
 
     void expand(const aabb_t<T>& o) {
         expand(o.min);
@@ -35,7 +36,9 @@ struct aabb_t {
             p.y <= max.y &&
             p.z <= max.z;
     }
+
     bool contains(const f32 p) const {
+        static_assert(std::is_same<T, f32>::value);
         return min <= p && p <= max;
     }
 };

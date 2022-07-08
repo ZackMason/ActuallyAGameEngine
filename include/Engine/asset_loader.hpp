@@ -10,6 +10,7 @@
 #include <fmt/core.h>
 #include <fmt/color.h>
 
+
 #include "Engine/heightmap.hpp"
 
 #include "Graphics/texture2d.hpp"
@@ -79,7 +80,6 @@ private:
 };
 
 struct asset_loader_t {
-
     template<typename R>  
     struct cache_resource_t {
         cache_resource_t() = default;
@@ -158,7 +158,10 @@ struct asset_loader_t {
     utl::vector<f32> get_heightmap(const std::string& path);
     resource_handle_t<static_mesh_t> get_heightmap_mesh(const std::string& path);
 
+    bool has_static_mesh(const std::string& path);
     resource_handle_t<static_mesh_t> get_static_mesh(const std::string& path);
+    resource_handle_t<static_mesh_t> create_static_mesh(const std::string& name, utl::vector<static_vertex_t>&& vertices);
+    resource_handle_t<static_mesh_t> create_static_mesh(const std::string& name, utl::vector<static_vertex_t>&& vertices, utl::vector<unsigned int>&& indices);
     resource_handle_t<texture2d_t> create_texture2d(const std::string& name, u32 w, u32 h);
 
     resource_handle_t<texture2d_t> get_texture2d(const std::string& path);

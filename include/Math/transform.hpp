@@ -32,6 +32,7 @@ struct transform_t {
 	void rotate_quat(const glm::quat& delta);
     
 	v3f get_origin() const;
+	glm::quat get_orientation() const;
     
 	transform_t inverse() const;
     

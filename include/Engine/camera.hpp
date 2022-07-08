@@ -81,7 +81,7 @@ struct camera_t {
 		v4f ray_eye = glm::inverse(projection) * ndc;
 		ray_eye.z = -1.0f;
 		ray_eye.w = 0.0f;
-		return { position, glm::normalize(v3f(glm::inverse(view) * ray_eye)) };
+		return { get_position(), glm::normalize(v3f(glm::inverse(view) * ray_eye)) };
 	}
 
     f32 fov = 45.0f;

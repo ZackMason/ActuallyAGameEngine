@@ -33,15 +33,14 @@ void skeletal_mesh_t::draw() {
 void skeletal_model_t::load_model(const std::string& path, const std::string& asset_dir) {
     Assimp::Importer importer;
     const aiScene* scene = importer.ReadFile(fmt::format("{}{}", asset_dir, path), aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_CalcTangentSpace | aiProcess_GlobalScale);
-    // check for errors
-    if(!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) // if is Not Zero
-    {
-        //return;
+
+    if(!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
         throw runtime_error_x(importer.GetErrorString());
     }
 
     process_node(scene->mRootNode, scene);
 }
+
 void skeletal_model_t::process_node(aiNode *start, const aiScene *scene){
 
     std::stack<const aiNode*> stack;
@@ -51,20 +50,17 @@ void skeletal_model_t::process_node(aiNode *start, const aiScene *scene){
         const aiNode* node = stack.top();
         stack.pop();
 
-        for(unsigned int i = 0; i < node->mNumMeshes; i++)
-        {
+        for(unsigned int i = 0; i < node->mNumMeshes; i++) {
             aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
             meshes.push_back(process_mesh(mesh, scene));
         }
-        for(unsigned int i = 0; i < node->mNumChildren; i++)
-        {
+        for(unsigned int i = 0; i < node->mNumChildren; i++) {
             stack.push(node->mChildren[i]);
         }
     }
 }
 void skeletal_model_t::set_bone_default(skinned_vertex_t& vertex){
-    for (int i = 0; i < 4; i++)
-    {
+    for (int i = 0; i < 4; i++) {
         vertex.id[i] = -1;
         vertex.weight[i] = 0.0f;
     }
@@ -75,8 +71,7 @@ skeletal_mesh_t* skeletal_model_t::process_mesh(aiMesh* mesh, const aiScene* sce
     utl::vector<unsigned int> indices;
     //utl::vector<Texture> textures;
 
-    for (unsigned int i = 0; i < mesh->mNumVertices; i++)
-    {
+    for (unsigned int i = 0; i < mesh->mNumVertices; i++) {
         skinned_vertex_t vertex;
         set_bone_default(vertex);
         vertex.position = AssimpGLMHelpers::GetGLMVec(mesh->mVertices[i]);
@@ -84,20 +79,18 @@ skeletal_mesh_t* skeletal_model_t::process_mesh(aiMesh* mesh, const aiScene* sce
         vertex.tangent = AssimpGLMHelpers::GetGLMVec(mesh->mTangents[i]);
         vertex.bitangent = AssimpGLMHelpers::GetGLMVec(mesh->mBitangents[i]);
         
-        if (mesh->mTextureCoords[0])
-        {
+        if (mesh->mTextureCoords[0]) {
             glm::vec2 vec;
             vec.x = mesh->mTextureCoords[0][i].x;
             vec.y = mesh->mTextureCoords[0][i].y;
             vertex.tex_coord = vec;
-        }
-        else
+        } else {
             vertex.tex_coord = glm::vec2(0.0f, 0.0f);
+        }
 
         indexed_vertices.push_back(vertex);
     }
-    for (unsigned int i = 0; i < mesh->mNumFaces; i++)
-    {
+    for (unsigned int i = 0; i < mesh->mNumFaces; i++) {
         aiFace face = mesh->mFaces[i];
         for (unsigned int j = 0; j < face.mNumIndices; j++)
             indices.push_back(face.mIndices[j]);
@@ -123,12 +116,9 @@ skeletal_mesh_t* skeletal_model_t::process_mesh(aiMesh* mesh, const aiScene* sce
 
     return new skeletal_mesh_t(std::move(vertices));
 }
-void set_vertex_bone_data(skinned_vertex_t& vertex, int boneID, float weight)
-{
-    for (int i = 0; i < 4; ++i)
-    {
-        if (vertex.id[i] < 0)
-        {
+void set_vertex_bone_data(skinned_vertex_t& vertex, int boneID, float weight) {
+    for (int i = 0; i < 4; ++i) {
+        if (vertex.id[i] < 0) {
             vertex.weight[i] = weight;
             vertex.id[i] = boneID;
             break;
@@ -136,32 +126,27 @@ void set_vertex_bone_data(skinned_vertex_t& vertex, int boneID, float weight)
     }
 }
 
-void skeletal_model_t::extract_bone_weight(std::vector<skinned_vertex_t>& vertices, aiMesh* mesh, const aiScene* scene){
+void skeletal_model_t::extract_bone_weight(std::vector<skinned_vertex_t>& vertices, aiMesh* mesh, const aiScene* scene) {
     auto& boneInfoMap = bone_info;
 
-    for (size_t boneIndex = 0; boneIndex < mesh->mNumBones; ++boneIndex)
-    {
+    for (size_t boneIndex = 0; boneIndex < mesh->mNumBones; ++boneIndex) {
         int boneID = -1;
         std::string boneName = mesh->mBones[boneIndex]->mName.C_Str();
-        if (boneInfoMap.find(boneName) == boneInfoMap.end())
-        {
+        if (boneInfoMap.find(boneName) == boneInfoMap.end()) {
             bone_info_t newBoneInfo;
             newBoneInfo.id = bone_count;
             newBoneInfo.offset = AssimpGLMHelpers::ConvertMatrixToGLMFormat(mesh->mBones[boneIndex]->mOffsetMatrix);
             boneInfoMap[boneName] = newBoneInfo;
             boneID = bone_count;
             bone_count++;
-        }
-        else
-        {
+        } else {
             boneID = boneInfoMap[boneName].id;
         }
         assert(boneID != -1);
         auto weights = mesh->mBones[boneIndex]->mWeights;
         int numWeights = mesh->mBones[boneIndex]->mNumWeights;
 
-        for (int weightIndex = 0; weightIndex < numWeights; ++weightIndex)
-        {
+        for (int weightIndex = 0; weightIndex < numWeights; ++weightIndex) {
             int vertexId = weights[weightIndex].mVertexId;
             float weight = weights[weightIndex].mWeight;
             assert(vertexId < vertices.size());

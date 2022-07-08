@@ -71,6 +71,13 @@ int main(int argc, char** argv) {
         TEST_ASSERT(1 == 1);
     });
 
+    run_test("reference addr", [](){
+        int a = 1;
+        int& b = a;
+        TEST_ASSERT(&a == &b);
+    });
+
+
     run_test("allocators", [](){
         stack_allocator_t stack(sizeof(int) * 1000);
 
@@ -175,10 +182,6 @@ int main(int argc, char** argv) {
         }
 
         TEST_ASSERT(passed == true);
-    });
-
-    run_test("mesh_load", [](){
-        static_mesh_t mesh = static_mesh_t::from_obj("models/sphere.obj", ASSETS_PATH);
     });
 
 

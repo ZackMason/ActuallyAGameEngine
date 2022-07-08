@@ -20,6 +20,8 @@ struct window_t {
     void set_height(int);
 
     void set_fullscreen(bool full);
+    void set_vsync(bool vsync);
+
 
     void set_position(const v2i& pos);
     void open_window();

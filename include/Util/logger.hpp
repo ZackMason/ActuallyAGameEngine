@@ -27,14 +27,14 @@ struct logger_t {
     inline static log_level_e level = log_level_e::INFO;
 
     inline static std::array<fmt::v8::text_style, log_level_e::SIZE> log_color = {
-        fg(fmt::color::light_green) | fmt::emphasis::bold,
-        fg(fmt::color::white) | fmt::emphasis::bold,
-        fg(fmt::color::orange) | fmt::emphasis::underline,
-        fg(fmt::color::green) | fmt::emphasis::bold,
-        fg(fmt::color::crimson) | fmt::emphasis::bold,
-        fg(fmt::color::light_golden_rod_yellow) | fmt::emphasis::bold,
-        fg(fmt::color::purple) | fmt::emphasis::bold,
-        fg(fmt::color::blue_violet) | fmt::emphasis::bold,
+        /* PROFILE */       fg(fmt::color::light_green) | fmt::emphasis::bold,
+        /* INFO */          fg(fmt::color::white) | fmt::emphasis::bold,
+        /* ALLOC */         fg(fmt::color::orange) | fmt::emphasis::underline,
+        /* WARN */          fg(fmt::color::yellow) | fmt::emphasis::bold,
+        /* ERR */           fg(fmt::color::crimson) | fmt::emphasis::bold,
+        /* EXCEPTION */     fg(fmt::color::light_golden_rod_yellow) | fmt::emphasis::bold,
+        /* CHAI_EXCEPTION */fg(fmt::color::purple) | fmt::emphasis::bold,
+        /* GRAPHICS_ERROR */fg(fmt::color::blue_violet) | fmt::emphasis::bold,
     };
 
     inline static std::array<std::string, log_level_e::SIZE> level_to_string = {

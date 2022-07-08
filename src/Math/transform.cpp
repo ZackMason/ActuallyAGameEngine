@@ -40,6 +40,10 @@ void transform_t::rotate_quat(const glm::quat& delta)
 	set_rotation(glm::quat(basis) * delta);
 }
 
+glm::quat transform_t::get_orientation() const {
+	return glm::quat_cast(basis);
+}
+
 v3f transform_t::get_origin() const
 {
 	return origin;

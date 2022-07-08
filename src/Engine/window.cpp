@@ -107,6 +107,7 @@ std::array<f32, 2> window_t::get_mouse() const {
     return {static_cast<f32>(x), static_cast<f32>(y)};
 }
 bool window_t::is_button_pressed(int button) const {
+    if (ImGui::GetIO().WantCaptureMouse) return false;
     return glfwGetMouseButton(window, button) == GLFW_PRESS;
 }
 bool window_t::is_key_pressed(int key) const {
@@ -118,6 +119,9 @@ bool window_t::is_key_released(int key) const {
     return glfwGetKey(window, key) == GLFW_RELEASE;
 }
 
+void window_t::set_vsync(bool vsync) {
+    glfwSwapInterval(vsync ? 60 : 0);
+}
 void window_t::set_fullscreen(bool full) {
     glfwSetWindowMonitor(window, full ? glfwGetPrimaryMonitor() : nullptr, GLFW_DONT_CARE, GLFW_DONT_CARE, width, height, GLFW_DONT_CARE);
 }
