@@ -65,6 +65,10 @@ void skeletal_model_t::set_bone_default(skinned_vertex_t& vertex){
         vertex.weight[i] = 0.0f;
     }
 }
+auto to_v3f(const auto& v) -> v3f {
+    return {v.x, v.y, v.z};
+}
+
 skeletal_mesh_t* skeletal_model_t::process_mesh(aiMesh* mesh, const aiScene* scene){
     utl::vector<skinned_vertex_t> indexed_vertices;
     utl::vector<skinned_vertex_t> vertices;
@@ -74,10 +78,10 @@ skeletal_mesh_t* skeletal_model_t::process_mesh(aiMesh* mesh, const aiScene* sce
     for (unsigned int i = 0; i < mesh->mNumVertices; i++) {
         skinned_vertex_t vertex;
         set_bone_default(vertex);
-        vertex.position = AssimpGLMHelpers::GetGLMVec(mesh->mVertices[i]);
-        vertex.normal = AssimpGLMHelpers::GetGLMVec(mesh->mNormals[i]);
-        vertex.tangent = AssimpGLMHelpers::GetGLMVec(mesh->mTangents[i]);
-        vertex.bitangent = AssimpGLMHelpers::GetGLMVec(mesh->mBitangents[i]);
+        vertex.position = to_v3f(mesh->mVertices[i]);
+        vertex.normal = to_v3f(mesh->mNormals[i]);
+        vertex.tangent = to_v3f(mesh->mTangents[i]);
+        vertex.bitangent = to_v3f(mesh->mBitangents[i]);
         
         if (mesh->mTextureCoords[0]) {
             glm::vec2 vec;

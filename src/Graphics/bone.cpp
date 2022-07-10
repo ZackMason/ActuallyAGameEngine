@@ -38,7 +38,7 @@ bone_t::bone_t(const std::string& pname, bone_id_t pID, const aiNodeAnim* channe
         aiQuaternion orientation = channel->mRotationKeys[rotationIndex].mValue;
         float timeStamp = (float)channel->mRotationKeys[rotationIndex].mTime;
         rotation_keyframe_t data;
-        data.orientation = glm::quat(orientation.x, orientation.y, orientation.z, orientation.w);
+        data.orientation = glm::quat(orientation.w, orientation.x, orientation.y, orientation.z);
         data.timestamp = timeStamp;
         rotations.push_back(data);
     }
