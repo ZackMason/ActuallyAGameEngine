@@ -6,8 +6,8 @@
 #include "Graphics/animation.hpp"
 
 #include "assimp/Importer.hpp"
-#include "assimp/Scene.h"
-#include "assimp/Postprocess.h"
+#include "assimp/scene.h"
+#include "assimp/postprocess.h"
 
 #include<assimp/quaternion.h>
 #include<assimp/vector3.h>

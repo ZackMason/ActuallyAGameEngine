@@ -8,8 +8,8 @@
 #include <glm/gtx/quaternion.hpp>
 
 #include "assimp/Importer.hpp"
-#include "assimp/Scene.h"
-#include "assimp/Postprocess.h"
+#include "assimp/scene.h"
+#include "assimp/postprocess.h"
 
 #include<assimp/quaternion.h>
 #include<assimp/vector3.h>
@@ -18,18 +18,6 @@
 #include <glm/gtx/quaternion.hpp>
 
 
-namespace AssimpGLMHelpers {
-
-    glm::vec3 AssimpGLMHelpers::GetGLMVec(const aiVector3D& vec) 
-    { 
-        return glm::vec3(vec.x, vec.y, vec.z); 
-    }	
-    glm::quat AssimpGLMHelpers::GetGLMQuat(const aiQuaternion& pOrientation)
-    {
-        return glm::quat(pOrientation.w, pOrientation.x, pOrientation.y, pOrientation.z);
-    }
-}
-
 bone_t::bone_t(const std::string& pname, bone_id_t pID, const aiNodeAnim* channel)
     : name(pname),
     id(pID),
@@ -37,20 +25,20 @@ bone_t::bone_t(const std::string& pname, bone_id_t pID, const aiNodeAnim* channe
 {
     for (size_t positionIndex = 0; positionIndex < channel->mNumPositionKeys; ++positionIndex)
     {
-        aiVector3D aiPosition = channel->mPositionKeys[positionIndex].mValue;
+        aiVector3D pos = channel->mPositionKeys[positionIndex].mValue;
         float timeStamp = (float)channel->mPositionKeys[positionIndex].mTime;
         position_keyframe_t data;
-        data.position = AssimpGLMHelpers::GetGLMVec(aiPosition);
+        data.position = v3f(pos.x, pos.y, pos.z);
         data.timestamp = timeStamp;
         positions.push_back(data);
     }
 
     for (size_t rotationIndex = 0; rotationIndex < channel->mNumRotationKeys; ++rotationIndex)
     {
-        aiQuaternion aiOrientation = channel->mRotationKeys[rotationIndex].mValue;
+        aiQuaternion orientation = channel->mRotationKeys[rotationIndex].mValue;
         float timeStamp = (float)channel->mRotationKeys[rotationIndex].mTime;
         rotation_keyframe_t data;
-        data.orientation = AssimpGLMHelpers::GetGLMQuat(aiOrientation);
+        data.orientation = glm::quat(orientation.x, orientation.y, orientation.z, orientation.w);
         data.timestamp = timeStamp;
         rotations.push_back(data);
     }
@@ -60,7 +48,7 @@ bone_t::bone_t(const std::string& pname, bone_id_t pID, const aiNodeAnim* channe
         aiVector3D scale = channel->mScalingKeys[keyIndex].mValue;
         float timeStamp = (float)channel->mScalingKeys[keyIndex].mTime;
         scale_keyframe_t data;
-        data.scale = AssimpGLMHelpers::GetGLMVec(scale);
+        data.scale = v3f(scale.x, scale.y, scale.z);
         data.timestamp = timeStamp;
         scales.push_back(data);
     }

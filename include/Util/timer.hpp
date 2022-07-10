@@ -7,8 +7,7 @@
 
 #include "types.hpp"
 
-struct timer_t {
+struct timer32_t {
     f32 time{0.0f};
-
 };
 

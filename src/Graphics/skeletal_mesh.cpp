@@ -8,8 +8,8 @@
 #include "Util/exceptions.hpp"
 
 #include "assimp/Importer.hpp"
-#include "assimp/Scene.h"
-#include "assimp/Postprocess.h"
+#include "assimp/scene.h"
+#include "assimp/postprocess.h"
 
 #include <stack>
 

@@ -5,6 +5,8 @@
 
 #include "Networking/packet.hpp"
 
+#include <cstring>
+
 void packet_t::set_data(const std::string& new_data){
     data = new_data;
     enet_packet_resize(packet, new_data.length() + 1);

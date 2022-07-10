@@ -39,7 +39,7 @@ constexpr auto throw_assert(const bool b, std::string&& text) -> auto {
     if (!b) throw test_failed(std::move(text));
 }
 
-constexpr auto throw_assert(const bool b) -> auto {
+auto throw_assert(const bool b) -> auto {
     throw_assert(b, "Assert Failed");
 }
 

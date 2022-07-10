@@ -12,13 +12,13 @@ file(GLOB_RECURSE lib_files
     ${PROJECT_SOURCE_DIR}/src/*.c*
 )
 
+#add_compile_options(/bigobj)
+
+
 add_library(${PROJECT_NAME} ${lib_files})
 
 target_include_directories(${PROJECT_NAME} PUBLIC include)
 target_include_directories(${PROJECT_NAME} PUBLIC include/imgui)
-
-
-add_compile_options(/bigobj)
 
 target_compile_definitions(${PROJECT_NAME} PUBLIC CMAKE_ASSETS_PATH="${CMAKE_CURRENT_SOURCE_DIR}/assets/")
 
@@ -26,9 +26,16 @@ file(GLOB_RECURSE test_files
     ${PROJECT_SOURCE_DIR}/tests/*.c*
 )
 
-add_executable(EngineTests ${test_files})
-target_compile_definitions(EngineTests PUBLIC CMAKE_ASSETS_PATH="${CMAKE_CURRENT_SOURCE_DIR}/assets/")
-target_link_libraries(EngineTests PUBLIC ${CONAN_LIBS} Engine)
+#add_executable(EngineTests ${test_files})
 
-target_link_libraries(${PROJECT_NAME} PUBLIC ${CONAN_LIBS})
+#set_target_properties(EngineTests 
+#                        PROPERTIES 
+#                            CXX_STANDARD 20
+#                            CXX_STANDARD_REQUIRED YES
+#                            CXX_EXTENSIONS ON
+#)
 
+#target_compile_definitions(EngineTests PUBLIC CMAKE_ASSETS_PATH="${CMAKE_CURRENT_SOURCE_DIR}/assets/")
+#target_link_libraries(EngineTests PUBLIC ${CONAN_LIBS} Engine)
+
+#target_link_libraries(${PROJECT_NAME} PUBLIC ${CONAN_LIBS})
