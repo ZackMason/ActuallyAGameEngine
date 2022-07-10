@@ -21,18 +21,15 @@ struct line_point_t {
 
 utl::vector<line_point_t> construct_aabb(const aabb_t<v3f>& aabb, v4f color);
 
-
 struct line_renderer_t : drawable_i {
     buffer_t<utl::vector<line_point_t>> buffer_object;
     vertex_array_t vertex_array;
     aabb_t<v3f> aabb;
 
-
     void update_aabb();
     void bind() override;
     void unbind() override;
     void draw() override;
-
 
     explicit line_renderer_t(utl::vector<line_point_t>&& p_vertices) 
         : buffer_object(std::move(p_vertices)), vertex_array(buffer_object.size()), aabb{v3f{0.0f}, v3f{0.0f}}
@@ -48,11 +45,9 @@ struct line_renderer_t : drawable_i {
         update_aabb();
     }
 
-
     line_renderer_t(line_renderer_t&) = delete;
     line_renderer_t(line_renderer_t&&) = delete;
     line_renderer_t& operator=(line_renderer_t&) = delete;
     line_renderer_t& operator=(line_renderer_t&&) = delete;
-
 };
 

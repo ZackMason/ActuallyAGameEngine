@@ -15,6 +15,10 @@ struct aabb_t {
     T min{std::numeric_limits<float>::max()};
     T max{-std::numeric_limits<float>::max()};
 
+    T size() const {
+        return max - min;
+    }
+
     void expand(const aabb_t<T>& o) {
         expand(o.min);
         expand(o.max);
