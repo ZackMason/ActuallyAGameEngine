@@ -16,7 +16,7 @@
 #include "Graphics/texture2d.hpp"
 #include "Graphics/bone.hpp"
 
-#include "Engine/asset_loader.hpp"
+#include "Engine/resource_handle.hpp"
 
 struct skinned_vertex_t {
     v3f position;

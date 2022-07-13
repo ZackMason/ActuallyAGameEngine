@@ -12,72 +12,19 @@
 
 
 #include "Engine/heightmap.hpp"
+#include "Engine/resource_handle.hpp"
 
 #include "Graphics/texture2d.hpp"
 #include "Graphics/shader.hpp"
 #include "Graphics/static_mesh.hpp"
 #include "Graphics/framebuffer.hpp"
+#include "Graphics/animation.hpp"
 
 #include "Util/exceptions.hpp"
 #include "Util/logger.hpp"
 
-// idk about this.....
-template <typename T>
-struct resource_handle_t {
-private:
-    static u32& get_dummy_count() {
-        static u32 d{0};
-        return d;
-    }
 
-public:
-    resource_handle_t() : resource(nullptr), count(get_dummy_count()) {
-    }
-
-    resource_handle_t(T* p_res, u32& p_count) 
-    : resource(p_res), count(p_count) 
-    {
-    }
-    ~resource_handle_t() {
-        count--;
-    }
-
-    resource_handle_t(resource_handle_t& o) 
-    : resource(o.resource), count(o.count) 
-    {
-        count++;
-    }
-    resource_handle_t(resource_handle_t&& o)
-        : resource(o.resource), count(o.count) 
-    {
-        count++;
-    }
-    resource_handle_t& operator=(const resource_handle_t& o) {
-        resource = o.resource;
-        count++;
-        return *this;
-    };
-    resource_handle_t& operator=(resource_handle_t&& o) {
-        resource = std::move(o.resource);
-        count++;
-        return *this;
-    };
-    operator int() {
-        return resource->id;
-    }
-
-    [[nodiscard]] bool valid() const { return resource != nullptr; }
-
-    T& get() const { return *resource; }
-
-    const int get_count() const {
-        return count;
-    } 
-
-private:
-    u32& count;
-    T* resource;
-};
+struct skeletal_model_t;
 
 struct asset_loader_t {
     template<typename R>  
@@ -113,6 +60,9 @@ struct asset_loader_t {
     cache_t<texture2d_t> texture2d_cache;
     cache_t<shader_t> shader_cache;
     cache_t<framebuffer_t> framebuffer_cache;
+    cache_t<skeletal_model_t> skeletal_model_cache;
+    cache_t<animation_t> animation_cache;
+
     std::unordered_map<std::string, utl::vector<f32>> heightmap_cache;
 
     template <typename T>
@@ -169,5 +119,7 @@ struct asset_loader_t {
     resource_handle_t<shader_t> get_shader_vs_fs(const std::string& name, const std::string& vs, const std::string& fs);
     resource_handle_t<shader_t> get_shader(const std::string& name, const utl::vector<std::string>& path);
     resource_handle_t<framebuffer_t> get_framebuffer(const std::string& name, int w, int h, bool msaa = false);
+    resource_handle_t<skeletal_model_t> get_skeletal_model(const std::string& path);
+    resource_handle_t<animation_t> get_animation(const std::string& path, const std::string& model);
 };
 

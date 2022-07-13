@@ -5,6 +5,8 @@
 
 #include "Engine/asset_loader.hpp"
 
+#include "Graphics/skeletal_mesh.hpp"
+
 u32 asset_loader_t::get_shader_count(const std::string& name) {
     if (shader_cache.count(name)) { 
         const auto count = shader_cache[name].count;

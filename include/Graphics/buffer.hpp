@@ -34,6 +34,11 @@ struct buffer_t : bindable_i {
         glBufferData(type, data.size() * sizeof(typename T::value_type), data.data(), GL_STATIC_DRAW);
     }
 
+    void update_buffer() {
+        bind();
+        glBufferSubData(type, 0, data.size() * sizeof(typename T::value_type), data.data());
+    }
+
     // only call if you are going to create a new buffer
     void destroy() {
         glDeleteBuffers(1, &id);

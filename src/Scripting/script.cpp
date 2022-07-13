@@ -78,6 +78,37 @@ void script_vm_t::init(window_t& window, entt::registry& world, asset_loader_t& 
     chai.add(chaiscript::fun(&v3f::x), "x");
     chai.add(chaiscript::fun(&v3f::y), "y");
     chai.add(chaiscript::fun(&v3f::z), "z");
+
+    chai.add(chaiscript::user_type<v4f>(), "v4f");
+    chai.add(chaiscript::constructor<v4f()>(), "v4f");
+    chai.add(chaiscript::constructor<v4f(f32,f32,f32,f32)>(), "v4f");
+    chai.add(chaiscript::constructor<v4f(f32)>(), "v4f");
+    chai.add(chaiscript::constructor<v4f(const v4f&)>(), "v4f");
+    chai.add(chaiscript::fun([](v4f& a, const v4f& b){a+=b; return a;}), "+=");
+    chai.add(chaiscript::fun([](v4f& a, const v4f& b){a-=b; return a;}), "-=");
+    chai.add(chaiscript::fun([](v4f& a, const v4f& b){a*=b; return a;}), "*=");
+    chai.add(chaiscript::fun([](v4f& a, const v4f& b){a/=b; return a;}), "/=");
+    
+    chai.add(chaiscript::fun([](v4f& a, const v4f& b){a=b; return a;}), "=");
+    chai.add(chaiscript::fun([](v4f& a, const f32 b){a+=b; return a;}), "+=");
+    chai.add(chaiscript::fun([](v4f& a, const f32 b){a-=b; return a;}), "-=");
+    chai.add(chaiscript::fun([](v4f& a, const f32 b){a*=b; return a;}), "*=");
+    chai.add(chaiscript::fun([](v4f& a, const f32 b){a/=b; return a;}), "/=");
+    chai.add(chaiscript::fun([](const v4f& a, const f32 b){ return a/b;}), "+");
+    chai.add(chaiscript::fun([](const v4f& a, const f32 b){ return a/b;}), "-");
+    chai.add(chaiscript::fun([](const v4f& a, const f32 b){ return a/b;}), "*");
+    chai.add(chaiscript::fun([](const v4f& a, const f32 b){ return a/b;}), "/");
+
+    chai.add(chaiscript::fun(&v4f::x), "x");
+    chai.add(chaiscript::fun(&v4f::y), "y");
+    chai.add(chaiscript::fun(&v4f::z), "z");
+    chai.add(chaiscript::fun(&v4f::w), "w");
+
+    chai.add(chaiscript::fun([](const v4f& a, const v4f& b, const f32 lambda){
+        return glm::mix(a,b,lambda);
+    }), "mix_v4f");
+
+
     chai.add(chaiscript::user_type<m33>(), "m33");
     chai.add(chaiscript::user_type<m44>(), "m44");
 

@@ -23,12 +23,12 @@ struct script_vm_t {
 };
 
 struct script_t {
+    std::string filename = "";
     using chai_ptr_t = std::shared_ptr<chaiscript::dispatch::Dynamic_Object>;
     chai_ptr_t script_object;
     void load_function(chaiscript::ChaiScript& chai);
 
     std::function<void (chai_ptr_t, entt::entity& e, const f32)> on_update = [](auto state, entt::entity& e, const f32 t){};
-    std::string filename = "";
     explicit script_t(const std::string& p_filename) : filename(p_filename) {}
     explicit script_t() = default;
     bool init = false;
