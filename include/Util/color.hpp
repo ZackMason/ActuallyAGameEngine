@@ -109,9 +109,13 @@ namespace color {
         static auto clear = "#00000000"_c4;
         static auto black = "#000000ff"_c4;
         static auto white = "#ffffffff"_c4;
+        static auto ray_white   = "#f1f1f1ff"_c4;
+        static auto light_gray  = "#d3d3d3ff"_c4;
+        static auto dark_gray   = "#2a2a2aff"_c4;
         static auto red   = "#ff0000ff"_c4;
         static auto green = "#00ff00ff"_c4;
         static auto blue  = "#0000ffff"_c4;
+        static auto purple= "#ff00ffff"_c4;
         static auto cyan  = "#00ffffff"_c4;
         static auto yellow= "#ffff00ff"_c4;
         static auto sand  = "#C2B280ff"_c4;
@@ -123,8 +127,9 @@ namespace color {
         static auto white = "#ffffffff"_c3;
         static auto red   = "#ff0000ff"_c3;
         static auto green = "#00ff00ff"_c3;
-        static auto cyan  = "#00ffffff"_c4;
+        static auto cyan  = "#00ffffff"_c3;
         static auto blue  = "#0000ffff"_c3;
+        static auto purple= "#ff00ffff"_c3;
         static auto yellow= "#ffff00ff"_c3;
         static auto sand  = "#C2B280ff"_c3;
     };

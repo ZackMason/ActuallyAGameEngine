@@ -101,14 +101,16 @@ struct random_t {
 
     void randomize() {
         rng.randomize();
-    };
+    }
 
     void seed(const decltype(Generator::state)& x) {
         rng.state = x;
     }
+
     auto rand() {
         return rng.rand();
     }
+
     float randf() {
         return float(rng.rand()) / float(Generator::max);
     }

@@ -159,3 +159,31 @@ resource_handle_t<framebuffer_t> asset_loader_t::get_framebuffer(const std::stri
     return resource_handle_t(framebuffer, count);
 }
 
+resource_handle_t<skeletal_model_t> asset_loader_t::get_skeletal_model(const std::string& path) {
+    const auto& name = path;
+    if (skeletal_model_cache.count(name)) { 
+        auto& [model, count] = skeletal_model_cache[name];
+        return resource_handle_t(model, ++count);
+    }
+    skeletal_model_cache[name] = create_cache_resource<skeletal_model_t>();
+    new (skeletal_model_cache[name].resource) skeletal_model_t(name, asset_dir);
+    auto& [model, count] = skeletal_model_cache[name];
+    return resource_handle_t(model, count);
+}
+
+resource_handle_t<animation_t> asset_loader_t::get_animation(
+    const std::string& path, 
+    const std::string& skeleton
+) {
+    if (animation_cache.count(path)) { 
+        auto& [animation, count] = animation_cache[path];
+        return resource_handle_t(animation, ++count);
+    }
+    auto skeleton_handle = get_skeletal_model(skeleton);
+    animation_cache[path] = create_cache_resource<animation_t>();
+    new (animation_cache[path].resource) animation_t(path, asset_dir, skeleton_handle.get());
+    auto& [animation, count] = animation_cache[path];
+
+    return resource_handle_t(animation, count);
+}
+

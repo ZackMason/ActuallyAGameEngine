@@ -53,7 +53,7 @@ public:
 
     [[nodiscard]] bool valid() const { return resource != nullptr; }
 
-    [[nodiscard]] const T* const get_ptr() const {
+    [[nodiscard]] T* get_ptr() const {
         return resource;
     } 
 

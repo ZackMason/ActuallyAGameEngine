@@ -104,7 +104,7 @@ struct particle_system_t {
     }
 
     particle_system_t() :
-        buffer_object(utl::vector<particle_t>{100'000, particle_t{}}), 
+        buffer_object(utl::vector<particle_t>{100, particle_t{}}), 
         vertex_array(buffer_object.size())
     {
         vertex_array.topology = GL_POINTS;
@@ -116,6 +116,5 @@ struct particle_system_t {
             .unbind();
         buffer_object.unbind();
     }
-
 };
 
