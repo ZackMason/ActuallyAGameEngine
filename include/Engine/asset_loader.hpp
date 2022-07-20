@@ -18,13 +18,12 @@
 #include "Graphics/shader.hpp"
 #include "Graphics/static_mesh.hpp"
 #include "Graphics/framebuffer.hpp"
-#include "Graphics/animation.hpp"
+#include "Graphics/skeleton_animation.hpp"
+#include "Graphics/skeletal_mesh.hpp"
 
 #include "Util/exceptions.hpp"
 #include "Util/logger.hpp"
 
-
-struct skeletal_model_t;
 
 struct asset_loader_t {
     template<typename R>  
@@ -61,7 +60,7 @@ struct asset_loader_t {
     cache_t<shader_t> shader_cache;
     cache_t<framebuffer_t> framebuffer_cache;
     cache_t<skeletal_model_t> skeletal_model_cache;
-    cache_t<animation_t> animation_cache;
+    cache_t<skeleton_animation_t> animation_cache;
 
     std::unordered_map<std::string, utl::vector<f32>> heightmap_cache;
 
@@ -120,6 +119,6 @@ struct asset_loader_t {
     resource_handle_t<shader_t> get_shader(const std::string& name, const utl::vector<std::string>& path);
     resource_handle_t<framebuffer_t> get_framebuffer(const std::string& name, int w, int h, bool msaa = false);
     resource_handle_t<skeletal_model_t> get_skeletal_model(const std::string& path);
-    resource_handle_t<animation_t> get_animation(const std::string& path, const std::string& model);
+    resource_handle_t<skeleton_animation_t> get_animation(const std::string& path, const std::string& model);
 };
 

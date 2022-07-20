@@ -67,7 +67,8 @@ struct animator_t {
 
             for (auto& node : animation->anim_nodes) {
                 const auto& bone_transform = node.bone ? node.bone->update(time) : node.transform;
-                const auto& parent_transform = (node.parent >= 0) ?  animation->anim_nodes[node.parent].transform : m44(1.0f);
+                const auto& parent_transform = (node.parent >= 0) ?
+                    animation->anim_nodes[node.parent].transform : m44(1.0f);
                 node.transform = parent_transform * bone_transform;
                 if(node.bone) {
                     const auto index = node.bone->id;
@@ -84,5 +85,5 @@ struct animator_t {
         std::fill(matrices.begin(), matrices.end(), m44(1.0f));
 		time = 0.0f;
 	}
-
 };
+

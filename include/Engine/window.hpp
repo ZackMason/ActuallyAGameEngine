@@ -7,12 +7,56 @@
 
 #include "types.hpp"
 
+#include "Event/event.hpp"
+
 #include <array>
+
+
+struct position2d_event_t : public v2i, public event_i {
+    position2d_event_t(int px, int py) {
+        x = px;
+        y = py;
+    }
+    MAKE_EVENT_TYPE(position2d)
+};
+
+struct window_resize_event_t : position2d_event_t {
+    using position2d_event_t::position2d_event_t;
+    MAKE_EVENT_TYPE(window_resize)
+};
+
+struct mouse_move_event_t : position2d_event_t {
+    using position2d_event_t::position2d_event_t;
+    MAKE_EVENT_TYPE(mouse_move)
+};
+
+struct mouse_scroll_event_t : position2d_event_t {
+    using position2d_event_t::position2d_event_t;
+    MAKE_EVENT_TYPE(mouse_scroll)
+};
+
+struct key_event_t : public event_i {
+    explicit key_event_t(int pk, int ps, int pm) :
+    key(pk), scancode(ps), mode(pm) {}
+
+    int key;
+    int scancode;
+    int mode;
+
+    MAKE_EVENT_TYPE(key);
+};
 
 struct GLFWwindow;
 struct window_t {
     u32 width{640}, height{480};
     std::array<f32, 2> scroll;
+
+   	using window_event_callback = std::function<void(event_i&)>;
+    window_event_callback event_callback;
+
+    void set_event_callback(window_event_callback&& callback) {
+        event_callback = callback;
+    }
 
     ~window_t();
 
@@ -20,6 +64,7 @@ struct window_t {
     void set_height(int);
 
     void set_fullscreen(bool full);
+    void toggle_fullscreen();
     void set_vsync(bool vsync);
 
 
@@ -36,7 +81,7 @@ struct window_t {
     bool is_key_released(int key) const;
     std::array<f32, 2> get_mouse() const;
     bool is_button_pressed(int button) const;
-    decltype(scroll) get_scroll() const;
+    decltype(scroll) get_scroll();
 
     f32 get_ticks() const;
 

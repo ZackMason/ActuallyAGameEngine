@@ -7,7 +7,7 @@
 #include "Engine/fly_camera.hpp"
 
 
-void fly_camera_t::update(const window_t& window, f32 dt) {
+void fly_camera_t::update(window_t& window, f32 dt) {
     width = (f32)window.width;
     height = (f32)window.height;
 

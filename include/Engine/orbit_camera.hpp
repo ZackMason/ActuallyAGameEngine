@@ -17,7 +17,13 @@ struct orbit_camera_t : public camera_t {
     f32 lastx{0.0f};
     f32 lasty{0.0f};
 
-    void update(const window_t& window, f32 dt);
+    bool on_scroll_event(const mouse_scroll_event_t& event) {
+        dist += -event.y * 5.0f;
+        dist = dist < 1.0f ? 1.0f : dist; 
+        return true;
+    }
+
+    void update(window_t& window, f32 dt);
     v3f get_direction() const;
     v3f get_position() const override {
         return position + get_direction() * -dist;

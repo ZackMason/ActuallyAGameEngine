@@ -15,7 +15,7 @@ v3f orbit_camera_t::get_direction() const {
         sin(glm::radians(yaw)) * cos(glm::radians(pitch))
     };
 }
-void orbit_camera_t::update(const window_t& window, f32 dt) {
+void orbit_camera_t::update(window_t& window, f32 dt) {
     width = (f32)window.width;
     height = (f32)window.height;
 
@@ -41,16 +41,10 @@ void orbit_camera_t::update(const window_t& window, f32 dt) {
         position += down() * dt * move_speed;
     }
 
-
-
-
     auto [x,y] = window.get_mouse();
-    auto [sx,sy] = window.get_scroll();
-    auto [dx, dy] = std::array<f32,2>{lastx-x, lasty-y};
+         auto [dx, dy] = std::array<f32,2>{lastx-x, lasty-y};
 
-    dist = std::max(dist + -sy * dt * camera_zoom_speed, 1.0f);
-
-    if (window.is_button_pressed(GLFW_MOUSE_BUTTON_2)) {
+        if (window.is_button_pressed(GLFW_MOUSE_BUTTON_2)) {
         yaw += -dx * dt  * camera_look_speed;
         pitch += dy * dt * camera_look_speed;
     }
@@ -63,7 +57,6 @@ void orbit_camera_t::update(const window_t& window, f32 dt) {
     position = temp;
 
     make_projection();
-    
 
     lastx = x; lasty = y;
 }

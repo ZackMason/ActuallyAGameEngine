@@ -9,7 +9,6 @@
 
 namespace internal {
     std::unordered_map<string_id_t, std::string> hashed_string_database{};
-
 };
 
 string_id_t save_string(const std::string& str) {
@@ -21,6 +20,7 @@ string_id_t save_string(const char* str) {
     internal::hashed_string_database[id] = str;
     return id;
 }
+
 const std::string& sid_to_string(string_id_t id) {
     if (internal::hashed_string_database.count(id) == 0) {
         static std::string dummy{"<Unknown String ID>"};

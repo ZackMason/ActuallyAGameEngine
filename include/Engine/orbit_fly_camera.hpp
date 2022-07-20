@@ -25,6 +25,6 @@ struct orbit_fly_camera_t {
     auto view_projection() const {
         return is_fly ? fly_camera.view_projection() : orbit_camera.view_projection();
     }
-    void update(const window_t& window, f32 dt);
+    void update(window_t& window, f32 dt);
 };
 

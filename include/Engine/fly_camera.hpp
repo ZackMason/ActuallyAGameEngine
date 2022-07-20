@@ -15,7 +15,7 @@ struct fly_camera_t : public camera_t {
     f32 lastx{0.0f};
     f32 lasty{0.0f};
     
-    void update(const window_t& window, f32 dt);
+    void update(window_t& window, f32 dt);
 
 };
 

@@ -76,26 +76,48 @@ void window_t::open_window() {
     glfwSetWindowUserPointer(window, this);
     glfwSetFramebufferSizeCallback(window,
         [](GLFWwindow* window, int w, int h) {
-            window_t& self = *static_cast<window_t*>(glfwGetWindowUserPointer(window));
-            
             if (!w||!h) return;
+            window_t& self = *static_cast<window_t*>(glfwGetWindowUserPointer(window));
 
             self.width = w;
             self.height = h;
             glViewport(0,0,w,h);
+            window_resize_event_t event{w,h};
+            self.event_callback(event);
     });
     glfwSetScrollCallback(window, [](GLFWwindow* window, double x, double y) {
-        window_t& self = *static_cast<window_t*>(glfwGetWindowUserPointer(window));
         if (ImGui::GetIO().WantCaptureMouse) return;
-        self.scroll = {(f32)x, (f32)y};
+        window_t& self = *static_cast<window_t*>(glfwGetWindowUserPointer(window));
+        self.scroll = {self.scroll[0] + (f32)x, self.scroll[1] + (f32)y};
+        
+        mouse_scroll_event_t event{(int)x, (int)y};
+        self.event_callback(event);
     });
 
+    glfwSetCursorPosCallback(window, [](GLFWwindow* window, double x, double y) {
+        if (ImGui::GetIO().WantCaptureMouse) return;
+        window_t& self = *static_cast<window_t*>(glfwGetWindowUserPointer(window));
+    
+        mouse_move_event_t event{(int)x,(int)y};
+        self.event_callback(event);
+
+    });
+
+    glfwSetKeyCallback(window, [](GLFWwindow* window, int key, int scancode, int action, int mode){
+        if (ImGui::GetIO().WantCaptureKeyboard) return;
+        window_t& self = *static_cast<window_t*>(glfwGetWindowUserPointer(window));
+    
+        key_event_t event{key, scancode, action};
+        self.event_callback(event);
+    });
 
 }
 
 
-decltype(window_t::scroll) window_t::get_scroll() const {
-    return scroll;
+decltype(window_t::scroll) window_t::get_scroll() {
+		const auto t = scroll;
+		scroll = {0.0f, 0.0f};
+    return t;
 }
 
 f32 window_t::get_ticks() const {
@@ -122,6 +144,12 @@ bool window_t::is_key_released(int key) const {
 void window_t::set_vsync(bool vsync) {
     glfwSwapInterval(vsync ? 60 : 0);
 }
+
+void window_t::toggle_fullscreen() {
+    auto monitor = glfwGetWindowMonitor(window); // false if windowed mode
+    set_fullscreen(!monitor);
+}
+
 void window_t::set_fullscreen(bool full) {
     glfwSetWindowMonitor(window, full ? glfwGetPrimaryMonitor() : nullptr, GLFW_DONT_CARE, GLFW_DONT_CARE, width, height, GLFW_DONT_CARE);
 }

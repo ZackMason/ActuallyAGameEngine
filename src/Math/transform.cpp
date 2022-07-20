@@ -68,7 +68,7 @@ void transform_t::look_at(const v3f& target, const v3f& up)
 {
 	auto mat = glm::lookAt(origin, target, up);
 	basis = mat;
-	origin = mat[3];
+	//origin = mat[3];
 }
 
 void transform_t::set_position(const v3f& position)

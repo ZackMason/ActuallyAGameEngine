@@ -90,7 +90,7 @@ struct particle_system_t {
         bind();
         buffer_object.bind();
         buffer_object.data = particles.get_active();
-        vertex_array.size = buffer_object.data.size();
+        vertex_array.size = static_cast<int>(buffer_object.data.size());
         buffer_object.update_buffer();    
     }
 

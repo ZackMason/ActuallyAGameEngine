@@ -15,6 +15,7 @@
 #include "Graphics/buffer.hpp"
 #include "Graphics/texture2d.hpp"
 #include "Graphics/bone.hpp"
+#include "Graphics/skeleton.hpp"
 
 #include "Engine/resource_handle.hpp"
 
@@ -64,21 +65,34 @@ struct aiScene;
 struct aiMesh;
 struct skeletal_model_t {
     utl::vector<skeletal_mesh_t*> meshes;
-    std::unordered_map<std::string, bone_info_t> bone_info;
-    int bone_count{0};
+    skeleton_t skeleton;
+
+    // very slow, requires file IO
+    void set_skeleton(const std::string& path, const std::string& dir) {
+        skeleton = skeleton_t(path, dir);
+        for (auto mesh: meshes) {
+            delete mesh;
+        }
+        meshes.clear();
+        load_model(path, dir);
+    }
 
     virtual ~skeletal_model_t() {
         for(auto mesh: meshes){
             delete mesh;
         }
     }
-    skeletal_model_t(const std::string& path, const std::string& asset_dir) {
+    
+    skeletal_model_t(
+        const std::string& path, 
+        const std::string& asset_dir
+    ) : skeleton(path, asset_dir) {
         load_model(path, asset_dir);
     }
+    
     void load_model(const std::string& path, const std::string& asset_dir);
     void process_node(aiNode *node, const aiScene *scene);
     void set_bone_default(skinned_vertex_t& vertex);
     skeletal_mesh_t* process_mesh(aiMesh* mesh, const aiScene* scene);
     void extract_bone_weight(std::vector<skinned_vertex_t>& vertices, aiMesh* mesh, const aiScene* scene);
-
 };

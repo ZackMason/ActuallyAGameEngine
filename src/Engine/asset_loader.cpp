@@ -5,8 +5,6 @@
 
 #include "Engine/asset_loader.hpp"
 
-#include "Graphics/skeletal_mesh.hpp"
-
 u32 asset_loader_t::get_shader_count(const std::string& name) {
     if (shader_cache.count(name)) { 
         const auto count = shader_cache[name].count;
@@ -18,6 +16,7 @@ u32 asset_loader_t::get_shader_count(const std::string& name) {
     }
     return 0;
 }
+
 u32 asset_loader_t::get_tex2d_count(const std::string& path) {
     if (texture2d_cache.count(path)) { 
         const auto count = texture2d_cache[path].count;
@@ -29,6 +28,7 @@ u32 asset_loader_t::get_tex2d_count(const std::string& path) {
     }
     return 0;
 }
+
 u32 asset_loader_t::get_mesh_count(const std::string& path) {
     if (static_mesh_cache.count(path)) { 
         const auto count = static_mesh_cache[path].count;
@@ -171,7 +171,7 @@ resource_handle_t<skeletal_model_t> asset_loader_t::get_skeletal_model(const std
     return resource_handle_t(model, count);
 }
 
-resource_handle_t<animation_t> asset_loader_t::get_animation(
+resource_handle_t<skeleton_animation_t> asset_loader_t::get_animation(
     const std::string& path, 
     const std::string& skeleton
 ) {
@@ -180,10 +180,21 @@ resource_handle_t<animation_t> asset_loader_t::get_animation(
         return resource_handle_t(animation, ++count);
     }
     auto skeleton_handle = get_skeletal_model(skeleton);
-    animation_cache[path] = create_cache_resource<animation_t>();
-    new (animation_cache[path].resource) animation_t(path, asset_dir, skeleton_handle.get());
-    auto& [animation, count] = animation_cache[path];
-
+    
+    skeleton_animation_t::loader_t animation_loader(skeleton_handle.get().skeleton);
+    auto animations = animation_loader.load(path, asset_dir);
+    bool first{true};
+    std::string return_name;
+    for (auto& animation : animations) {
+        auto animation_name = fmt::format("{} - {}", path, animation.name);
+        if (first) {
+            first = false;
+            return_name = animation_name;
+        }
+        animation_cache[animation_name] = create_cache_resource<skeleton_animation_t>();
+        new (animation_cache[animation_name].resource) skeleton_animation_t(animation);
+    }
+    auto& [animation, count] = animation_cache[return_name];
     return resource_handle_t(animation, count);
 }
 

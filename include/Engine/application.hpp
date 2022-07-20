@@ -11,6 +11,9 @@
 #include "Engine/asset_loader.hpp"
 #include "Scripting/script.hpp"
 
+#include "Event/event.hpp"
+
+#include "Util/logger.hpp"
 
 struct application_i {
     window_t window;
@@ -20,8 +23,17 @@ struct application_i {
 
     f32 tick_rate = 1.0f / 60.0f;
 
+    event_handler_t event_handler;
+
+    virtual void on_event(event_i& event) {
+        logger_t::info(fmt::format("Event {}", event.get_type_name()));
+    }
+
     void run() {
         window.open_window();
+
+        window.set_event_callback(std::bind(&application_i::on_event, this, std::placeholders::_1));
+
         init();
 
         auto last_time = window.get_ticks();

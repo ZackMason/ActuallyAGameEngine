@@ -6,6 +6,7 @@
 #include "Graphics/skeletal_mesh.hpp"
 
 #include "Util/exceptions.hpp"
+#include "Util/logger.hpp"
 
 #include "assimp/Importer.hpp"
 #include "assimp/scene.h"
@@ -32,7 +33,8 @@ void skeletal_mesh_t::draw() {
 
 void skeletal_model_t::load_model(const std::string& path, const std::string& asset_dir) {
     Assimp::Importer importer;
-    const aiScene* scene = importer.ReadFile(fmt::format("{}{}", asset_dir, path), aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_CalcTangentSpace | aiProcess_GlobalScale);
+    const aiScene* scene = importer.ReadFile(fmt::format("{}{}", asset_dir, path), 
+    aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_CalcTangentSpace | aiProcess_GlobalScale);
 
     if(!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
         throw runtime_error_x(importer.GetErrorString());
@@ -120,33 +122,26 @@ skeletal_mesh_t* skeletal_model_t::process_mesh(aiMesh* mesh, const aiScene* sce
 
     return new skeletal_mesh_t(std::move(vertices));
 }
-void set_vertex_bone_data(skinned_vertex_t& vertex, int boneID, float weight) {
+void set_vertex_bone_data(skinned_vertex_t& vertex, int bone_id, float weight) {
     for (int i = 0; i < 4; ++i) {
         if (vertex.id[i] < 0) {
             vertex.weight[i] = weight;
-            vertex.id[i] = boneID;
+            vertex.id[i] = bone_id;
             break;
         }
     }
 }
 
 void skeletal_model_t::extract_bone_weight(std::vector<skinned_vertex_t>& vertices, aiMesh* mesh, const aiScene* scene) {
-    auto& boneInfoMap = bone_info;
-
     for (size_t boneIndex = 0; boneIndex < mesh->mNumBones; ++boneIndex) {
-        int boneID = -1;
-        std::string boneName = mesh->mBones[boneIndex]->mName.C_Str();
-        if (boneInfoMap.find(boneName) == boneInfoMap.end()) {
-            bone_info_t newBoneInfo;
-            newBoneInfo.id = bone_count;
-            newBoneInfo.offset = AssimpGLMHelpers::ConvertMatrixToGLMFormat(mesh->mBones[boneIndex]->mOffsetMatrix);
-            boneInfoMap[boneName] = newBoneInfo;
-            boneID = bone_count;
-            bone_count++;
-        } else {
-            boneID = boneInfoMap[boneName].id;
+        const std::string bone_name = mesh->mBones[boneIndex]->mName.C_Str();
+        const int bone_id = skeleton.find_bone_id(sid(bone_name));
+        
+        if (bone_id == -1) {
+            logger_t::warn(fmt::format("Skeleton is missing bone: {}", bone_name));
         }
-        assert(boneID != -1);
+        assert(bone_id != -1 && "Skeleton is missing bones");
+
         auto weights = mesh->mBones[boneIndex]->mWeights;
         int numWeights = mesh->mBones[boneIndex]->mNumWeights;
 
@@ -154,7 +149,7 @@ void skeletal_model_t::extract_bone_weight(std::vector<skinned_vertex_t>& vertic
             int vertexId = weights[weightIndex].mVertexId;
             float weight = weights[weightIndex].mWeight;
             assert(vertexId < vertices.size());
-            set_vertex_bone_data(vertices[vertexId], boneID, weight);
+            set_vertex_bone_data(vertices[vertexId], bone_id, weight);
         }
     }
 }

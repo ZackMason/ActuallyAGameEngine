@@ -34,6 +34,7 @@ constexpr string_id_t operator"" _sid(const char* str, std::size_t size) {
 
 string_id_t save_string(const std::string& str);
 string_id_t save_string(const char* str);
+
 const std::string& sid_to_string(string_id_t id);
 
 

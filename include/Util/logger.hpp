@@ -8,9 +8,26 @@
 #include "fmt/core.h"
 #include "fmt/color.h"
 #include "fmt/os.h"
+#include "fmt/format.h"
 
 #include <array>
 #include <source_location>
+
+#include "types.hpp"
+
+template<>
+struct fmt::formatter<v3f>
+{
+    template<typename ParseContext>
+    constexpr auto parse(ParseContext& ctx) {
+        return ctx.begin();
+    }
+
+    template<typename FormatContext>
+    auto format(v3f const& v, FormatContext& ctx) {
+        return fmt::format_to(ctx.out(), "[{:.2f}, {:.2f}, {:.2f}]", v.x, v.y, v.z);
+    }
+};
 
 struct logger_t {
     enum log_level_e {

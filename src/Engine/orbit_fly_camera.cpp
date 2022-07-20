@@ -6,7 +6,7 @@
 
 #include "Engine/orbit_fly_camera.hpp"
 
-void orbit_fly_camera_t::update(const window_t& window, f32 dt) {
+void orbit_fly_camera_t::update(window_t& window, f32 dt) {
     orbit_camera.width = fly_camera.width = (f32)window.width;
     orbit_camera.height = fly_camera.height = (f32)window.height;
     if (is_fly) {

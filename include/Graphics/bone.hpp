@@ -55,7 +55,6 @@ struct bone_t {
     utl::vector<scale_keyframe_t>    scales;
 
     m44 transform;
-    m44 local_to_bone;
     std::string name;
     bone_id_t id;
 
@@ -70,6 +69,7 @@ struct bone_t {
     glm::mat4 interpolate_rotation(float anim);
     glm::mat4 interpolate_scale(float anim);
 
+    bone_t() = default;
     explicit bone_t(const std::string& pname, bone_id_t pID, const aiNodeAnim* channel);
 };
 
