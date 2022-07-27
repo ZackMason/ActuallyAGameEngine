@@ -12,10 +12,31 @@
 
 #include "Util/logger.hpp"
 
+#include <algorithm>
+
 skeleton_animation_t::loader_t::loader_t(
     const skeleton_t& _skeleton 
 ) : skeleton(_skeleton) {
 
+}
+
+skeleton_animator_t skeleton_animator_t::blend(skeleton_animator_t& b, f32 perc) const {
+    auto& a = *this;
+    assert(a.animation);
+    assert(b.animation);
+
+    perc = std::clamp(perc, 0.0f, 1.0f);
+
+    b.time = a.time;
+    b.update(0.0f);
+    skeleton_animator_t res{a.animation};
+    
+    res.time = a.time;
+
+    for (int i = 0; i < a.animation->node_count; i++ ) {
+        res.matrices[i] = a.matrices[i] * (1.0f-perc) + b.matrices[i] * perc;
+    }
+    return res;
 }
 
 void load_animation(
@@ -41,7 +62,7 @@ void load_animation(
         assert(bone_id != -1);
         const auto& bone = skeleton.find_bone(sid(bone_name));
 
-        animation.node_count = bone_id >= animation.node_count ? bone_id + 1: animation.node_count;
+        animation.node_count = bone_id >= animation.node_count ? bone_id + 1 : animation.node_count;
         animation.nodes[bone_id].offset = bone.offset;
         animation.nodes[bone_id].parent = bone.parent;
         const auto ai_node = ai_root->FindNode(bone_name.c_str());

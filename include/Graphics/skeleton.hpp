@@ -42,7 +42,7 @@ struct skeleton_t {
     [[nodiscard]] bone_id_t find_bone_id(string_id_t bone_name) const;
     [[nodiscard]] const skeleton_bone_t& find_bone(string_id_t bone_name) const;
 
-    constexpr static size_t max_bones = 200; 
+    constexpr static size_t max_bones = 256; 
 
     int count{0};
     std::array<skeleton_bone_t, max_bones> bones;

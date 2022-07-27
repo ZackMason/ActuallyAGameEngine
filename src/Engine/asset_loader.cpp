@@ -187,6 +187,7 @@ resource_handle_t<skeleton_animation_t> asset_loader_t::get_animation(
     std::string return_name;
     for (auto& animation : animations) {
         auto animation_name = fmt::format("{} - {}", path, animation.name);
+        logger_t::info(fmt::format("Asset Loader: Loaded animation {}", animation_name));
         if (first) {
             first = false;
             return_name = animation_name;
@@ -196,5 +197,21 @@ resource_handle_t<skeleton_animation_t> asset_loader_t::get_animation(
     }
     auto& [animation, count] = animation_cache[return_name];
     return resource_handle_t(animation, count);
+}
+
+resource_handle_t<skeleton_animation_t> asset_loader_t::get_sub_animation(
+    const std::string& path, 
+    const std::string& anim, 
+    const std::string& skeleton
+) {
+    const auto animation_name = fmt::format("{} - {}", path, anim);
+
+    if (animation_cache.count(animation_name)) { 
+        auto& [animation, count] = animation_cache[animation_name];
+        return resource_handle_t(animation, ++count);
+    }
+
+    get_animation(path, skeleton);
+    return get_sub_animation(path, anim, skeleton);
 }
 

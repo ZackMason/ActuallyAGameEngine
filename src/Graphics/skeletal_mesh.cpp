@@ -82,8 +82,10 @@ skeletal_mesh_t* skeletal_model_t::process_mesh(aiMesh* mesh, const aiScene* sce
         set_bone_default(vertex);
         vertex.position = to_v3f(mesh->mVertices[i]);
         vertex.normal = to_v3f(mesh->mNormals[i]);
-        vertex.tangent = to_v3f(mesh->mTangents[i]);
-        vertex.bitangent = to_v3f(mesh->mBitangents[i]);
+        if (mesh->mTangents)
+            vertex.tangent = to_v3f(mesh->mTangents[i]);
+        if (mesh->mBitangents)
+            vertex.bitangent = to_v3f(mesh->mBitangents[i]);
         
         if (mesh->mTextureCoords[0]) {
             glm::vec2 vec;

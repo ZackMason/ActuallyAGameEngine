@@ -69,6 +69,8 @@ void read_heirarchy_data(skeleton_t& skeleton, const aiNode* root, const utl::ve
 
 [[nodiscard]] utl::vector<bone_pair_t> parse_bone_names(const aiScene* scene) {
     assert(scene);
+    assert(scene->HasMeshes());
+    assert(scene->mMeshes);
 
     utl::vector<bone_pair_t> bone_names;
 

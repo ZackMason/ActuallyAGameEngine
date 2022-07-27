@@ -37,7 +37,8 @@ string_id_t save_string(const char* str);
 
 const std::string& sid_to_string(string_id_t id);
 
-
+std::string get_extension(const std::string& s);
+bool has_extension(const std::string& s, const std::string& ext);
 
 
 

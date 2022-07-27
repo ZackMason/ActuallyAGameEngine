@@ -7,6 +7,7 @@
 
 #include "Util/exceptions.hpp"
 #include <glm/gtx/quaternion.hpp>
+#include <glm/gtx/euler_angles.hpp>
 
 m44 transform_t::to_matrix() const
 {
@@ -84,6 +85,9 @@ void transform_t::set_scale(const v3f& scale)
 
 void transform_t::set_rotation(const v3f& rotation)
 {
+	basis = glm::eulerAngleYXZ(rotation.y, rotation.x, rotation.z);
+	return;
+
     auto nbasis = m44{1.0f};
     nbasis = glm::rotate(nbasis, rotation.x, v3f{1,0,0});
     nbasis = glm::rotate(nbasis, rotation.y, v3f{0,1,0});
@@ -95,4 +99,14 @@ void transform_t::set_rotation(const v3f& rotation)
 void transform_t::set_rotation(const glm::quat& quat)
 {
 	basis = glm::toMat3(glm::normalize(quat));
+}
+
+void transform_t::normalize() {
+	for (size_t i = 0; i < 3; i++) {
+		basis[i] = glm::normalize(basis[i]);
+	}
+}
+
+v3f transform_t::get_euler_rotation() const {
+	return glm::eulerAngles(get_orientation());
 }

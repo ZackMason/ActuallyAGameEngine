@@ -120,5 +120,6 @@ struct asset_loader_t {
     resource_handle_t<framebuffer_t> get_framebuffer(const std::string& name, int w, int h, bool msaa = false);
     resource_handle_t<skeletal_model_t> get_skeletal_model(const std::string& path);
     resource_handle_t<skeleton_animation_t> get_animation(const std::string& path, const std::string& model);
+    resource_handle_t<skeleton_animation_t> get_sub_animation(const std::string& path, const std::string& anim,  const std::string& model);
 };
 

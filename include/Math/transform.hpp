@@ -8,6 +8,7 @@
 #include "types.hpp"
 
 #include "Math/aabb.hpp"
+#include "Math/ray.hpp"
 
 struct transform_t {
     transform_t() = default;
@@ -43,7 +44,11 @@ struct transform_t {
 	void set_scale(const v3f& scale);
 	void set_rotation(const v3f& rotation);
 	void set_rotation(const glm::quat& quat);
-    
+	// in radians
+	v3f get_euler_rotation() const;
+
+	void normalize();
+
 	void affine_invert() {
 		basis = glm::inverse(basis);
 		origin = basis * -origin;
@@ -60,6 +65,13 @@ struct transform_t {
 		return v3f(basis * vector) + origin;
 	}
     
+	ray_t xform(const ray_t& ray) const { 
+		return ray_t{
+			xform(ray.origin),
+			glm::normalize(basis * ray.direction)
+		};
+	}
+
 	aabb_t<v3f> xform_aabb(const aabb_t<v3f>& box)const
 	{
 		aabb_t<v3f> t_box;

@@ -18,7 +18,7 @@ struct orbit_camera_t : public camera_t {
     f32 lasty{0.0f};
 
     bool on_scroll_event(const mouse_scroll_event_t& event) {
-        dist += -event.y * 5.0f;
+        dist += -event.y * 2.0f;
         dist = dist < 1.0f ? 1.0f : dist; 
         return true;
     }

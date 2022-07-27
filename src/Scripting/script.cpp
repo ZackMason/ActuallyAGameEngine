@@ -181,7 +181,9 @@ void script_vm_t::init(window_t& window, entt::registry& world, asset_loader_t& 
     chai.add(chaiscript::fun(&transform_t::set_scale), "set_scale");
     chai.add(chaiscript::fun(&transform_t::translate), "translate");
     chai.add(chaiscript::fun(&transform_t::rotate), "rotate");
-    chai.add(chaiscript::fun(&transform_t::xform), "xform");
+    chai.add(chaiscript::fun([](const transform_t& t, const v3f& v) {return t.xform(v);}), "xform");
+    chai.add(chaiscript::fun([](const transform_t& t, const ray_t& r) {return t.xform(r);}), "xform");
+
 
     chai.add(chaiscript::user_type<entt::entity>(), "entt");
     chai.add(chaiscript::fun([](entt::registry& world){return world.create();}), "create");

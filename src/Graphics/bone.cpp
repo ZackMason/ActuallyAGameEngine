@@ -54,15 +54,14 @@ bone_t::bone_t(const std::string& pname, bone_id_t pID, const aiNodeAnim* channe
     }
 }
 
-const m44& bone_t::update(float animationTime)
-{
+const m44& bone_t::update(float animationTime) {
     glm::mat4 translation = interpolate_position(animationTime);
     glm::mat4 rotation = interpolate_rotation(animationTime);
     glm::mat4 scale = interpolate_scale(animationTime);
     return transform = translation * rotation * scale;
 }
-int bone_t::get_position_index(float animationTime)
-{
+
+int bone_t::get_position_index(float animationTime) {
     for (int index = 0; index < positions.size() - 1; ++index)
     {
         if (animationTime < positions[index + 1].timestamp)
@@ -72,8 +71,7 @@ int bone_t::get_position_index(float animationTime)
     return -1;
 }
 
-int bone_t::get_rotation_index(float animationTime)
-{
+int bone_t::get_rotation_index(float animationTime) {
     for (int index = 0; index < rotations.size() - 1; ++index)
     {
         if (animationTime < rotations[index + 1].timestamp)

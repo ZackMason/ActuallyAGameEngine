@@ -19,6 +19,7 @@ void static_mesh_t::update_aabb() {
         aabb.expand(vertex.position);
     }
 }
+
 void static_mesh_t::bind() {
     vertex_array.bind();
 }

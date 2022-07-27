@@ -12,15 +12,15 @@ file(GLOB_RECURSE lib_files
     ${PROJECT_SOURCE_DIR}/src/*.c*
 )
 
-add_library(${PROJECT_NAME} ${lib_files})
+add_library(Engine ${lib_files})
 
-target_include_directories(${PROJECT_NAME} PUBLIC include)
-target_include_directories(${PROJECT_NAME} PUBLIC include/imgui)
+target_include_directories(Engine PUBLIC include)
+target_include_directories(Engine PUBLIC include/imgui)
 
 # This will break the build for some fucking insane reason if it is higher in this file, do not fucking touch, I have wasted so much fucking time because of this stupid fucking flag
 add_compile_options(/bigobj) 
 
-target_compile_definitions(${PROJECT_NAME} PUBLIC CMAKE_ASSETS_PATH="${CMAKE_CURRENT_SOURCE_DIR}/assets/")
+target_compile_definitions(Engine PUBLIC CMAKE_ASSETS_PATH="${CMAKE_CURRENT_SOURCE_DIR}/assets/")
 
 file(GLOB_RECURSE test_files 
     ${PROJECT_SOURCE_DIR}/tests/*.c*
@@ -38,4 +38,4 @@ set_target_properties(EngineTests
 target_compile_definitions(EngineTests PUBLIC CMAKE_ASSETS_PATH="${CMAKE_CURRENT_SOURCE_DIR}/assets/")
 target_link_libraries(EngineTests PUBLIC ${CONAN_LIBS} Engine)
 
-target_link_libraries(${PROJECT_NAME} PUBLIC ${CONAN_LIBS})
+target_link_libraries(Engine PUBLIC ${CONAN_LIBS})

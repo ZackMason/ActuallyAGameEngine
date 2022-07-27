@@ -42,11 +42,14 @@ struct skeleton_animator_t {
     skeleton_animation_t* animation{nullptr};    
 
     explicit skeleton_animator_t(skeleton_animation_t* p_anim) :
-        animation(p_anim), matrices(200, m44(1.0f))
+        animation(p_anim), matrices(skeleton_t::max_bones, m44(1.0f))
     {
     }
 
-    void update(float dt){ 
+    skeleton_animator_t blend(skeleton_animator_t& b, f32 f) const;
+    
+
+    void update(float dt) { 
         if (animation) {
             time += dt * animation->ticks_per_sec;
             time = fmod(time, animation->duration - 0.001f);
@@ -64,8 +67,7 @@ struct skeleton_animator_t {
         }
     }
 
-    void play_animation(skeleton_animation_t* pAnimation)
-	{
+    void play_animation(skeleton_animation_t* pAnimation) {
 		animation = pAnimation;
         std::fill(matrices.begin(), matrices.end(), m44(1.0f));
 		time = 0.0f;

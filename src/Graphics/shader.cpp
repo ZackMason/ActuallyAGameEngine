@@ -147,6 +147,7 @@ shader_t::shader_t(const std::string& p_name, const std::vector<std::string>& p_
             if (stages.back().type == GL_FRAGMENT_SHADER) {
                 stages.pop_back();
                 stages.emplace_back("shaders/error.fs", asset_dir);
+                logger_t::warn(fmt::format("Shader {}: failed to compile", file));
             }
         }
         glAttachShader(id, stages.back().id);
