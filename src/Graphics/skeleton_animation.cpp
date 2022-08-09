@@ -33,8 +33,16 @@ skeleton_animator_t skeleton_animator_t::blend(skeleton_animator_t& b, f32 perc)
     
     res.time = a.time;
 
-    for (int i = 0; i < a.animation->node_count; i++ ) {
-        res.matrices[i] = a.matrices[i] * (1.0f-perc) + b.matrices[i] * perc;
+    static constexpr bool blend_mats = true;
+
+    if constexpr (blend_mats) {
+        for (int i = 0; i < a.animation->node_count; i++ ) {
+            res.matrices[i] = a.matrices[i] * (1.0f-perc) + b.matrices[i] * perc;
+        }
+    } else {
+        for (auto& node : a.animation->nodes) {
+
+        }
     }
     return res;
 }

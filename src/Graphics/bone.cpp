@@ -101,48 +101,53 @@ float bone_t::get_scale_factor(float lastTimeStamp, float nextTimeStamp, float a
     return scaleFactor;
 }
 
-glm::mat4 bone_t::interpolate_position(float animationTime)
-{
-    if (1 == positions.size())
-        return glm::translate(glm::mat4(1.0f), positions[0].position);
-
-    int p0Index = get_position_index(animationTime);
-    int p1Index = p0Index + 1;
-    float scaleFactor = get_scale_factor(positions[p0Index].timestamp,
-        positions[p1Index].timestamp, animationTime);
-    glm::vec3 finalPosition = glm::mix(positions[p0Index].position,
-        positions[p1Index].position, scaleFactor);
-    return glm::translate(glm::mat4(1.0f), finalPosition);
+glm::mat4 bone_t::interpolate_position(float anim) {
+    return glm::translate(glm::mat4(1.0f), get_position(anim));
 }
 
-glm::mat4 bone_t::interpolate_rotation(float animationTime)
-{
-    if (1 == rotations.size())
-    {
-        auto rotation = glm::normalize(rotations[0].orientation);
-        return glm::toMat4(rotation);
+glm::mat4 bone_t::interpolate_rotation(float anim) {
+    return glm::toMat4(get_rotation(anim));
+}
+
+glm::mat4 bone_t::interpolate_scale(float anim) {
+    return glm::scale(glm::mat4(1.0f), get_scale(anim));
+}
+
+v3f bone_t::get_position(float animationTime) {
+    if (1 == positions.size()) {
+        return positions[0].position;
     }
 
-    int p0Index = get_rotation_index(animationTime);
-    int p1Index = p0Index + 1;
-    float scaleFactor = get_scale_factor(rotations[p0Index].timestamp,
-        rotations[p1Index].timestamp, animationTime);
-    glm::quat finalRotation = glm::slerp(rotations[p0Index].orientation,
-        rotations[p1Index].orientation, scaleFactor);
-    finalRotation = glm::normalize(finalRotation);
-    return glm::toMat4(finalRotation);
+    int p0 = get_position_index(animationTime);
+    int p1 = p0 + 1;
+    float scaleFactor = get_scale_factor(positions[p0].timestamp,
+        positions[p1].timestamp, animationTime);
+    return glm::mix(positions[p0].position, positions[p1].position, scaleFactor);
 }
 
-glm::mat4 bone_t::interpolate_scale(float animationTime)
-{
-    if (1 == scales.size())
-        return glm::scale(glm::mat4(1.0f), scales[0].scale);
+glm::quat bone_t::get_rotation(float animationTime) {
+    if (1 == rotations.size()) {
+        return glm::normalize(rotations[0].orientation);
+    }
 
-    int p0Index = get_scale_index(animationTime);
-    int p1Index = p0Index + 1;
-    float scaleFactor = get_scale_factor(scales[p0Index].timestamp,
-        scales[p1Index].timestamp, animationTime);
-    glm::vec3 finalScale = glm::mix(scales[p0Index].scale, scales[p1Index].scale
-        , scaleFactor);
-    return glm::scale(glm::mat4(1.0f), finalScale);
+    int p0 = get_rotation_index(animationTime);
+    int p1 = p0 + 1;
+    float scaleFactor = get_scale_factor(rotations[p0].timestamp,
+        rotations[p1].timestamp, animationTime);
+    glm::quat finalRotation = glm::slerp(rotations[p0].orientation,
+        rotations[p1].orientation, scaleFactor);
+    
+    return glm::normalize(finalRotation);     
+}
+
+v3f bone_t::get_scale(float animationTime) {
+    if (1 == scales.size()) {
+        return scales[0].scale;
+    }
+
+    int p0 = get_scale_index(animationTime);
+    int p1 = p0 + 1;
+    float scaleFactor = get_scale_factor(scales[p0].timestamp, scales[p1].timestamp, animationTime);
+    
+    return glm::mix(scales[p0].scale, scales[p1].scale, scaleFactor);
 }

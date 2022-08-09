@@ -68,6 +68,10 @@ struct bone_t {
     glm::mat4 interpolate_position(float anim);
     glm::mat4 interpolate_rotation(float anim);
     glm::mat4 interpolate_scale(float anim);
+    v3f get_position(float anim);
+    v3f get_scale(float anim);
+    glm::quat get_rotation(float anim);
+
 
     bone_t() = default;
     explicit bone_t(const std::string& pname, bone_id_t pID, const aiNodeAnim* channel);

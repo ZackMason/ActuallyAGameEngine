@@ -29,6 +29,30 @@ struct fmt::formatter<v3f>
     }
 };
 
+template<>
+struct fmt::formatter<m44>
+{
+    template<typename ParseContext>
+    constexpr auto parse(ParseContext& ctx) {
+        return ctx.begin();
+    }
+
+    template<typename FormatContext>
+    auto format(m44 const& m, FormatContext& ctx) {
+        return fmt::format_to(ctx.out(), 
+            R"(
+|{:.2f} {:.2f} {:.2f} {:.2f}|
+|{:.2f} {:.2f} {:.2f} {:.2f}|
+|{:.2f} {:.2f} {:.2f} {:.2f}|
+|{:.2f} {:.2f} {:.2f} {:.2f}|)",
+            m[0][0], m[0][1], m[0][2], m[0][3], 
+            m[1][0], m[1][1], m[1][2], m[1][3], 
+            m[2][0], m[2][1], m[2][2], m[2][3], 
+            m[3][0], m[3][1], m[3][2], m[3][3]);
+    }
+};
+
+
 struct logger_t {
     enum log_level_e {
         PROFILE,

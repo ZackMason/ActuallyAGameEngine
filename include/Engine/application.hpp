@@ -22,6 +22,7 @@ struct application_i {
     entt::registry world;
 
     f32 tick_rate = 1.0f / 60.0f;
+    f32 time_scale = 1.0f;
 
     event_handler_t event_handler;
 
@@ -40,7 +41,7 @@ struct application_i {
         auto accum_time = 0.0f;
         while(!window.should_close()) {
             auto time = window.get_ticks();
-            auto dt = (time - last_time) / tick_rate;
+            auto dt = time_scale * (time - last_time) / tick_rate;
             accum_time += dt;
             last_time = time;
             if (accum_time >= 1.0f) {
