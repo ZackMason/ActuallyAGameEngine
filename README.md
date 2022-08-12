@@ -90,12 +90,19 @@ TODO
 
 TODO
 
+## CastleDB Integration
+
+TODO
+
 # FAQ
 
 ## Why doesn't `static_mesh_t` handle loading from files but `skeleton_model_t` does?
 
 Loading models from files should Ideally be handled by the user because there are lots of different ways to handle all of the textures, it would shoe horn the programmer into a design which they might not want. TODO { Explain more }
 
+## Why no editor
+
+Huge waste of time, you can use ImGUI to make an editor for your specific game if you need too.
 
 
 
