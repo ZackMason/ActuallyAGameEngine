@@ -15,7 +15,7 @@ AAGE only works on windows x64 at the moment, there is a working linux branch wi
 
 You can find a starter template at https://github.com/ZackMason/AAGEStarterTemplate
 
-# Features
+# How AAGE? (Features)
 
 ## Scripting - Native C++
 
