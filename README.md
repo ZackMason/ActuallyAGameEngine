@@ -9,7 +9,7 @@ AAGE is meant to be a less opinionated alternative to raylib. The main use case 
 
 # Where AAGE?
 
-AAGE only works on windows at the moment, there is a working linux branch with only minor changes, it just needs to be updated and is low priority at the moment.
+AAGE only works on windows x64 at the moment, there is a working linux branch with only minor changes, it just needs to be updated and is low priority at the moment. 32 bit will not be supported.
 
 # Template
 
