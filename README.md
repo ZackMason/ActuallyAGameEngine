@@ -118,7 +118,7 @@ TODO
 - Tessalation shaders
 - Text/Localization 
 - DLL exports
-- DX11 Backend - requires shader abstraction/cross-compilation
+- DX11 Backend - probably requires shader abstraction/cross-compilation or user needs to mantain shaders for both APIs
 - Emscripten
 - Android
 - iOS
