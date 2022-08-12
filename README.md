@@ -28,7 +28,7 @@ TODO - Examples
 ## ECS - Entt
 
 AAGE uses entt as an entity component system, but do to the modular structure of the engine it is not required that you actually use it.
-The only part of the actual engine that uses it the scripting virtual machine, which will probably be removed in the near future.
+The only part of the actual engine that uses it is the scripting virtual machine, which will probably be removed in the near future, when this happens entt will be removed as a dependancy.
 
 ## Shader Preprocessing 
 
