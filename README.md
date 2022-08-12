@@ -11,7 +11,7 @@ AAGE is designed to be modular, and easy to modify. AAGE provides easy to use ab
 ## Features
 
 
-### Shader Preproccessing 
+### Shader Preprocessing 
 
 
 #### #include
