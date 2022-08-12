@@ -45,6 +45,10 @@ You can write to a shader header file called `$ASSET_DIR$/shaders/$FILE_NAME$.gl
 static shader_t::add_glsl_constant(const std::string& constant, const std::string& asset_directory, const std::string& file_name) -> void
 ```
 
+## Scriptable Render Pipeline
+
+TODO - Examples
+
 ## Compute Shaders
 
 TODO - Examples
