@@ -8,6 +8,8 @@
 #include "Engine/window.hpp"
 
 #include "imgui.h"
+#include "imgui/imgui_impl_glfw.h"
+#include "imgui/imgui_impl_opengl3.h"
 
 #include <exception>
 #include <stdexcept>
@@ -15,6 +17,20 @@
 namespace internal {
     static bool glfw_initialized = false;
     static bool glad_initialized = false;
+    static bool imgui_initialized = false;
+
+    void init_imgui(GLFWwindow* window) {
+        IMGUI_CHECKVERSION();
+        ImGui::CreateContext();
+        ImGuiIO& io = ImGui::GetIO(); (void)io;
+        
+        ImGui::StyleColorsDark();
+        
+        ImGui_ImplGlfw_InitForOpenGL(window, true);
+        ImGui_ImplOpenGL3_Init("#version 130");
+
+        imgui_initialized = true;
+    }
 
     void init_glfw() {
         glfwInit();
@@ -72,6 +88,8 @@ void window_t::open_window() {
         throw std::runtime_error("Failed to load glad");
     }
     internal::glad_initialized = true;
+
+    if (!internal::imgui_initialized) { internal::init_imgui(window); }
 
     glfwSetWindowUserPointer(window, this);
     glfwSetFramebufferSizeCallback(window,

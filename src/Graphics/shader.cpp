@@ -44,8 +44,12 @@ namespace internal {
     }
 };
 
-void shader_t::add_glsl_constant(const std::string& str, const std::string& asset_dir) {
-    auto out = fmt::output_file(fmt::format("{}shaders/engine.glsl", asset_dir), 
+void shader_t::add_glsl_constant(
+    const std::string& str,
+    const std::string& asset_dir, 
+    const std::string& file
+) {
+    auto out = fmt::output_file(fmt::format("{}shaders/{}.glsl", asset_dir, file), 
         (internal::first_constant ? fmt::file::TRUNC : fmt::file::APPEND) | fmt::file::WRONLY | fmt::file::CREATE);
     internal::first_constant = false;
     out.print("#define {}\n", str);

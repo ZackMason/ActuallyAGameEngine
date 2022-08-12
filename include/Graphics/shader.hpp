@@ -92,7 +92,7 @@ struct shader_t : bindable_i {
 	void set_mat4  (const std::string &name, const m44 &mat) const;
     void set_mat4v (const std::string &name, const m44& mat, int count) const;
 
-    static void add_glsl_constant(const std::string& str, const std::string& dir);
+    static void add_glsl_constant(const std::string& str, const std::string& dir, const std::string& file = "engine");
     static void reset();
 };
 
