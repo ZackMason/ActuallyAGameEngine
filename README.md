@@ -11,6 +11,15 @@ AAGE is meant to be a less opinionated alternative to raylib. The main use case 
 
 AAGE only works on windows x64 at the moment, there is a working linux branch with only minor changes, it just needs to be updated and is low priority at the moment. 32 bit will not be supported.
 
+# Dependancies 
+
+- C++ 20 with MSVC / G++ - (no clang support atm because of <source_location>) 
+- CMake
+- Conan Package Manager
+- OpenGL 4.6
+- Ninja (optional)
+
+
 # Template
 
 You can find a starter template at https://github.com/ZackMason/AAGEStarterTemplate
