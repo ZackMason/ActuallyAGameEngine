@@ -113,7 +113,4 @@ Loading models from files should Ideally be handled by the user because there ar
 
 Huge waste of time, you can use ImGUI to make an editor for your specific game if you need too.
 
-## Can I use this to make X?
-
-Probably
 
