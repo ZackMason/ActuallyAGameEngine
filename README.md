@@ -6,6 +6,10 @@
 
 AAGE is designed to be modular, and easy to modify. AAGE provides easy to use abstractions for OpenGL.
 
+# Template
+
+You can find a start template at `https://github.com/ZackMason/AAGEStarterTemplate`
+
 # Features
 
 ## Scripting - Native C++
