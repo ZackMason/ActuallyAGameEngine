@@ -118,6 +118,7 @@ TODO
 - Tessalation shaders
 - Text/Localization 
 - DLL exports
+- DX11 Backend - requires shader abstraction/cross-compilation
 - Emscripten
 - Android
 - iOS
