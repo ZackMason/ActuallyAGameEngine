@@ -5,7 +5,7 @@
 # Why AAGE?
 
 AAGE is designed to be modular, and easy to modify. AAGE provides easy to use abstractions for OpenGL, Networking, and Scripting.
-AAGE is meant to be a less opinionated alternative to raylib, mainly focused on 3D games.
+AAGE is meant to be a less opinionated alternative to raylib. AAGE's main purpose is for creating 3D games, although other types of applications should be possible.
 
 # Template
 
