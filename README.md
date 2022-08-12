@@ -10,6 +10,24 @@ AAGE is designed to be modular, and easy to modify. AAGE provides easy to use ab
 
 ## Features
 
+## Scripting - Native C++
+
+TODO - Examples
+
+---
+
+### Scripting - Chaiscript
+
+TODO - Examples
+TODO - Constants
+
+---
+
+### Networking
+
+TODO - Examples
+
+---
 
 ### Shader Preprocessing 
 
@@ -26,3 +44,31 @@ You can write to a shader header file called `$ASSET_DIR$/engine.glsl` using
 ```
 static shader_t::add_glsl_constant(const std::string& constant, const std::string& asset_directory, const std::string& file_name) -> void
 ```
+
+---
+
+### Compute Shaders
+
+TODO - Examples
+
+---
+
+### Cascade Shadow Maps
+
+TODO - Examples
+
+---
+
+### Events
+
+TODO - Examples
+
+---
+
+### Asset loader
+
+TODO - Examples
+
+
+
+
