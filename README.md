@@ -18,6 +18,8 @@ AAGE is designed to be modular, and easy to modify. AAGE provides easy to use ab
 
 You can include other files that have the `.glsl` extension by using `#include <foo.glsl>`
 
+---
+
 #### Engine constants
 
 You can write to a shader header file called `$ASSET_DIR$/engine.glsl` using 
