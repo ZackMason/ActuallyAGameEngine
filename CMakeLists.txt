@@ -20,6 +20,7 @@ target_include_directories(Engine PUBLIC include/imgui)
 # This will break the build for some fucking insane reason if it is higher in this file, do not fucking touch, I have wasted so much fucking time because of this stupid fucking flag
 add_compile_options(/bigobj) 
 
+# This asset dir is used for internal tests, you should use your own asset directory
 target_compile_definitions(Engine PUBLIC CMAKE_ASSETS_PATH="${CMAKE_CURRENT_SOURCE_DIR}/assets/")
 
 file(GLOB_RECURSE test_files 
@@ -35,6 +36,7 @@ set_target_properties(EngineTests
                             CXX_EXTENSIONS ON
 )
 
+# This asset dir is used for internal tests, you should use your own asset directory
 target_compile_definitions(EngineTests PUBLIC CMAKE_ASSETS_PATH="${CMAKE_CURRENT_SOURCE_DIR}/assets/")
 target_link_libraries(EngineTests PUBLIC ${CONAN_LIBS} Engine)
 
