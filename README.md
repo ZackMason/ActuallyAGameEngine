@@ -84,6 +84,10 @@ TODO - Examples
 
 TODO - Blending
 
+## Logging
+
+TODO - Examples
+
 # Examples
 
 ## Worldmachine Heightmap
