@@ -25,19 +25,20 @@ namespace internal {
     decltype(shader_t::id) bound_shader = -1;  
 
     void include_preprocess(std::string& code, const std::string& asset_dir) {
-        static const std::regex r("(#include <)([a-zA-Z]+)(\.glsl>)");
+        static const std::regex r(R"(#include <([a-zA-Z]+)\.glsl>)");
         std::smatch m;
         while (std::regex_search(code, m, r)) {
             std::ifstream file;
             std::stringstream code_stream;
-            file.open(fmt::format("{}shaders/{}.glsl", asset_dir, (std::string)m[2]));
+            file.open(fmt::format("{}shaders/{}.glsl", asset_dir, (std::string)m[1]));
             if (file.is_open()) {
                 code_stream << file.rdbuf();
                 file.close();
-                std::regex file_reg("(#include <)" + (std::string)m[2] + "(\.glsl>)");
-                code = std::regex_replace(code, file_reg, code_stream.str());
+                //std::regex file_reg("(#include <)" + (std::string)m[1] + "(\\.glsl>)");
+                //code = std::regex_replace(code, file_reg, code_stream.str());
+                code = m.prefix().str() + code_stream.str() + m.suffix().str();
             } else {
-                throw runtime_error_x(fmt::format("Shader Preprocess: file {}.glsl not found", (std::string)m[2]));
+                throw runtime_error_x(fmt::format("Shader Preprocess: file {}.glsl not found", (std::string)m[1]));
             }
         }
     }

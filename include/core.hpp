@@ -48,3 +48,10 @@ inline T damp(T a, T b, f32 lambda, f32 dt)
 	return lerp(a, b, 1.0f - std::exp(-lambda * dt));
 }
 
+
+template <typename T>
+inline void clamp_length(T& v, f32 max_length) {
+	if (glm::dot(v, v) > max_length * max_length) {
+		v = glm::normalize(v) * max_length;
+	}
+}
