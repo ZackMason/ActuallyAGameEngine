@@ -7,6 +7,10 @@
 AAGE is designed to be modular, and easy to modify. AAGE provides easy to use abstractions for OpenGL, Networking, Scripting, and more.
 AAGE is meant to be a less opinionated alternative to raylib. The main use case of this engine is for creating 3D games, although other types of applications should be possible.
 
+# Where AAGE?
+
+AAGE only works on windows at the moment, there is a working linux branch with only minor changes, it just needs to be updated and is low priority at the moment.
+
 # Template
 
 You can find a starter template at https://github.com/ZackMason/AAGEStarterTemplate
