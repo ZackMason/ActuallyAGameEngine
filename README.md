@@ -17,3 +17,10 @@ AAGE is designed to be modular, and easy to modify. AAGE provides easy to use ab
 #### #include
 
 You can include other files that have the `.glsl` extension by using `#include <foo.glsl>`
+
+#### Engine constants
+
+You can write to a shader header file called `$ASSET_DIR$/engine.glsl` using 
+```
+static shader_t::add_glsl_constant(const std::string& constant, const std::string& asset_directory, const std::string& file_name) -> void
+```
