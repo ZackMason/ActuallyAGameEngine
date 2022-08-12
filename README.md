@@ -9,7 +9,7 @@ AAGE is meant to be a less opinionated alternative to raylib. The main use case 
 
 # Template
 
-You can find a start template at https://github.com/ZackMason/AAGEStarterTemplate
+You can find a starter template at https://github.com/ZackMason/AAGEStarterTemplate
 
 # Features
 
