@@ -8,7 +8,7 @@ AAGE is designed to be modular, and easy to modify. AAGE provides easy to use ab
 
 # Template
 
-You can find a start template at `https://github.com/ZackMason/AAGEStarterTemplate`
+You can find a start template at https://github.com/ZackMason/AAGEStarterTemplate
 
 # Features
 
