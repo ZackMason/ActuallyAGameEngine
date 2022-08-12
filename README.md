@@ -4,7 +4,7 @@
 
 # Why use AAGE?
 
-AAGE is designed to be modular, and easy to modify. AAGE provides easy to use abstractions for OpenGL.
+AAGE is designed to be modular, and easy to modify. AAGE provides easy to use abstractions for OpenGL, Networking, and Scripting.
 
 # Template
 
@@ -24,6 +24,11 @@ TODO - Constants
 ## Networking
 
 TODO - Examples
+
+## ECS - Entt
+
+AAGE uses entt as an entity component system, but do to the modular structure of the engine it is not required that you actually use it.
+The only part of the actual engine that uses it the scripting virtual machine, which will probably be removed in the near future.
 
 ## Shader Preprocessing 
 
