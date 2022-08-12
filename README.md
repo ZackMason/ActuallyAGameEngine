@@ -106,6 +106,21 @@ TODO
 
 TODO
 
+# Missing Features
+
+- Audio
+- 2D Batch Rendering
+- Custom UI
+- Global Illumination
+- G-Buffer
+- Forward Plus Utilities
+- Tessalation shaders
+- Text/Localization 
+- DLL exports
+- Emscripten
+- Android
+- iOS
+
 # FAQ
 
 ## Why doesn't `static_mesh_t` handle loading from files but `skeleton_model_t` does?
