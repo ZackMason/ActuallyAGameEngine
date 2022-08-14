@@ -59,6 +59,22 @@ You can write to a shader header file called `$ASSET_DIR$/shaders/$FILE_NAME$.gl
 static shader_t::add_glsl_constant(const std::string& constant, const std::string& asset_directory, const std::string& file_name) -> void
 ```
 
+### Parse uniforms
+
+Shader uniforms can be parsed from shaders by marking them with `// export ?[MIN_RANGE, STEP, MAX_RANGE] ?START_VALUE` and using `shader_t::get_uniform_variables()`.
+
+There is a function to display the uniforms using Imgui called `shader_t::uniform_edit()`
+
+Example
+```
+
+uniform float a; // export
+uniform int b; // export 1337
+uniform int c; // export [0, 5, 1337]
+uniform vec3 c1; // export [0, 0.1, 1] 0.5
+
+```
+
 ## Scriptable Render Pipeline
 
 TODO - Examples
