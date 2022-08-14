@@ -89,7 +89,6 @@ void window_t::open_window() {
     }
     internal::glad_initialized = true;
 
-    if (!internal::imgui_initialized) { internal::init_imgui(window); }
 
     glfwSetWindowUserPointer(window, this);
     glfwSetFramebufferSizeCallback(window,
@@ -140,6 +139,7 @@ void window_t::open_window() {
         self.event_callback(event);
     });
 
+    if (!internal::imgui_initialized) { internal::init_imgui(window); }
 }
 
 
