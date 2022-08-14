@@ -37,4 +37,8 @@ bool has_extension(const std::string& str, const std::string& ext) {
     return get_extension(str) == ext;
 }
 
+std::string remove_path(const std::string& str) {
+    return str.substr(str.find_last_of("/\\") + 1);
+}
+
 

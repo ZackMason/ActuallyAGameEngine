@@ -40,6 +40,6 @@ const std::string& sid_to_string(string_id_t id);
 std::string get_extension(const std::string& s);
 bool has_extension(const std::string& s, const std::string& ext);
 
-
+std::string remove_path(const std::string& str);
 
 

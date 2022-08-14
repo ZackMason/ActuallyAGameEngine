@@ -35,6 +35,18 @@ struct mouse_scroll_event_t : position2d_event_t {
     MAKE_EVENT_TYPE(mouse_scroll)
 };
 
+struct file_dropped_event_t : event_i {
+    explicit file_dropped_event_t() = default;
+    explicit file_dropped_event_t(std::vector<std::string>&& files_) 
+        : files(std::move(files_))
+    {}
+    virtual ~file_dropped_event_t() = default;
+
+    std::vector<std::string> files;
+
+    MAKE_EVENT_TYPE(file_dropped);
+};
+
 struct key_event_t : public event_i {
     explicit key_event_t(int pk, int ps, int pm) :
     key(pk), scancode(ps), mode(pm) {}

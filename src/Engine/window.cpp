@@ -129,6 +129,17 @@ void window_t::open_window() {
         self.event_callback(event);
     });
 
+    glfwSetDropCallback(window, [](GLFWwindow* window, int count, const char** paths){
+        window_t& self = *static_cast<window_t*>(glfwGetWindowUserPointer(window));
+        
+        std::vector<std::string> files;
+        for (int i = 0; i < count; i++) {
+            files.emplace_back(paths[i]);
+        }
+        file_dropped_event_t event{std::move(files)};
+        self.event_callback(event);
+    });
+
 }
 
 
