@@ -119,6 +119,10 @@ TODO - Examples
 
 TODO
 
+## Shader Editor
+
+https://github.com/ZackMason/AAGEShaderEditor
+
 ## Voxel Rendering 
 
 https://github.com/ZackMason/AAGEVoxelExample
