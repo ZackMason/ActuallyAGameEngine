@@ -25,7 +25,7 @@ namespace internal {
     decltype(shader_t::id) bound_shader = -1;  
 
     void include_preprocess(std::string& code, const std::string& asset_dir) {
-        static const std::regex r(R"(#include <([a-zA-Z]+)\.glsl>)");
+        static const std::regex r(R"(#include <([a-zA-Z_]+)\.glsl>)");
         std::smatch m;
         while (std::regex_search(code, m, r)) {
             std::ifstream file;
@@ -38,11 +38,27 @@ namespace internal {
                 //code = std::regex_replace(code, file_reg, code_stream.str());
                 code = m.prefix().str() + code_stream.str() + m.suffix().str();
             } else {
-                throw runtime_error_x(fmt::format("Shader Preprocess: file {}.glsl not found", (std::string)m[1]));
+                throw runtime_error_x(fmt::format("Shader Preprocess: file {}{}.glsl not found", asset_dir, (std::string)m[1]));
             }
         }
     }
 };
+
+void shader_t::add_attribute_definition(
+    const std::vector<std::string>& attrs,
+    const std::string& file,
+    const std::string& asset_dir
+) {
+    static bool first = true;
+    auto out = fmt::output_file(fmt::format("{}shaders/{}.glsl", asset_dir, file), 
+        (first ? fmt::file::TRUNC : fmt::file::APPEND) | fmt::file::WRONLY | fmt::file::CREATE);
+    
+    for (size_t i = 0; const auto& attr: attrs) {
+        out.print("layout(location = {}) in {};\n", i++, attr);
+    }
+
+    first = false;
+}
 
 void shader_t::add_glsl_constant(
     const std::string& str,
@@ -98,7 +114,7 @@ shader_stage_t::shader_stage_t(const std::string& path, const std::string& asset
         internal::include_preprocess(shader_code, asset_dir);
         //IncludePreprocess(shader_code);
     } catch (std::ifstream::failure & e) {
-        logger_t::warn(fmt::format("Shader stage error: {} - {}", path, e.what()));
+        logger_t::error(fmt::format("Shader stage error: {} - {}", path, e.what()));
     }
 
     const char* vShaderCode = shader_code.c_str();
@@ -114,7 +130,7 @@ shader_stage_t::shader_stage_t(const std::string& path, const std::string& asset
         char infoLog[512];
         glGetShaderInfoLog(shader_slot, 512, NULL, infoLog);
         //throw runtime_error_x(fmt::format("Shader stage error: {} - {} - {}", path, type, infoLog));
-        logger_t::warn(fmt::format("Shader stage error: {} - {} - {}", path, type, infoLog));
+        logger_t::error(fmt::format("Shader stage error: {} - {} - {}", path, type, infoLog));
         id = -1;
     } else {
         id = shader_slot;
