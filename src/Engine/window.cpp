@@ -18,9 +18,20 @@ namespace internal {
     static bool glfw_initialized = false;
     static bool glad_initialized = false;
     static bool imgui_initialized = false;
+    static GLFWwindow* imgui_window_context{nullptr};
+
+    void init_glad() {
+        if (!glad_initialized && !gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)){
+            throw std::runtime_error("Failed to load glad");
+        }
+        internal::glad_initialized = true;
+    }
 
     void init_imgui(GLFWwindow* window) {
         IMGUI_CHECKVERSION();
+        if (imgui_initialized) {
+            ImGui::DestroyContext();
+        }
         ImGui::CreateContext();
         ImGuiIO& io = ImGui::GetIO(); (void)io;
         
@@ -30,6 +41,7 @@ namespace internal {
         ImGui_ImplOpenGL3_Init("#version 130");
 
         imgui_initialized = true;
+        imgui_window_context = window;
     }
 
     void init_glfw() {
@@ -74,6 +86,20 @@ const bool window_t::is_open() const {
     return window != nullptr && !glfwWindowShouldClose(window); 
 }
 
+void window_t::make_imgui_context() const {
+    internal::init_imgui(window);
+}
+
+void window_t::imgui_new_frame() const {
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
+}
+
+void window_t::imgui_render() const {
+    ImGui::Render();
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+}
 
 void window_t::open_window() {
     if (!internal::glfw_initialized) internal::init_glfw();
@@ -82,15 +108,13 @@ void window_t::open_window() {
     if (window == nullptr){
         throw std::runtime_error("Failed to create glfw window");
     }
+
     glfwMakeContextCurrent(window);
 
-    if (!internal::glad_initialized && !gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)){
-        throw std::runtime_error("Failed to load glad");
-    }
-    internal::glad_initialized = true;
-
-
+    internal::init_glad();
+    
     glfwSetWindowUserPointer(window, this);
+    
     glfwSetFramebufferSizeCallback(window,
         [](GLFWwindow* window, int w, int h) {
             if (!w||!h) return;
@@ -102,8 +126,10 @@ void window_t::open_window() {
             window_resize_event_t event{w,h};
             self.event_callback(event);
     });
+    
     glfwSetScrollCallback(window, [](GLFWwindow* window, double x, double y) {
-        if (ImGui::GetIO().WantCaptureMouse) return;
+        if (internal::imgui_window_context == window)
+            if (ImGui::GetIO().WantCaptureMouse) return;
         window_t& self = *static_cast<window_t*>(glfwGetWindowUserPointer(window));
         self.scroll = {self.scroll[0] + (f32)x, self.scroll[1] + (f32)y};
         
@@ -112,7 +138,8 @@ void window_t::open_window() {
     });
 
     glfwSetCursorPosCallback(window, [](GLFWwindow* window, double x, double y) {
-        if (ImGui::GetIO().WantCaptureMouse) return;
+        if (internal::imgui_window_context == window)
+            if (ImGui::GetIO().WantCaptureMouse) return;
         window_t& self = *static_cast<window_t*>(glfwGetWindowUserPointer(window));
     
         mouse_move_event_t event{(int)x,(int)y};
@@ -121,7 +148,8 @@ void window_t::open_window() {
     });
 
     glfwSetKeyCallback(window, [](GLFWwindow* window, int key, int scancode, int action, int mode){
-        if (ImGui::GetIO().WantCaptureKeyboard) return;
+        if (internal::imgui_window_context == window)
+            if (ImGui::GetIO().WantCaptureKeyboard) return;
         window_t& self = *static_cast<window_t*>(glfwGetWindowUserPointer(window));
     
         key_event_t event{key, scancode, action};
@@ -138,33 +166,34 @@ void window_t::open_window() {
         file_dropped_event_t event{std::move(files)};
         self.event_callback(event);
     });
-
-    if (!internal::imgui_initialized) { internal::init_imgui(window); }
 }
 
-
 decltype(window_t::scroll) window_t::get_scroll() {
-		const auto t = scroll;
-		scroll = {0.0f, 0.0f};
+    const auto t = scroll;
+    scroll = {0.0f, 0.0f};
     return t;
 }
 
 f32 window_t::get_ticks() const {
     return static_cast<f32>(glfwGetTime());
 }
+
 std::array<f32, 2> window_t::get_mouse() const {
     double x,y;
     glfwGetCursorPos(window, &x, &y);
     return {static_cast<f32>(x), static_cast<f32>(y)};
 }
+
 bool window_t::is_button_pressed(int button) const {
     if (ImGui::GetIO().WantCaptureMouse) return false;
     return glfwGetMouseButton(window, button) == GLFW_PRESS;
 }
+
 bool window_t::is_key_pressed(int key) const {
     if (ImGui::GetIO().WantCaptureKeyboard) return false;
     return glfwGetKey(window, key) == GLFW_PRESS;
 }
+
 bool window_t::is_key_released(int key) const {
     if (ImGui::GetIO().WantCaptureKeyboard) return true;
     return glfwGetKey(window, key) == GLFW_RELEASE;

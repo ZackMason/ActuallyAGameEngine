@@ -9,7 +9,7 @@
 void orbit_fly_camera_t::update(window_t& window, f32 dt) {
     orbit_camera.width = fly_camera.width = (f32)window.width;
     orbit_camera.height = fly_camera.height = (f32)window.height;
-    if (is_fly) {
+    if (is_fly) { // for a white guy
         orbit_camera.position = fly_camera.position;
         orbit_camera.lastx = fly_camera.lastx;
         orbit_camera.lasty = fly_camera.lasty;

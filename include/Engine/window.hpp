@@ -72,6 +72,8 @@ struct window_t {
 
     ~window_t();
 
+    void make_imgui_context() const;
+
     void set_width(int);
     void set_height(int);
 
@@ -88,6 +90,9 @@ struct window_t {
     const bool should_close() const;
     const bool is_open() const;
     void set_title(const char* t);
+
+    void imgui_new_frame() const;
+    void imgui_render() const;
 
     bool is_key_pressed(int key) const;
     bool is_key_released(int key) const;
