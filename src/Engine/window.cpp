@@ -185,17 +185,20 @@ std::array<f32, 2> window_t::get_mouse() const {
 }
 
 bool window_t::is_button_pressed(int button) const {
-    if (ImGui::GetIO().WantCaptureMouse) return false;
+    if (internal::imgui_window_context == window)
+        if (ImGui::GetIO().WantCaptureMouse) return false;
     return glfwGetMouseButton(window, button) == GLFW_PRESS;
 }
 
 bool window_t::is_key_pressed(int key) const {
-    if (ImGui::GetIO().WantCaptureKeyboard) return false;
+    if (internal::imgui_window_context == window)
+        if (ImGui::GetIO().WantCaptureKeyboard) return false;
     return glfwGetKey(window, key) == GLFW_PRESS;
 }
 
 bool window_t::is_key_released(int key) const {
-    if (ImGui::GetIO().WantCaptureKeyboard) return true;
+    if (internal::imgui_window_context == window)
+        if (ImGui::GetIO().WantCaptureKeyboard) return true;
     return glfwGetKey(window, key) == GLFW_RELEASE;
 }
 
