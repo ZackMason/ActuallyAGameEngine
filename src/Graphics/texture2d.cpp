@@ -26,7 +26,7 @@ void texture2d_t::mipmap() {
 }
 void texture2d_t::bind_image() {
 
-	glBindImageTexture(slot, id, 0, GL_FALSE, 0, GL_READ_WRITE, data_format);
+	glBindImageTexture(slot, id, 0, GL_FALSE, 0, GL_READ_WRITE, internal_format);
 }
 
 void texture2d_t::bind() {

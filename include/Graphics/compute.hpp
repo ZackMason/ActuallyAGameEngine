@@ -11,7 +11,7 @@
 
 #include <string>
 
-struct texture_compute_t{
+struct texture_compute_t {
 
     void bind_buffer(unsigned int buffer);
     void execute(unsigned int count);
