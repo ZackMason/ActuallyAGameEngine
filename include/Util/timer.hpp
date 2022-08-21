@@ -8,6 +8,14 @@
 #include "types.hpp"
 
 struct timer32_t {
-    f32 time{0.0f};
+
+    f32 get_dt(double ticks) {
+        dt = ticks - last_time;
+        last_time = ticks;
+        return dt;
+    }
+
+    f32 dt{0.0f};
+    f32 last_time{0.0f};
 };
 
