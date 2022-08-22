@@ -127,6 +127,10 @@ https://github.com/ZackMason/AAGEShaderEditor
 
 https://github.com/ZackMason/AAGEVoxelExample
 
+## Global Illumination
+
+https://github.com/ZackMason/AAGEGlobalIllumination
+
 ## Worldmachine Heightmap
 
 TODO
