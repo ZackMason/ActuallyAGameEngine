@@ -29,6 +29,20 @@ struct fmt::formatter<v3f>
     }
 };
 
+template<typename T>
+struct fmt::formatter<glm::vec<3, T>>
+{
+    template<typename ParseContext>
+    constexpr auto parse(ParseContext& ctx) {
+        return ctx.begin();
+    }
+
+    template<typename FormatContext>
+    auto format(glm::vec<3, T> const& v, FormatContext& ctx) {
+        return fmt::format_to(ctx.out(), "[{}, {}, {}]", v.x, v.y, v.z);
+    }
+};
+
 template<>
 struct fmt::formatter<m44>
 {

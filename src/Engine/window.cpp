@@ -208,10 +208,18 @@ void window_t::set_vsync(bool vsync) {
 
 void window_t::toggle_fullscreen() {
     auto monitor = glfwGetWindowMonitor(window); // false if windowed mode
+
     set_fullscreen(!monitor);
 }
 
 void window_t::set_fullscreen(bool full) {
+    if (full) {
+        const auto mon = glfwGetPrimaryMonitor();
+        int x,y,w,h;
+        glfwGetMonitorWorkarea(mon, &x, &y, &w, &h);
+        set_width(w);
+        set_height(h);
+    }
     glfwSetWindowMonitor(window, full ? glfwGetPrimaryMonitor() : nullptr, GLFW_DONT_CARE, GLFW_DONT_CARE, width, height, GLFW_DONT_CARE);
 }
 
