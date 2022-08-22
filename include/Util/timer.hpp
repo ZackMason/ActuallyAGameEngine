@@ -9,7 +9,7 @@
 
 struct timer32_t {
 
-    f32 get_dt(double ticks) {
+    f32 get_dt(f32 ticks) {
         dt = ticks - last_time;
         last_time = ticks;
         return dt;

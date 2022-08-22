@@ -19,6 +19,10 @@ struct aabb_t {
         return max - min;
     }
 
+    T center() const {
+        return (max+min)/2.0f;
+    }
+
     void expand(const aabb_t<T>& o) {
         expand(o.min);
         expand(o.max);
@@ -30,7 +34,7 @@ struct aabb_t {
     }
 
     bool contains(const v3f& p) const {
-        static_assert(std::is_same<T, v3f>::value);
+        //static_assert(std::is_same<T, v3f>::value);
     
         return 
             min.x <= p.x &&
