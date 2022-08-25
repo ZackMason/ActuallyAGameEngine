@@ -40,7 +40,7 @@ inline T lerp(T a, T b, f32 t)
 template <typename T>
 inline T lerp_dt(T a, T b, f32 s, f32 dt)
 {
-	return lerp(a, b, 1.0f - std::pow(s, dt));
+	return lerp(b, a, std::pow(1.0f - s, dt));
 }
 template <typename T>
 inline T damp(T a, T b, f32 lambda, f32 dt)

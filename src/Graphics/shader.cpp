@@ -49,15 +49,12 @@ void shader_t::add_attribute_definition(
     const std::string& file,
     const std::string& asset_dir
 ) {
-    static bool first = true;
     auto out = fmt::output_file(fmt::format("{}shaders/{}.glsl", asset_dir, file), 
-        (first ? fmt::file::TRUNC : fmt::file::APPEND) | fmt::file::WRONLY | fmt::file::CREATE);
+        fmt::file::TRUNC | fmt::file::WRONLY | fmt::file::CREATE);
     
     for (size_t i = 0; const auto& attr: attrs) {
         out.print("layout(location = {}) in {};\n", i++, attr);
     }
-
-    first = false;
 }
 
 void shader_t::add_glsl_constant(
