@@ -212,6 +212,7 @@ void window_t::toggle_fullscreen() {
     set_fullscreen(!monitor);
 }
 
+// TODO: save width and height for when you exit fullscreen
 void window_t::set_fullscreen(bool full) {
     if (full) {
         const auto mon = glfwGetPrimaryMonitor();
@@ -220,7 +221,10 @@ void window_t::set_fullscreen(bool full) {
         set_width(w);
         set_height(h);
     }
-    glfwSetWindowMonitor(window, full ? glfwGetPrimaryMonitor() : nullptr, GLFW_DONT_CARE, GLFW_DONT_CARE, width, height, GLFW_DONT_CARE);
+    glfwSetWindowMonitor(window, 
+        full ? glfwGetPrimaryMonitor() : nullptr, 
+        GLFW_DONT_CARE, GLFW_DONT_CARE, 
+        width, height, GLFW_DONT_CARE);
 }
 
 const bool window_t::should_close() const {
