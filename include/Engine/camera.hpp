@@ -8,6 +8,9 @@
 #include "core.hpp"
 
 #include "Math/ray.hpp"
+#include "Math/aabb.hpp"
+#include "Math/transform.hpp"
+
 #include "Util/vector.hpp"
 
 struct camera_t {
@@ -82,6 +85,42 @@ struct camera_t {
 		ray_eye.z = -1.0f;
 		ray_eye.w = 0.0f;
 		return { get_position(), glm::normalize(v3f(glm::inverse(view) * ray_eye)) };
+	}
+
+	bool cull_aabb(
+		const aabb_t<v3f>& aabb,
+		const transform_t& tr
+	) const {
+
+		if (tr.xform_aabb(aabb).contains(position
+		)) {
+			return false;
+		}
+
+		const auto within = [](f32 a, f32 b, f32 c) {
+			return a <= b && b <= c;
+		};
+
+		const v4f corners[8] = {
+			{aabb.min.x, aabb.min.y, aabb.min.z, 1.0f},
+			{aabb.max.x, aabb.min.y, aabb.min.z, 1.0f},
+			{aabb.min.x, aabb.max.y, aabb.min.z, 1.0f},
+			{aabb.max.x, aabb.max.y, aabb.min.z, 1.0f},
+
+			{aabb.min.x, aabb.min.y, aabb.max.z, 1.0f},
+			{aabb.max.x, aabb.min.y, aabb.max.z, 1.0f},
+			{aabb.min.x, aabb.max.y, aabb.max.z, 1.0f},
+			{aabb.max.x, aabb.max.y, aabb.max.z, 1.0f},
+		};
+
+		bool inside = false;
+		for (size_t i = 0; i < 8; i++) {
+			const v4f corner =  view_projection() * tr.to_matrix() * corners[i];
+			inside = inside || within(-corner.w, corner.x, corner.w) &&
+				within(-corner.w, corner.y, corner.w) &&
+				within(0.0f, corner.z, corner.w);
+		}
+		return !inside;
 	}
 
     f32 fov = 45.0f;

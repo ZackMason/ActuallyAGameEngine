@@ -79,7 +79,7 @@ struct skeletal_model_t {
 
     virtual ~skeletal_model_t() {
         for(auto mesh: meshes){
-            delete mesh;
+        //    delete mesh;
         }
     }
     

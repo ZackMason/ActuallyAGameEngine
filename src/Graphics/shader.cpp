@@ -96,7 +96,7 @@ shader_stage_t::shader_stage_t(const std::string& path, const std::string& asset
     } else if (path.substr(path.find_last_of(".") + 1) == "cs") {
         type = GL_COMPUTE_SHADER;
     } else {
-        throw runtime_error_x("Unknown shader type");
+        throw runtime_error_x(fmt::format("Unknown shader type: {}", path));
     }
 
     std::string shader_code;

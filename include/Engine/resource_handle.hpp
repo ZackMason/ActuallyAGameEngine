@@ -47,8 +47,13 @@ public:
         count++;
         return *this;
     };
-    operator int() {
-        return resource->id;
+    
+    //operator int() {
+    //    return resource->id;
+    //}
+
+    operator bool() {
+        return valid();
     }
 
     [[nodiscard]] bool valid() const { return resource != nullptr; }

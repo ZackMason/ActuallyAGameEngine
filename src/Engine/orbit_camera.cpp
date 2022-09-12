@@ -44,7 +44,7 @@ void orbit_camera_t::update(window_t& window, f32 dt) {
     auto [x,y] = window.get_mouse();
          auto [dx, dy] = std::array<f32,2>{lastx-x, lasty-y};
 
-        if (window.is_button_pressed(GLFW_MOUSE_BUTTON_2)) {
+        if (window.is_button_pressed(GLFW_MOUSE_BUTTON_3)) {
         yaw += -dx * dt  * camera_look_speed;
         pitch += dy * dt * camera_look_speed;
     }
