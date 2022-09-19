@@ -27,7 +27,7 @@ public:
         count--;
     }
 
-    resource_handle_t(resource_handle_t& o) 
+    resource_handle_t(const resource_handle_t& o) 
     : resource(o.resource), count(o.count) 
     {
         count++;

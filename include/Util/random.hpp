@@ -136,6 +136,11 @@ struct random_t {
 struct random_s {
     inline static random_t<xor64_random_t> state;
 
+    template <typename T>
+    static auto choice(const T& indexable) -> const typename T::value_type& {
+        return state.choice(indexable);
+    }
+
     static void randomize() {
         state.randomize();
     }

@@ -11,11 +11,20 @@ struct vertex_array_t : drawable_i {
     GLsizei size;
     GLenum topology = GL_TRIANGLES;
 
-    void draw() override {
+    void draw() {
         bind();
             glDrawArrays(topology, 0, (size));
         unbind();
     }
+    
+    template <typename T>
+        //requires (std::is_same<T::value_type, unsigned int>::value)
+    void draw(const buffer_t<T>& buffer) {
+        bind();
+            glDrawElements(topology, static_cast<GLsizei>(buffer.data.size()), GL_UNSIGNED_INT, 0);
+        unbind();
+    }
+
     void unbind();
     void bind();
 
@@ -38,14 +47,21 @@ struct vertex_array_t : drawable_i {
         return *this;
     }
 
-    virtual ~vertex_array_t() {
-        glDeleteVertexArrays(1, &id);
-    }
-    explicit vertex_array_t(size_t s) : size(static_cast<GLsizei>(s)) {
+    void create() {
         glGenVertexArrays(1, &id);
     }
 
-    vertex_array_t() = default;
+    virtual ~vertex_array_t() {
+        glDeleteVertexArrays(1, &id);
+    }
+
+    explicit vertex_array_t(size_t s) : size(static_cast<GLsizei>(s)) {
+        create();
+    }
+
+    explicit vertex_array_t() : size(0) {
+        create();
+    }
     vertex_array_t(vertex_array_t&) = delete;
     vertex_array_t(vertex_array_t&&) = delete;
     vertex_array_t& operator=(vertex_array_t&) = delete;

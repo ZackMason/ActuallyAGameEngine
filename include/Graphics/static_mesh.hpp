@@ -39,6 +39,7 @@ struct static_mesh_t : drawable_i {
         : buffer_object(p_vertices), vertex_array(buffer_object.size()), aabb{}
     {
         buffer_object.bind();
+
         vertex_array.bind_ref()
             .set_attrib(0, 3, GL_FLOAT, sizeof(static_vertex_t), offsetof(static_vertex_t, position))
             .set_attrib(1, 3, GL_FLOAT, sizeof(static_vertex_t), offsetof(static_vertex_t, normal))

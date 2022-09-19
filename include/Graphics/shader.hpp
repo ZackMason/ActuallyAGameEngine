@@ -78,6 +78,7 @@ struct shader_t : bindable_i {
     void set_uniform_block(const std::string &name, int loc) const;
 	void set_bool  (const std::string &name, bool  value) const;
 	void set_int   (const std::string& name, int   value) const;
+    void set_intv  (const std::string& name, int*  value, int count) const;
 	void set_uint  (const std::string &name, unsigned int   value) const;
 	void set_float (const std::string &name, float value) const;
 	void set_floatv (const std::string &name, const float* value, int count) const;

@@ -8,6 +8,7 @@
 #include <string>
 
 using string_id_t = size_t;
+using sid_t = string_id_t;
 
 // https://stackoverflow.com/questions/48896142/is-it-possible-to-get-hash-values-as-compile-time-constants
 template <typename Str>

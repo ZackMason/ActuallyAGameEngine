@@ -29,9 +29,11 @@ struct buffer_t : bindable_i {
 
     void create() {
         glGenBuffers(1, &id);
-        glBindBuffer(type, id);
+        bind();
         
-        glBufferData(type, data.size() * sizeof(typename T::value_type), data.data(), GL_STATIC_DRAW);
+        if (data.size()) {
+            glBufferData(type, data.size() * sizeof(typename T::value_type), data.data(), GL_STATIC_DRAW);
+        }
     }
 
     void update_buffer() {

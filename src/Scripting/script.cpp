@@ -121,7 +121,8 @@ void script_vm_t::init(window_t& window, entt::registry& world, asset_loader_t& 
     chai.add(chaiscript::fun(&buffer_t<utl::vector<v3f>>::data), "data");
     chai.add(chaiscript::fun(&vertex_array_t::bind), "bind");
     chai.add(chaiscript::fun(&vertex_array_t::unbind), "unbind");
-    chai.add(chaiscript::fun(&vertex_array_t::draw), "draw");
+    //chai.add(chaiscript::fun(&vertex_array_t::draw), "draw");
+    chai.add(chaiscript::fun([](vertex_array_t& v){v.draw();}), "draw");
     chai.add(chaiscript::fun(&vertex_array_t::set_attrib), "set_attrib");
 
     chai.add(chaiscript::user_type<asset_loader_t>(), "asset_loader_t");

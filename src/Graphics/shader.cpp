@@ -313,6 +313,9 @@ void shader_t::set_bool(const std::string &n, bool value) const {
 void shader_t::set_int(const std::string &n, int value) const {
 	glUniform1i(get_uniform_location(n), value);
 }
+void shader_t::set_intv(const std::string &n, int* value, int count) const {
+	glUniform1iv(get_uniform_location(n), count, value);
+}
 void shader_t::set_uint(const std::string& n, unsigned int value) const {
 	glUniform1ui(get_uniform_location(n), value);
 }
