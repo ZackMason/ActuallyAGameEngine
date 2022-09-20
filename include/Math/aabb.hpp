@@ -45,6 +45,16 @@ struct aabb_t {
             p.z <= max.z;
     }
 
+    bool contains(const v2f& p) const {
+        //static_assert(std::is_same<T, v3f>::value);
+    
+        return 
+            min.x <= p.x &&
+            min.y <= p.y &&
+            p.x <= max.x &&
+            p.y <= max.y;
+    }
+
     bool contains(const f32 p) const {
         static_assert(std::is_same<T, f32>::value);
         return min <= p && p <= max;
