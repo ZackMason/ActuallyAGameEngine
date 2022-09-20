@@ -12,7 +12,7 @@ AAGE only works on windows x64 at the moment, there is a working linux branch wi
 
 # Dependancies 
 
-- C++ 20 with MSVC / G++ - (no clang support atm because of <source_location>) 
+- C++ 20 with MSVC / G++ 
 - CMake
 - Conan Package Manager
 - OpenGL 4.6
