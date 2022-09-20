@@ -168,15 +168,3 @@ TODO
 - Android
 - iOS
 
-# FAQ
-
-## Why doesn't `static_mesh_t` handle loading from files but `skeleton_model_t` does?
-
-Loading models from files should Ideally be handled by the user because there are lots of different ways to handle all of the textures/shaders, it would shoe horn the programmer into a design which they might not want. `skeleton_mesh_t` exisits if you do not want to use `skeleton_model_t` or you can implement your own.
-
-
-## Why no editor?
-
-Huge waste of time, you can use ImGUI to make an editor for your specific game if you need too.
-
-
