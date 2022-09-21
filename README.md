@@ -58,6 +58,10 @@ You can write to a shader header file called `$ASSET_DIR$/shaders/$FILE_NAME$.gl
 static shader_t::add_glsl_constant(const std::string& constant, const std::string& asset_directory, const std::string& file_name) -> void
 ```
 
+### Vertex Attributes
+
+You can generate vertex attribute using `shader_t::add_attribute_definition`
+
 ### Parse uniforms
 
 Shader uniforms can be parsed from shaders by marking them with `// export ?[MIN_RANGE, STEP, MAX_RANGE] ?START_VALUE` and using `shader_t::get_uniform_variables()`.
