@@ -125,6 +125,7 @@ namespace color {
         static auto clear = "#00000000"_c3;
         static auto black = "#000000ff"_c3;
         static auto white = "#ffffffff"_c3;
+        static auto gray  = "#333333ff"_c3;
         static auto red   = "#ff0000ff"_c3;
         static auto green = "#00ff00ff"_c3;
         static auto cyan  = "#00ffffff"_c3;
