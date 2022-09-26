@@ -81,7 +81,7 @@ struct shader_t : bindable_i {
     void set_intv  (const std::string& name, int*  value, int count) const;
 	void set_uint  (const std::string &name, unsigned int   value) const;
 	void set_float (const std::string &name, float value) const;
-	void set_floatv (const std::string &name, const float* value, int count) const;
+	void set_floatv(const std::string &name, const float* value, int count) const;
 	void set_vec2  (const std::string &name, float x, float y) const;
 	void set_vec3  (const std::string &name, float x, float y, float z) const;
 	void set_vec4  (const std::string &name, float x, float y, float z, float w);

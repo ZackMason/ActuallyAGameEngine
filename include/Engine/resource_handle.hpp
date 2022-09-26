@@ -56,6 +56,10 @@ public:
         return valid();
     }
 
+    T* operator->() {
+        return resource;
+    }
+
     [[nodiscard]] bool valid() const { return resource != nullptr; }
 
     [[nodiscard]] T* get_ptr() const {

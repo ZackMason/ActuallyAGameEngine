@@ -14,6 +14,8 @@
 
 #include "Engine/resource_handle.hpp"
 
+#include "Math/aabb.hpp"
+
 struct batch2d_t {
     struct vertex2d_t {
         v2f position{};
@@ -28,23 +30,92 @@ struct batch2d_t {
     size_t quad_count{0};
 
     void draw(resource_handle_t<texture2d_t> texture, const v2f& position) {
-        add_quad( (v2f{position.x*2, screen_size.y} - position) / screen_size, 
+        add_quad( 
+            (v2f{position.x*2, screen_size.y} - position) / screen_size, 
             v2f{texture.get().width, texture.get().height} / screen_size, 
-            get_texture(texture));
+            get_texture(texture)
+        );
     }
 
     void draw(resource_handle_t<texture2d_t> texture, const v2f& position, const v2f& size) {
-        add_quad( (v2f{position.x*2, screen_size.y} - position) / screen_size, 
+        add_quad( 
+            (v2f{position.x*2, screen_size.y} - position) / screen_size, 
             size / screen_size, 
-            get_texture(texture));
+            get_texture(texture)
+        );
     }
 
     void draw_scaled(resource_handle_t<texture2d_t> texture, const v2f& position, const v2f& scale) {
-        add_quad( (v2f{position.x*2, screen_size.y} - position) / screen_size, 
+        add_quad( 
+            (v2f{position.x*2, screen_size.y} - position) / screen_size, 
             v2f{texture.get().width, texture.get().height} / screen_size * scale, 
-            get_texture(texture));
+            get_texture(texture)
+        );
     }
 
+    void draw_ex(
+        const resource_handle_t<texture2d_t> texture,
+        const v2f& center,
+        const f32 angle
+    ) {
+        draw_ex(
+            texture,
+            center,
+            texture.get().get_image_size(),
+            angle
+        );
+    }
+
+    void draw_ex(
+        const resource_handle_t<texture2d_t> texture,
+        const v2f& center,
+        const v2f& size,
+        const f32 angle
+    ) {
+        add_quad_ex(
+            (v2f{center.x*2, screen_size.y} - center) / screen_size,
+            size, 
+            angle, 
+            get_texture(texture)
+        );
+    }
+
+    void add_quad_ex(
+        const v2f& center, 
+        const v2f& size, 
+        f32 angle, 
+        int texture_id
+    ) {
+        const v2f h_size = size * 0.5f;
+        const v2f right = v2f{glm::cos(angle), glm::sin(angle)};
+        const v2f up = v2f{right.y, -right.x} * h_size.y / screen_size;
+        const v2f r = right * h_size.x / screen_size;
+
+        const int i = static_cast<int>(vertices.size());
+
+        vertices.data.push_back(vertex2d_t{center + up - r, v3f{0,1,texture_id}});
+        vertices.data.push_back(vertex2d_t{center + up + r, v3f{1,1,texture_id}});
+        vertices.data.push_back(vertex2d_t{center - up - r, v3f{0,0,texture_id}});
+        vertices.data.push_back(vertex2d_t{center - up + r, v3f{1,0,texture_id}});
+
+        indices.data.push_back(i);
+        indices.data.push_back(i + 1);
+        indices.data.push_back(i + 2);
+
+        indices.data.push_back(i + 1);
+        indices.data.push_back(i + 3);
+        indices.data.push_back(i + 2);
+
+        vertices.update_buffer();
+        indices.update_buffer();
+        vertex_array.size = static_cast<GLsizei>(indices.size());
+
+        quad_count += 1;
+    }
+
+    void add_quad(const aabb_t<v2f>& box, int texture_id) {
+        add_quad(box.min, box.min + box.size(), texture_id);
+    }
 
     void add_quad(const v2f& position, const v2f& size, int texture_id) {
         const int i = static_cast<int>(vertices.size());
@@ -65,6 +136,8 @@ struct batch2d_t {
         vertices.update_buffer();
         indices.update_buffer();
         vertex_array.size = static_cast<GLsizei>(indices.size());
+
+        quad_count += 1;
     }
 
     int get_texture(resource_handle_t<texture2d_t> texture) {

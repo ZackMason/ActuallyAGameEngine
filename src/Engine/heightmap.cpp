@@ -6,14 +6,14 @@
 #include "Engine/heightmap.hpp"
 #include "Engine/asset_loader.hpp"
 
-std::tuple<utl::vector<static_vertex_t>, utl::vector<unsigned int>, utl::vector<f32>>  heightmap_t::load_vertices(
-                                                                                      asset_loader_t* loader_ptr, 
-                                                                                      const std::string& heightmap_path, 
-                                                                                      f32 max_height, f32 texel_width, f32 texel_height)
-{
+heightmap_t::load_result_t heightmap_t::load_vertices(
+    asset_loader_t* loader_ptr, 
+    const std::string& heightmap_path, 
+    f32 max_height, f32 texel_width, f32 texel_height
+) {
     auto& loader = *loader_ptr;
     auto texture = loader.get_texture2d(heightmap_path);
-//    texture.get().mipmap();
+
     auto texture_accessor = texture.get().map_buffer();
     
     auto size = 4;

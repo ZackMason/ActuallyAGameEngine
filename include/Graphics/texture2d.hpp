@@ -46,6 +46,12 @@ struct texture2d_t : public texture_i {
     void set_filter(bool linear);
     void set_wrap(bool wrap);
     void mipmap();
+    v2f get_image_size() const {
+        return v2f{
+            static_cast<f32>(width),
+            static_cast<f32>(height)
+        };
+    }
 
     texture2d_accessor_t map_buffer();
 
