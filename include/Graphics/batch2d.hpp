@@ -14,6 +14,8 @@
 
 #include "Engine/resource_handle.hpp"
 
+#include "Util/color.hpp"
+
 #include "Math/aabb.hpp"
 
 struct batch2d_t {
@@ -78,6 +80,14 @@ struct batch2d_t {
             angle, 
             get_texture(texture)
         );
+    }
+
+    void draw(
+        const color32 color,
+        const v2f& position,
+        const v2f& size
+    ) {
+        add_quad(position, size, static_cast<int>(color));
     }
 
     void add_quad_ex(
