@@ -102,7 +102,7 @@ void transform_t::set_rotation(const glm::quat& quat)
 }
 
 void transform_t::normalize() {
-	for (size_t i = 0; i < 3; i++) {
+	for (decltype(basis)::length_type i = 0; i < 3; i++) {
 		basis[i] = glm::normalize(basis[i]);
 	}
 }

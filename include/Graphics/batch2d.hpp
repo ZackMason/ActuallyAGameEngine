@@ -87,7 +87,7 @@ struct batch2d_t {
         const v2f& position,
         const v2f& size
     ) {
-        add_quad(position, size, static_cast<int>(color));
+        add_quad((v2f{position.x*2, screen_size.y} - position) / screen_size, size / screen_size, static_cast<int>(color));
     }
 
     void add_quad_ex(

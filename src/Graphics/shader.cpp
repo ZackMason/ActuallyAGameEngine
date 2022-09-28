@@ -259,7 +259,10 @@ void shader_t::uniform_edit(std::vector<uniform_variable_t>& uniforms) {
                 ImGui::Checkbox(uniform.name.c_str(), (bool*)uniform.data.get());
                 break;
             case uniform_variable_e::INT:
-                ImGui::DragInt(uniform.name.c_str(), (int*)uniform.data.get(), uniform.step, uniform.min, uniform.max );
+                ImGui::DragInt(uniform.name.c_str(), (int*)uniform.data.get(), 
+                    uniform.step, 
+                    static_cast<int>(uniform.min), 
+                    static_cast<int>(uniform.max));
                 break;
             case uniform_variable_e::FLOAT:
                 ImGui::DragFloat(uniform.name.c_str(), (f32*)uniform.data.get(), uniform.step, uniform.min, uniform.max);
