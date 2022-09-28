@@ -21,7 +21,8 @@
 struct batch2d_t {
     struct vertex2d_t {
         v2f position{};
-        v3f uv{};
+        v2f uv{};
+        int tex{};
     };
 
     buffer_t<std::vector<vertex2d_t>> vertices{};
@@ -30,6 +31,7 @@ struct batch2d_t {
     std::vector<resource_handle_t<texture2d_t>> textures;
     v2f screen_size{};
     size_t quad_count{0};
+    resource_handle_t<shader_t> shader;
 
     void draw(resource_handle_t<texture2d_t> texture, const v2f& position) {
         add_quad( 
@@ -89,6 +91,13 @@ struct batch2d_t {
     ) {
         add_quad((v2f{position.x*2, screen_size.y} - position) / screen_size, size / screen_size, static_cast<int>(color));
     }
+    
+    void draw(
+        const color32 color,
+        const aabb_t<v2f>& box
+    ) {
+        draw(color, box.min, box.size());
+    }
 
     void add_quad_ex(
         const v2f& center, 
@@ -103,10 +112,10 @@ struct batch2d_t {
 
         const int i = static_cast<int>(vertices.size());
 
-        vertices.data.push_back(vertex2d_t{center + up - r, v3f{0,1,texture_id}});
-        vertices.data.push_back(vertex2d_t{center + up + r, v3f{1,1,texture_id}});
-        vertices.data.push_back(vertex2d_t{center - up - r, v3f{0,0,texture_id}});
-        vertices.data.push_back(vertex2d_t{center - up + r, v3f{1,0,texture_id}});
+        vertices.data.push_back(vertex2d_t{center + up - r, v2f{0,1}, texture_id});
+        vertices.data.push_back(vertex2d_t{center + up + r, v2f{1,1}, texture_id});
+        vertices.data.push_back(vertex2d_t{center - up - r, v2f{0,0}, texture_id});
+        vertices.data.push_back(vertex2d_t{center - up + r, v2f{1,0}, texture_id});
 
         indices.data.push_back(i);
         indices.data.push_back(i + 1);
@@ -130,10 +139,10 @@ struct batch2d_t {
     void add_quad(const v2f& position, const v2f& size, int texture_id) {
         const int i = static_cast<int>(vertices.size());
 
-        vertices.data.push_back(vertex2d_t{position, v3f{0, 1, texture_id}});
-        vertices.data.push_back(vertex2d_t{position + v2f{size.x, 0}, v3f{1, 1, texture_id}});
-        vertices.data.push_back(vertex2d_t{position + v2f{0, -size.y}, v3f{0, 0, texture_id}});
-        vertices.data.push_back(vertex2d_t{position + size * v2f{1,-1}, v3f{1, 0, texture_id}});
+        vertices.data.push_back(vertex2d_t{position,                    v2f{0, 1}, texture_id});
+        vertices.data.push_back(vertex2d_t{position + v2f{size.x, 0},   v2f{1, 1}, texture_id});
+        vertices.data.push_back(vertex2d_t{position + v2f{0, -size.y},  v2f{0, 0}, texture_id});
+        vertices.data.push_back(vertex2d_t{position + size * v2f{1,-1}, v2f{1, 0}, texture_id});
         
         indices.data.push_back(i);
         indices.data.push_back(i + 2);
@@ -162,7 +171,8 @@ struct batch2d_t {
         return -1;
     }
 
-    void present(resource_handle_t<shader_t> shader) {
+    void present() {
+        assert(shader.valid() && "batch2d:: shader is invalid");
         shader.get().bind();
 
         int s[32];
@@ -218,7 +228,8 @@ struct batch2d_t {
 
         vertex_array.bind_ref()
             .set_attrib(0, 2, GL_FLOAT, sizeof(vertex2d_t), offsetof(vertex2d_t, position))
-            .set_attrib(1, 3, GL_FLOAT, sizeof(vertex2d_t), offsetof(vertex2d_t, uv))
+            .set_attrib(1, 2, GL_FLOAT, sizeof(vertex2d_t), offsetof(vertex2d_t, uv))
+            .set_attribi(2, 1, GL_INT, sizeof(vertex2d_t), offsetof(vertex2d_t, tex))
             .unbind();
 
         vertices.unbind();
