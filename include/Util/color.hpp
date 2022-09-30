@@ -15,9 +15,8 @@ using color3 = v3f;
 using color32 = u32;
 
 namespace color {
-
     constexpr bool is_hex_digit(char c) {
-        return c=='x' || ('0' <= c && c <= '9') || ('a' <= c && c <= 'f') || ('A' <= c && c <= 'F');
+        return ('0' <= c && c <= '9') || ('a' <= c && c <= 'f') || ('A' <= c && c <= 'F');
     }
 
     constexpr u32 hex_value(char c) {
@@ -40,7 +39,7 @@ namespace color {
         assert(str.size() == 10 && "invalid rgba size");
         
         for (const auto c: str) {
-            assert(is_hex_digit(c));
+            assert(is_hex_digit(c) || c == '#');
         }
 
         color4 res;

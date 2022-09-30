@@ -127,7 +127,7 @@ texture2d_t::texture2d_t(const std::string& path, const std::string& asset_dir) 
 	}
 	else
 	{
-        throw runtime_error_x("Texture2d: Failed to load");
+        throw runtime_error_x(fmt::format("Texture failed to load: {}", path));
 
 		data = stbi_load(fmt::format("{}{}", asset_dir, "textures/UVgrid.png").c_str(), &width, &height, &channels, 0);
 		if (data)

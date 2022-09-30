@@ -13,6 +13,7 @@
 #include "Graphics/texture2d.hpp"
 
 #include "Engine/resource_handle.hpp"
+#include "Util/logger.hpp"
 
 #include "Util/color.hpp"
 
@@ -89,7 +90,13 @@ struct batch2d_t {
         const v2f& position,
         const v2f& size
     ) {
-        add_quad((v2f{position.x*2, screen_size.y} - position) / screen_size, size / screen_size, static_cast<int>(color));
+        // logger_t::info(fmt::format("Drawing color: {:x}", static_cast<int>(color)));
+
+        add_quad(
+            (v2f{position.x*2, screen_size.y} - position) / screen_size, 
+            size / screen_size, 
+            static_cast<int>(color)
+        );
     }
     
     void draw(
