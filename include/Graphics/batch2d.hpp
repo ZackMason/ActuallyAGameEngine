@@ -21,6 +21,7 @@
 
 #include <atomic>
 
+template <size_t Count>
 struct batch2d_t {
     struct vertex2d_t {
         v2f position{};
@@ -28,8 +29,8 @@ struct batch2d_t {
         int tex{};
     };
 
-    mapped_buffer_t<vertex2d_t, 4000> vertices;
-    mapped_buffer_t<unsigned int, 6000> indices;
+    mapped_buffer_t<vertex2d_t, 4 * Count> vertices;
+    mapped_buffer_t<unsigned int, 6 * Count> indices;
     vertex_array_t vertex_array;
     std::vector<resource_handle_t<texture2d_t>> textures;
     v2f screen_size{};
