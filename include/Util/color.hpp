@@ -15,6 +15,18 @@ using color3 = v3f;
 using color32 = u32;
 
 namespace color {
+    constexpr color32 to_color32(const color4& c) {
+        return 
+            (u8(c.x * 255.0f) << 0 ) |
+            (u8(c.y * 255.0f) << 8 ) |
+            (u8(c.z * 255.0f) << 16) |
+            (u8(c.w * 255.0f) << 24) ;
+    }
+
+    constexpr color32 to_color32(const color3& c) {
+        return to_color32(color4(c, 1.0));
+    }
+
     constexpr bool is_hex_digit(char c) {
         return ('0' <= c && c <= '9') || ('a' <= c && c <= 'f') || ('A' <= c && c <= 'F');
     }
@@ -52,14 +64,7 @@ namespace color {
 
     constexpr color32 operator"" _rgba(const char* str, std::size_t size) {
         auto c = str_to_rgba(std::string_view(str, size));
-        u32 res = 0u;
-        res = 
-            (u8(c.x * 255.0f) << 0) |
-            (u8(c.y * 255.0f) << 8) |
-            (u8(c.z * 255.0f) << 16)|
-            (u8(c.w * 255.0f) << 24);
-
-        return res; 
+        return to_color32(c);
     }
 
     constexpr color32 operator"" _abgr(const char* str, std::size_t size) {

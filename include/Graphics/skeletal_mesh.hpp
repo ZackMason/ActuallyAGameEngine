@@ -44,19 +44,17 @@ struct skeletal_mesh_t : drawable_i {
     void draw() override;
 
     explicit skeletal_mesh_t(utl::vector<skinned_vertex_t>&& p_vertices) 
-        : buffer_object(std::move(p_vertices)), vertex_array(buffer_object.size())
+        : buffer_object(std::move(p_vertices)), 
+        vertex_array(buffer_object.id, buffer_object.size(), sizeof(skinned_vertex_t))
     { 
-        buffer_object.bind();
-        vertex_array.bind_ref()
-            .set_attrib(0, 3, GL_FLOAT, sizeof(skinned_vertex_t), offsetof(skinned_vertex_t, position))
-            .set_attrib(1, 3, GL_FLOAT, sizeof(skinned_vertex_t), offsetof(skinned_vertex_t, normal))
-            .set_attrib(2, 2, GL_FLOAT, sizeof(skinned_vertex_t), offsetof(skinned_vertex_t, tex_coord))
-            .set_attrib(3, 3, GL_FLOAT, sizeof(skinned_vertex_t), offsetof(skinned_vertex_t, tangent))
-            .set_attrib(4, 3, GL_FLOAT, sizeof(skinned_vertex_t), offsetof(skinned_vertex_t, bitangent))
-            .set_attribi(5, 4, GL_INT  , sizeof(skinned_vertex_t), offsetof(skinned_vertex_t, id))
-            .set_attrib(6, 4, GL_FLOAT, sizeof(skinned_vertex_t), offsetof(skinned_vertex_t, weight))
-            .unbind();
-        buffer_object.unbind();
+        vertex_array
+            .set_attrib(0, 3, GL_FLOAT, offsetof(skinned_vertex_t, position))
+            .set_attrib(1, 3, GL_FLOAT, offsetof(skinned_vertex_t, normal))
+            .set_attrib(2, 2, GL_FLOAT, offsetof(skinned_vertex_t, tex_coord))
+            .set_attrib(3, 3, GL_FLOAT, offsetof(skinned_vertex_t, tangent))
+            .set_attrib(4, 3, GL_FLOAT, offsetof(skinned_vertex_t, bitangent))
+            .set_attribi(5, 4, GL_INT, offsetof(skinned_vertex_t, id))
+            .set_attrib(6, 4, GL_FLOAT, offsetof(skinned_vertex_t, weight));
     }
 };
 

@@ -32,16 +32,16 @@ struct line_renderer_t : drawable_i {
     void draw() override;
 
     explicit line_renderer_t(utl::vector<line_point_t>&& p_vertices) 
-        : buffer_object(std::move(p_vertices)), vertex_array(buffer_object.size()), aabb{v3f{0.0f}, v3f{0.0f}}
+        : buffer_object(std::move(p_vertices)),
+        vertex_array(buffer_object.id, buffer_object.size(), sizeof(line_point_t)), 
+        aabb{v3f{0.0f}, v3f{0.0f}}
     { 
         vertex_array.topology = GL_LINES;
-        buffer_object.bind();
-        vertex_array.bind_ref()
-            .set_attrib(0, 3, GL_FLOAT, sizeof(line_point_t), offsetof(line_point_t, position))
-            .set_attrib(1, 4, GL_FLOAT, sizeof(line_point_t), offsetof(line_point_t, color))
-            .unbind();
-        buffer_object.unbind();
-
+        
+        vertex_array
+            .set_attrib(0, 3, GL_FLOAT, offsetof(line_point_t, position))
+            .set_attrib(1, 4, GL_FLOAT, offsetof(line_point_t, color));
+        
         update_aabb();
     }
 

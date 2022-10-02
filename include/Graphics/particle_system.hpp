@@ -105,16 +105,14 @@ struct particle_system_t {
 
     particle_system_t() :
         buffer_object(utl::vector<particle_t>{100, particle_t{}}), 
-        vertex_array(buffer_object.size())
+        vertex_array(buffer_object.id, buffer_object.size(), sizeof(particle_t))
     {
         vertex_array.topology = GL_POINTS;
-        buffer_object.bind();
-        vertex_array.bind_ref()
-            .set_attrib(0, 3, GL_FLOAT, sizeof(particle_t), offsetof(particle_t, position))
-            .set_attrib(1, 3, GL_FLOAT, sizeof(particle_t), offsetof(particle_t, velocity))
-            .set_attrib(2, 4, GL_FLOAT, sizeof(particle_t), offsetof(particle_t, color))
-            .unbind();
-        buffer_object.unbind();
+        
+        vertex_array
+            .set_attrib(0, 3, GL_FLOAT, offsetof(particle_t, position))
+            .set_attrib(1, 3, GL_FLOAT, offsetof(particle_t, velocity))
+            .set_attrib(2, 4, GL_FLOAT, offsetof(particle_t, color));
     }
 };
 

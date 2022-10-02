@@ -7,6 +7,7 @@
 
 #include "Graphics/buffer.hpp"
 
+
 struct vertex_array_t : drawable_i {
     GLsizei size;
     GLenum topology = GL_TRIANGLES;
@@ -17,11 +18,9 @@ struct vertex_array_t : drawable_i {
         unbind();
     }
     
-    template <typename T>
-        //requires (std::is_same<T::value_type, unsigned int>::value)
-    void draw(const buffer_t<T>& buffer) {
+    void draw_elements(const size_t& buffer_size) {
         bind();
-            glDrawElements(topology, static_cast<GLsizei>(buffer.data.size()), GL_UNSIGNED_INT, 0);
+            glDrawElements(topology, static_cast<GLsizei>(buffer_size), GL_UNSIGNED_INT, 0);
         unbind();
     }
 
@@ -31,37 +30,54 @@ struct vertex_array_t : drawable_i {
 
     static void reset();
     vertex_array_t& bind_ref() {
-        bind();
+        //bind();
         return *this;
     }
 
-    vertex_array_t& set_attrib(int index, int count, GLenum type, GLsizei s, size_t offset) {
-        glEnableVertexAttribArray(index);
-        glVertexAttribPointer(index, count, type, GL_FALSE, s, reinterpret_cast<void*>(offset));
+    vertex_array_t& set_attrib(int index, int count, GLenum type, GLuint offset) {
+        glEnableVertexArrayAttrib(id, index);
+        glVertexArrayAttribFormat(id, index, count, type, GL_FALSE, (offset));
+        glVertexArrayAttribBinding(id, index, 0);
+        //glEnableVertexAttribArray(index);
+        //glVertexAttribPointer(index, count, type, GL_FALSE, s, reinterpret_cast<void*>(offset));
         return *this;
     }
 
-    vertex_array_t& set_attribi(int index, int count, GLenum type, GLsizei s, size_t offset) {
-        glEnableVertexAttribArray(index);
-        glVertexAttribIPointer(index, count, type, s, reinterpret_cast<void*>(offset));
+    vertex_array_t& set_attribi(int index, int count, GLenum type, GLuint offset) {
+        glEnableVertexArrayAttrib(id, index);
+        glVertexArrayAttribIFormat(id, index, count, type, offset);
+        glVertexArrayAttribBinding(id, index, 0);
+        //glEnableVertexAttribArray(index);
+        //glVertexAttribIPointer(index, count, type, s, offset);
         return *this;
     }
 
     void create() {
-        glGenVertexArrays(1, &id);
+        glCreateVertexArrays(1, &id);
+    }
+
+    void destroy() {
+        if (id != -1) {
+            glDeleteVertexArrays(1, &id);
+        }
+        id = -1;
     }
 
     virtual ~vertex_array_t() {
-        glDeleteVertexArrays(1, &id);
+        destroy();
     }
 
-    explicit vertex_array_t(size_t s) : size(static_cast<GLsizei>(s)) {
+    explicit vertex_array_t(GLuint vbo, size_t s, size_t vertex_size) : size(static_cast<GLsizei>(s)) {
         create();
+        glVertexArrayVertexBuffer(id, 0, vbo, 0, static_cast<GLsizei>(vertex_size));
     }
 
-    explicit vertex_array_t() : size(0) {
+    explicit vertex_array_t(GLuint vbo, GLuint ibo, size_t s, size_t vertex_size) : size(static_cast<GLsizei>(s)) {
         create();
+        glVertexArrayVertexBuffer(id, 0, vbo, 0, static_cast<GLsizei>(vertex_size));
+        glVertexArrayElementBuffer(id, ibo);
     }
+
     vertex_array_t(vertex_array_t&) = delete;
     vertex_array_t(vertex_array_t&&) = delete;
     vertex_array_t& operator=(vertex_array_t&) = delete;

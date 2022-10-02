@@ -21,8 +21,8 @@ namespace internal {
 
 
 void texture2d_t::mipmap() {
-	bind();
-	glGenerateMipmap(GL_TEXTURE_2D);
+	//bind();
+	glGenerateTextureMipmap(id);
 }
 void texture2d_t::bind_image() {
 
@@ -33,15 +33,15 @@ void texture2d_t::bind() {
     //if (internal::bound_texture != id) {
 		internal::bound_texture = id;
 		texture_i::bind_slot(slot);
-		glBindTexture(GL_TEXTURE_2D, id);
+		//glBindTexture(GL_TEXTURE_2D, id);
 	//}
 }
 
 void texture2d_t::unbind() {
 	//if (internal::bound_texture != 0) {
 		internal::bound_texture = 0;
-		texture_i::bind_slot(slot);
-		glBindTexture(GL_TEXTURE_2D, 0);
+		texture_i::bind_slot(0);
+		//glBindTexture(GL_TEXTURE_2D, 0);
 	//}
 }
 texture2d_accessor_t::texture2d_accessor_t(GLuint id, int w, int h, GLenum f, GLuint mip_level)
@@ -78,20 +78,20 @@ void texture2d_t::set_data(const std::vector<u32>& data) {
 		throw runtime_error_x("Texture2d::set_data: Data doesn't match texture dimensions");
 	}
 
-	bind();
-	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, data_format, data_type, data.data());
+	//bind();
+	glTextureSubImage2D(id, 0, 0, 0, width, height, data_format, data_type, data.data());
 
 }
 
 void texture2d_t::set_wrap(bool wrap) {
-	bind();
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap ? GL_REPEAT : GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap ? GL_REPEAT : GL_CLAMP_TO_EDGE);
+	//bind();
+	glTextureParameteri(id, GL_TEXTURE_WRAP_S, wrap ? GL_REPEAT : GL_CLAMP_TO_EDGE);
+	glTextureParameteri(id, GL_TEXTURE_WRAP_T, wrap ? GL_REPEAT : GL_CLAMP_TO_EDGE);
 }
 void texture2d_t::set_filter(bool linear) {
-	bind();
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, linear ? GL_LINEAR : GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, linear ? GL_LINEAR : GL_NEAREST);
+	//bind();
+	glTextureParameteri(id, GL_TEXTURE_MIN_FILTER, linear ? GL_LINEAR : GL_NEAREST);
+	glTextureParameteri(id, GL_TEXTURE_MAG_FILTER, linear ? GL_LINEAR : GL_NEAREST);
 }
 
 texture2d_t::texture2d_t(const std::string& path, const std::string& asset_dir) {
@@ -101,28 +101,34 @@ texture2d_t::texture2d_t(const std::string& path, const std::string& asset_dir) 
     
 	stbi_set_flip_vertically_on_load(true);
     
-	glGenTextures(1, &id);
-	glBindTexture(GL_TEXTURE_2D, id);
+	glCreateTextures(GL_TEXTURE_2D, 1, &id);
+	//glGenTextures(1, &id);
+	//glBindTexture(GL_TEXTURE_2D, id);
 	float anisotropy = 16.f;
 	glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY, &anisotropy);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY, anisotropy);
+	glTextureParameterf(id, GL_TEXTURE_MAX_ANISOTROPY, anisotropy);
 	// set the texture wrapping/filtering options (on the currently bound texture object)
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTextureParameteri(id, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTextureParameteri(id, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTextureParameteri(id, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTextureParameteri(id, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	// load and generate the texture
     
 	unsigned char* data = stbi_load(fmt::format("{}{}", asset_dir, path).c_str(), &width, &height, &channels, 0);
 	if (data)
 	{
-		if (channels == 3){
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, data_type, data);
+		if (channels == 3) {
+			glTextureStorage2D(id, 1, GL_RGB8, width, height);
+			glTextureSubImage2D(id, 0, 0, 0, width, height, GL_RGB, data_type, data);
+			//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, data_type, data);
 			data_format = GL_RGB;
 		}
-		else if (channels == 4)
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, data_type, data);
-		glGenerateMipmap(GL_TEXTURE_2D);
+		else if (channels == 4) {
+			glTextureStorage2D(id, 1, GL_RGBA8, width, height);
+			glTextureSubImage2D(id, 0, 0, 0, width, height, GL_RGBA, data_type, data);
+			//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, data_type, data);
+		}
+		glGenerateTextureMipmap(id);
 		logger_t::info(fmt::format("Texture loaded: {}, {} x {} - channels: {}", path, width, height, channels));
 	}
 	else
@@ -132,8 +138,9 @@ texture2d_t::texture2d_t(const std::string& path, const std::string& asset_dir) 
 		data = stbi_load(fmt::format("{}{}", asset_dir, "textures/UVgrid.png").c_str(), &width, &height, &channels, 0);
 		if (data)
         {
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, data_type, data);
-            glGenerateMipmap(GL_TEXTURE_2D);
+            glTextureStorage2D(id, 0, GL_RGB, width, height);
+			glTextureSubImage2D(id, 0, 0, 0, width, height, GL_RGB, data_type, data);
+            glGenerateTextureMipmap(id);
         }
 		logger_t::warn(fmt::format("Texture failed to load: {}", path));
 	}

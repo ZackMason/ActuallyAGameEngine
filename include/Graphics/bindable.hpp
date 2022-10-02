@@ -7,8 +7,11 @@
 
 #include <glad/glad.h>
 
-struct bindable_i {
+struct gl_handle_t {
     GLuint id;
+};
+
+struct bindable_i : public gl_handle_t {
     virtual void bind() = 0;
     virtual void unbind() = 0;
 

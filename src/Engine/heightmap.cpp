@@ -6,6 +6,8 @@
 #include "Engine/heightmap.hpp"
 #include "Engine/asset_loader.hpp"
 
+#include "vendor/stb_image.h"
+
 heightmap_t::load_result_t heightmap_t::load_vertices(
     asset_loader_t* loader_ptr, 
     const std::string& heightmap_path, 

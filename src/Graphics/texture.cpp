@@ -11,5 +11,6 @@ void texture_i::bind_slot(GLuint new_slot) {
     if (slot < 0 || slot >= 32) {
         throw std::runtime_error("Invalid texture slot");
     }
-    glActiveTexture(GL_TEXTURE0 + slot);
+    //glActiveTexture(GL_TEXTURE0 + slot);
+    glBindTextureUnit(slot, id);
 }
