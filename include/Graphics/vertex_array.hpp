@@ -52,6 +52,10 @@ struct vertex_array_t : drawable_i {
         return *this;
     }
 
+    vertex_array_t& set_attrib_divisor(int index, int div) {
+        glVertexArrayBindingDivisor(id, index, div);
+    }
+
     void create() {
         glCreateVertexArrays(1, &id);
     }
@@ -63,19 +67,26 @@ struct vertex_array_t : drawable_i {
         id = -1;
     }
 
+    void bind_vertex_buffer(GLuint vbo, int index, size_t vertex_size) {
+        glVertexArrayVertexBuffer(id, index, vbo, 0, static_cast<GLsizei>(vertex_size));
+    }
+    void bind_element_buffer(GLuint ibo) {
+        glVertexArrayElementBuffer(id, ibo);
+    }
+
     virtual ~vertex_array_t() {
         destroy();
     }
 
     explicit vertex_array_t(GLuint vbo, size_t s, size_t vertex_size) : size(static_cast<GLsizei>(s)) {
         create();
-        glVertexArrayVertexBuffer(id, 0, vbo, 0, static_cast<GLsizei>(vertex_size));
+        bind_vertex_buffer(vbo, 0, vertex_size);
     }
 
     explicit vertex_array_t(GLuint vbo, GLuint ibo, size_t s, size_t vertex_size) : size(static_cast<GLsizei>(s)) {
         create();
-        glVertexArrayVertexBuffer(id, 0, vbo, 0, static_cast<GLsizei>(vertex_size));
-        glVertexArrayElementBuffer(id, ibo);
+        bind_vertex_buffer(vbo, 0, vertex_size);
+        bind_element_buffer(ibo);
     }
 
     vertex_array_t(vertex_array_t&) = delete;

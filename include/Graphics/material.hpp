@@ -7,12 +7,15 @@
 
 #include "core.hpp"
 
-struct material_t {
-    std::string shader;
-    std::string albedo;
-    std::string normal;
+#include "Util/string.hpp"
 
-    v3f color;
+struct material_t {
+    v3f base_color{1.0f};
+    float metallic{0.0f};
+    float roughness{0.5f};
+    float emissive{0.0f};
+
+    sid_t albedo_texture{0};
     //bool triplanar; //??
 
 };

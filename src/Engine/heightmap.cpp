@@ -44,7 +44,7 @@ heightmap_t::load_result_t heightmap_t::load_vertices(
             vert.position.y = max_height*height;
             
             vert.tex_coord = v2f(px+0.5f,py+0.5f);
-            vert.tex_coord.y = 1.0f-vert.tex_coord.y;
+            // vert.tex_coord.y = 1.0f-vert.tex_coord.y;
             indexed_verts.push_back(vert);
             heightmap.push_back(vert.position.y);
             int id = (y) * texture_accessor.width + (x);
