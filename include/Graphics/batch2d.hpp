@@ -173,6 +173,8 @@ public:
     }
 
     void present() {
+        if (!quad_count) return;
+
         assert(shader.valid() && "batch2d:: shader is invalid");
         shader.get().bind();
 
@@ -192,8 +194,11 @@ public:
     }
 
     void clear() {
+        if (quad_count || !vertex_ptr) {
+            // dont need to sync if we didnt write to the vertices last frame
+            vertex_ptr = vertices.get_data();
+        }
         vertex_array.size = quad_count = 0;
-        vertex_ptr = vertices.get_data();
     }
     
     void set_indices() {

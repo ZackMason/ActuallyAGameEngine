@@ -38,9 +38,8 @@ struct buffer_t : bindable_i {
         }
     }
 
+    // use mapped_buffer_t instead if you need to update regularly
     void update_buffer() {
-        //bind();
-        //glBufferSubData(type, 0, data.size() * sizeof(typename T::value_type), data.data());
         glNamedBufferSubData(id, 0, data.size() * sizeof(typename T::value_type), data.data());
     }
 
@@ -87,7 +86,7 @@ struct buffer_t : bindable_i {
 // for multi threaded writing
 template <typename T, size_t Count>
 struct mapped_buffer_t : gl_handle_t {
-    GLenum type = GL_ARRAY_BUFFER;
+    GLenum type = GL_ARRAY_BUFFER; 
     GLsync sync;
 
     auto size() const {
