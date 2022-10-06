@@ -48,7 +48,7 @@ namespace color {
 
     template <typename Str>
     constexpr color4 str_to_rgba(const Str& str) {
-        assert(str.size() == 10 && "invalid rgba size");
+        assert(str.size() == 9 && "invalid rgba size");
         
         for (const auto c: str) {
             assert(is_hex_digit(c) || c == '#');

@@ -41,3 +41,6 @@ target_compile_definitions(EngineTests PUBLIC CMAKE_ASSETS_PATH="${CMAKE_CURRENT
 target_link_libraries(EngineTests PUBLIC ${CONAN_LIBS} Engine)
 
 target_link_libraries(Engine PUBLIC ${CONAN_LIBS})
+
+target_link_libraries(Engine PUBLIC d3d12.lib)
+target_link_libraries(Engine PUBLIC dxgi.lib)
