@@ -11,6 +11,70 @@
 
 #include <array>
 
+#define NOMINMAX
+#define WIN32_LEAN_AND_MEAN
+#include <Windows.h>
+
+#if defined(CreateWindow)
+#undef CreateWindow
+#endif
+
+enum struct gfx_api_e {
+    OPENGL, DX12, SIZE
+};
+
+struct GLFWwindow;
+struct window_t {
+    u32 width{640}, height{480};
+    std::array<f32, 2> scroll;
+
+   	using window_event_callback = std::function<void(event_i&)>;
+    window_event_callback event_callback;
+
+    void set_event_callback(window_event_callback&& callback) {
+        event_callback = callback;
+    }
+
+    ~window_t();
+    void open_window(gfx_api_e api = gfx_api_e::OPENGL);
+
+    HWND get_handle() const;
+
+    void set_width(int);
+    void set_height(int);
+
+    void set_fullscreen(bool full);
+    void toggle_fullscreen();
+    void set_vsync(bool vsync);
+
+    void make_imgui_context() const;
+    void imgui_new_frame() const;
+    void imgui_render() const;
+
+    void viewport(int x, int y, int w, int h) const;
+
+    void set_position(const v2i& pos);
+    void close_window();
+    void swap_buffers();
+    void poll_events();
+    const bool should_close() const;
+    const bool is_open() const;
+    void set_title(const char* t);
+
+    bool is_key_pressed(int key) const;
+    bool is_key_released(int key) const;
+    std::array<f32, 2> get_mouse() const;
+    bool is_button_pressed(int button) const;
+    decltype(scroll) get_scroll();
+
+    f32 get_ticks() const;
+
+    GLFWwindow *window{nullptr};
+
+    void* get_dx_state() const;
+private:
+    const char* title = "TheGame";
+};
 
 struct position2d_event_t : public v2i, public event_i {
     position2d_event_t(int px, int py) {
@@ -56,54 +120,5 @@ struct key_event_t : public event_i {
     int mode;
 
     MAKE_EVENT_TYPE(key);
-};
-
-struct GLFWwindow;
-struct window_t {
-    u32 width{640}, height{480};
-    std::array<f32, 2> scroll;
-
-   	using window_event_callback = std::function<void(event_i&)>;
-    window_event_callback event_callback;
-
-    void set_event_callback(window_event_callback&& callback) {
-        event_callback = callback;
-    }
-
-    ~window_t();
-
-    void make_imgui_context() const;
-
-    void set_width(int);
-    void set_height(int);
-
-    void set_fullscreen(bool full);
-    void toggle_fullscreen();
-    void set_vsync(bool vsync);
-
-
-    void set_position(const v2i& pos);
-    void open_window();
-    void close_window();
-    void swap_buffers();
-    void poll_events();
-    const bool should_close() const;
-    const bool is_open() const;
-    void set_title(const char* t);
-
-    void imgui_new_frame() const;
-    void imgui_render() const;
-
-    bool is_key_pressed(int key) const;
-    bool is_key_released(int key) const;
-    std::array<f32, 2> get_mouse() const;
-    bool is_button_pressed(int button) const;
-    decltype(scroll) get_scroll();
-
-    f32 get_ticks() const;
-
-    GLFWwindow *window{nullptr};
-private:
-    const char* title = "TheGame";
 };
 

@@ -6,6 +6,7 @@
 #pragma once
 
 #include <stdexcept>
+#include <exception>
 #include <source_location>
 
 class not_implemented_x : public std::logic_error
