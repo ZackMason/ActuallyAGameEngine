@@ -9,6 +9,7 @@ imgui/1.87
 chaiscript/6.1.0
 tinyobjloader/1.0.6
 assimp/5.2.2
+freetype/2.12.1
 
 [generators]
 cmake
