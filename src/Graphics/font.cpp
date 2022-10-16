@@ -3,6 +3,7 @@
 
 #include "Graphics\font.hpp"
 
+
 #define STB_TRUETYPE_IMPLEMENTATION
 #define STBTT_STATIC
 #include "vendor/stb_truetype.h"
@@ -34,6 +35,7 @@ stack_allocator_t font_allocator{1024<<16};
         font_texture = resource_handle_t<texture2d_t>(p_texture, c);
 
         return true;
+
     }
 
     void lazy_init() {
@@ -41,6 +43,7 @@ stack_allocator_t font_allocator{1024<<16};
             initialized = init();
         }
     }
+
 
     sid_t load_font(const std::string& font_path, float size) {
         const sid_t id = save_string(font_path);
