@@ -208,6 +208,17 @@ void window_t::open_window(gfx_api_e api) {
         file_dropped_event_t event{std::move(files)};
         self.event_callback(event);
     });
+
+    glfwSetCharCallback(window, [](GLFWwindow* window, unsigned int codepoint) {
+        if (internal::imgui_window_context == window)
+            if (ImGui::GetIO().WantCaptureKeyboard) return;
+        
+        window_t& self = *static_cast<window_t*>(glfwGetWindowUserPointer(window));
+
+        char_event_t event{codepoint};
+        self.event_callback(event);
+    });
+
 }
 
 HWND window_t::get_handle() const {

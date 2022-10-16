@@ -66,6 +66,7 @@ struct texture2d_t : public texture_i {
     {}
     
     explicit texture2d_t(const std::string& path, const std::string& asset_dir);
-    explicit texture2d_t(u32 w, u32 h);
+    explicit texture2d_t(u32 w, u32 h, 
+        GLenum in_form = GL_RGBA8, GLenum d_form = GL_RGBA, GLenum d_type = GL_UNSIGNED_BYTE);
 };
 

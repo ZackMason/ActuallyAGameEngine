@@ -8,7 +8,8 @@
 #include "types.hpp"
 #include <cstdlib>
 #include <string_view>
-#include <array>
+#include <array> 
+#include <algorithm> 
 
 using color4 = v4f;
 using color3 = v3f;
@@ -17,14 +18,23 @@ using color32 = u32;
 namespace color {
     constexpr color32 to_color32(const color4& c) {
         return 
-            (u8(c.x * 255.0f) << 0 ) |
-            (u8(c.y * 255.0f) << 8 ) |
-            (u8(c.z * 255.0f) << 16) |
-            (u8(c.w * 255.0f) << 24) ;
+            (u8(std::min(u16(c.x * 255.0f), 255ui16)) << 0 ) |
+            (u8(std::min(u16(c.y * 255.0f), 255ui16)) << 8 ) |
+            (u8(std::min(u16(c.z * 255.0f), 255ui16)) << 16) |
+            (u8(std::min(u16(c.w * 255.0f), 255ui16)) << 24) ;
     }
 
     constexpr color32 to_color32(const color3& c) {
-        return to_color32(color4(c, 1.0));
+        return to_color32(color4(c, 1.0f));
+    }
+
+    constexpr color4 to_color4(const color32 c) {
+        return color4{
+            ((c&0xff)       >> 0),
+            ((c&0xff00)     >> 8),
+            ((c&0xff0000)   >> 16),
+            ((c&0xff000000) >> 24)            
+        } / 255.0f;
     }
 
     constexpr bool is_hex_digit(char c) {
@@ -59,6 +69,9 @@ namespace color {
         res.y = f32(hex_value(str[3]) * 16u + hex_value(str[4])) / 255.0f;
         res.z = f32(hex_value(str[5]) * 16u + hex_value(str[6])) / 255.0f;
         res.w = f32(hex_value(str[7]) * 16u + hex_value(str[8])) / 255.0f;
+
+        res = glm::min(res, color4(1.0f));
+
         return res;
     }
 
@@ -90,11 +103,14 @@ namespace color {
     namespace rgba {
         static auto clear = "#00000000"_rgba;
         static auto black = "#000000ff"_rgba;
+        static auto dark_gray = "#111111ff"_rgba;
         static auto white = "#ffffffff"_rgba;
+        static auto cream = "#fafafaff"_rgba;
         static auto red   = "#ff0000ff"_rgba;
         static auto green = "#00ff00ff"_rgba;
         static auto blue  = "#0000ffff"_rgba;
         static auto yellow= "#ffff00ff"_rgba;
+        static auto purple= "#fa11faff"_rgba;
         static auto sand  = "#C2B280ff"_rgba;
     };
 
