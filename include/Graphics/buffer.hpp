@@ -29,11 +29,8 @@ struct buffer_t : bindable_i {
 
     void create() {
         glCreateBuffers(1, &id);
-        //glGenBuffers(1, &id);
-        //bind();
-        
+                
         if (data.size()) {
-            //glBufferData(type, data.size() * sizeof(typename T::value_type), data.data(), GL_STATIC_DRAW);
             glNamedBufferStorage(id, data.size() * sizeof(typename T::value_type), data.data(), GL_DYNAMIC_STORAGE_BIT);
         }
     }
@@ -87,7 +84,7 @@ struct buffer_t : bindable_i {
 template <typename T, size_t Count>
 struct mapped_buffer_t : gl_handle_t {
     GLenum type = GL_ARRAY_BUFFER; 
-    GLsync sync;
+    GLsync sync_id;
 
     auto size() const {
         return Count * sizeof(T);
@@ -98,21 +95,25 @@ struct mapped_buffer_t : gl_handle_t {
     }
 
     void wait() {
-        if (glIsSync(sync)) {
+        if (glIsSync(sync_id)) {
             GLenum wait_return = GL_UNSIGNALED;
             while(wait_return != GL_ALREADY_SIGNALED && wait_return != GL_CONDITION_SATISFIED)
             {
-                wait_return = glClientWaitSync(sync, GL_SYNC_FLUSH_COMMANDS_BIT, 1);
+                wait_return = glClientWaitSync(sync_id, GL_SYNC_FLUSH_COMMANDS_BIT, 1);
             }
     
-            glDeleteSync(sync);
+            glDeleteSync(sync_id);
+            sync_id = 0;
         }
+    }
+
+    void sync() {
+        sync_id = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
     }
 
     [[nodiscard]] T* get_data() {
         wait();
         
-        sync = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
         return data;
     }
 

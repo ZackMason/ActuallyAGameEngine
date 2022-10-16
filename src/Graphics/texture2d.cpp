@@ -147,28 +147,25 @@ texture2d_t::texture2d_t(const std::string& path, const std::string& asset_dir) 
 	stbi_image_free(data);
 }
 
-texture2d_t::texture2d_t(u32 w, u32 h) 
+texture2d_t::texture2d_t(u32 w, u32 h, GLenum in_form, GLenum d_form, GLenum d_type) 
 	: width(w), height(h)
 {
-    internal_format = GL_RGBA8;
-	data_format = GL_RGBA;
-    data_type = GL_UNSIGNED_BYTE;
+    internal_format = in_form;
+	data_format = d_form;
+    data_type = d_type;
 
-	glGenTextures(1, &id);
-	glBindTexture(GL_TEXTURE_2D, id);
-
+	glCreateTextures(GL_TEXTURE_2D, 1, &id);
+	
 	float anisotropy = 16.f;
 	glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY, &anisotropy);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY, anisotropy);
+	glTextureParameterf(id, GL_TEXTURE_MAX_ANISOTROPY, anisotropy);
     
-	//glCreateTextures(GL_TEXTURE_2D, 1, &m_Texture);
-	glTexStorage2D(GL_TEXTURE_2D, 1, internal_format, width, height);
+	glTextureStorage2D(id, 1, internal_format, width, height);
     
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexImage2D(GL_TEXTURE_2D, 0, internal_format, width, height, 0, data_format, data_type, nullptr);
+	glTextureParameteri(id, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTextureParameteri(id, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	    
+	glTextureParameteri(id, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTextureParameteri(id, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
 }

@@ -43,6 +43,10 @@ struct window_t {
     void set_width(int);
     void set_height(int);
 
+    v2f size() const {
+        return v2f{static_cast<f32>(width), static_cast<f32>(height)};
+    }
+
     void set_fullscreen(bool full);
     void toggle_fullscreen();
     void set_vsync(bool vsync);
@@ -122,3 +126,11 @@ struct key_event_t : public event_i {
     MAKE_EVENT_TYPE(key);
 };
 
+struct char_event_t : public event_i {
+    explicit char_event_t(unsigned int cp) :
+        codepoint(cp) {}
+
+    unsigned int codepoint;
+
+    MAKE_EVENT_TYPE(char);
+};  
