@@ -65,29 +65,54 @@ struct console_t {
         }
 
         aabb_t<v2f> window_box;
-        window_box.expand(v2f(screen_size)*0.5f - v2f{window_size().x*0.5f, open * window_size().y});
-        window_box.expand(v2f(screen_size)*0.5f + v2f{window_size().x*0.5f, (open)*window_size().y});
+        if (theme.open_style) {
+            window_box.expand(v2f(screen_size)*0.5f - v2f{window_size().x*0.5f, open * window_size().y});
+            window_box.expand(v2f(screen_size)*0.5f + v2f{window_size().x*0.5f, (open)*window_size().y});
+        } else {
+            window_box.expand(v2f(screen_size)*v2f{0.5f,1.0f} - v2f{window_size().x*0.5f, open * window_size().y});
+            window_box.expand(v2f(screen_size)*v2f{0.5f,1.0f} + v2f{window_size().x*0.5f, -(open*2.0)*window_size().y});
+        }
+
+        
+        aabb_t<v2f> bg_box = window_box;
+        bg_box.min -= v2f{theme.border_size};
+        bg_box.max += v2f{theme.border_size};
+        
+        const v2f text_start = v2f{window_box.min.x, window_box.max.y} + v2f{8.0f, -8.0f};
+        
+        aabb_t<v2f> input_box = window_box;
+        input_box.min += v2f{5.0f};
+        input_box.max -= v2f{5.0f};
+        input_box.min.y = text_start.y - 3.0f - font.get_glyph(0,0,'L').screen.size().y;
+
+        aabb_t<v2f> messages_box = window_box;
+        messages_box.max.y -= input_box.size().y * 2.0f;
 
         if (open > 0.2f) {
-            v2f text_pos = v2f{window_box.min.x, window_box.max.y} + v2f{8.0f, -8.0f} + scroll;
+            v2f text_pos = text_start;
             
             if (window_box.contains(text_pos)) {
-                gfx.draw_font(input_text, text_pos.x, text_pos.y, font, color::rgba::yellow);
+                gfx.draw_font(input_text, text_pos.x, text_pos.y, font, theme.bg_color);
                 if (sin(a) > 0.0f) {
-                    gfx.draw_font("_", text_pos.x + font.get_text_size(input_text).x + 2, text_pos.y, font);
+                    gfx.draw_font("_", text_pos.x + font.get_text_size(input_text).x + 2, text_pos.y, font, theme.bg_color);
                 }
             }
+
+            text_pos += scroll;
             
             for (auto message = message_log.rbegin(); message != message_log.rend(); ++message) {
-                text_pos.y -= font.get_glyph(0,0,'L').screen.size().y;
-                if (window_box.contains(text_pos)) {
+                text_pos.y -= font.get_glyph(0,0,'L').screen.size().y + 5.0f;
+                if (messages_box.contains(text_pos - v2f{0.0f, font.get_glyph(0,0,'L').screen.size().y})) {
                     gfx.draw_font(message->text, text_pos.x, text_pos.y, font, message->color);
                 }
             }
             
         }
 
+
+        gfx.draw(theme.border_color, input_box);
         gfx.draw(theme.bg_color, window_box);
+        gfx.draw(theme.border_color, bg_box);
     }
 
     void on_enter(void* game) {
@@ -139,21 +164,67 @@ struct console_t {
 
     struct theme_t {
         color32 bg_color{color::rgba::dark_gray};
+        color32 border_color{color::to_color32(color::str_to_rgba("#55fa22dd"))};
         color32 text_color{color::rgba::white};
+        int open_style{1};
+        f32 border_size{1.0f};
     } theme;
 
     v2f ratio{0.75f, 0.20f};
     v2f screen_size{};
     v2f scroll{};
     f32 open{0.0f};
-    f32 target{1.0f};
+    f32 target{0.0f};
 
 
     explicit console_t() {
-        for (int i = 0; i < 30; i ++)
-            log("nana");
-        log("nanananananan batman");
+        commands.push_back(console_t::command_t{"help", 
+            [&](void* _d, auto& args) {
+                for (const auto& cmd: commands) {
+                    log(fmt::format("    {}", sid_to_string(cmd.name)), color::rgba::purple);
+                }
+        }});
+
+        commands.push_back(console_t::command_t{"clear",
+            [&](void* _d, auto& args) {
+                message_log.clear();
+        }});
+
+        commands.push_back(command_t{"set_open_style", [&](void* _d, auto& args) {
+            if (args.size() == 1) {
+                theme.open_style = std::stoi(args[0]);
+            }
+        }, 1});
+
+        commands.push_back(command_t{"set_border_size", [&](void* _d, auto& args) {
+            if (args.size() == 1) {
+                theme.border_size = std::stof(args[0]);
+            }
+        }, 1});
+
+        commands.push_back(command_t{"set_bg_color", [&](void* _d, auto& args) {
+            if (args.size() == 1) {
+                theme.bg_color = color::to_color32(color::str_to_rgba(args[0]));
+            }
+        }, 1});
+
+        commands.push_back(command_t{"set_border_color", [&](void* _d, auto& args) {
+            if (args.size() == 1) {
+                theme.border_color = color::to_color32(color::str_to_rgba(args[0]));
+            }
+        }, 1});
+
+        commands.push_back(console_t::command_t{"color", 
+            [&](void* _d, auto& args) {
+                for (const auto& arg: args) {
+                    const color4 cv = color::str_to_rgba(arg);
+                    const color32 ci = color::to_color32(cv);
+                    log(fmt::format("    {} = {:x} = {}", arg, ci, cv), color::rgba::purple);
+                }
+        }});
+
     }
+
 
 };
 
