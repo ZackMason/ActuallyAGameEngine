@@ -13,7 +13,8 @@
 #include "Util/color.hpp"
 
 #include "types.hpp"
-                    
+
+struct key_event_t;           
 struct console_t {
     struct command_t {
         std::function<void(void*, std::vector<std::string>&)> fn = [](auto g, auto& args){};
@@ -44,7 +45,7 @@ struct console_t {
         message_log.clear();
     }
 
-    bool [[no_discard]] is_open() const {
+    bool [[nodiscard]] is_open() const {
         return open > 0.5f;
     }
 
@@ -52,12 +53,13 @@ struct console_t {
         target = is_open()?0.0f:1.0f;
     }
 
-    template<typename Batch>
-    void draw(Batch& gfx, font_t& font) {
+    template<size_t N>
+    void draw(batch2d_t<N>& gfx, font_t& font) {
 
         static f32 a = 0.0f;
         a += 0.1f;
-
+        
+        scroll = glm::max(scroll, v2f{0.0f});
         open = lerp_dt(open, target, 0.5f, 0.1f);
 
         if (open < 0.05f) {
@@ -118,6 +120,8 @@ struct console_t {
     void on_enter(void* game) {
         if (!is_open()) return;
 
+        
+
         color32 text_color = color::rgba::red;
 
         const size_t command_index = input_text.find_first_of(' ');
@@ -176,6 +180,9 @@ struct console_t {
     f32 open{0.0f};
     f32 target{0.0f};
 
+    static console_t& get();
+
+    bool on_key_event(const key_event_t&);
 
     explicit console_t() {
         commands.push_back(console_t::command_t{"help", 
@@ -222,9 +229,6 @@ struct console_t {
                     log(fmt::format("    {} = {:x} = {}", arg, ci, cv), color::rgba::purple);
                 }
         }});
-
     }
-
-
 };
 
