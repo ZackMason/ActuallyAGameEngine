@@ -23,7 +23,6 @@ console_t& console_t::get() {
 
 bool console_t::on_key_event(const key_event_t& e) {
     switch(e.key) {
-        
         case GLFW_KEY_BACKSPACE:
             if (e.mode != 1) return false;
             if (is_open()) {
@@ -32,10 +31,14 @@ bool console_t::on_key_event(const key_event_t& e) {
                 }
             }
             break;
+        case GLFW_KEY_GRAVE_ACCENT:
+            if (e.mode != 1) return false;
+            console_t::get().toggle_open();
+            break;
         case GLFW_KEY_LEFT_BRACKET:
             if (is_open()) {
                 scroll.y += 10;
-            }
+           }
             break;
         case GLFW_KEY_RIGHT_BRACKET:
             if (is_open()) {

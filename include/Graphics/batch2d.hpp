@@ -27,10 +27,10 @@ struct batch2d_t {
     struct vertex2d_t {
         v2f position{};
         v2f uv{};
-        int tex{33};
+        u32 tex{33};
         color32 color{color::rgba::white};
 
-        vertex2d_t(v2f p, v2f t, int i, color32 c) :
+        vertex2d_t(v2f p, v2f t, u32 i, color32 c) :
             position(p), uv(t), tex(i), color(static_cast<int>(c)) {}
     };
 
@@ -139,7 +139,7 @@ public:
         const v2f& center, 
         const v2f& size, 
         f32 angle, 
-        int texture_id,
+        u32 texture_id,
         color32 color
     ) {
         const v2f h_size = size * 0.5f;
@@ -179,11 +179,11 @@ public:
         });
     }
 
-    void add_quad(const aabb_t<v2f>& box, int texture_id) {
+    void add_quad(const aabb_t<v2f>& box, u32 texture_id) {
         add_quad(box.min, box.min + box.size(), texture_id, color::rgba::white);
     }
 
-    void add_quad(const v2f& position, const v2f& size, int texture_id, color32 color) {
+    void add_quad(const v2f& position, const v2f& size, u32 texture_id, color32 color) {
         const int i = static_cast<int>((quad_count++) * 4);
 
         vertex_ptr[i]   = (vertex2d_t{position,                    v2f{0, 1}, texture_id, color});
@@ -192,7 +192,7 @@ public:
         vertex_ptr[i+3] = (vertex2d_t{position + size * v2f{1,-1}, v2f{1, 0}, texture_id, color});
     }
 
-    void blit_quad(const aabb_t<v2f>& position, const aabb_t<v2f>& tex_coord, int texture_id, color32 color) {
+    void blit_quad(const aabb_t<v2f>& position, const aabb_t<v2f>& tex_coord, u32 texture_id, color32 color) {
         const int i = static_cast<int>((quad_count++) * 4);
 
         const v2f p0 = position.min;
@@ -211,8 +211,8 @@ public:
         vertex_ptr[i+3] = vertex2d_t{p3, t2, texture_id, color};
     }
 
-    int get_texture(resource_handle_t<texture2d_t> texture) {
-        for (auto i{0}; const auto& t: textures) {
+    u32 get_texture(resource_handle_t<texture2d_t> texture) {
+        for (u32 i{0}; const auto& t: textures) {
             if (t.get().id == texture.get().id) {
                 return i;
             }
@@ -273,7 +273,7 @@ public:
         vertex_array
             .set_attrib(0, 2, GL_FLOAT, offsetof(vertex2d_t, position))
             .set_attrib(1, 2, GL_FLOAT, offsetof(vertex2d_t, uv))
-            .set_attribi(2, 1, GL_INT, offsetof(vertex2d_t, tex))
+            .set_attribi(2, 1, GL_UNSIGNED_INT, offsetof(vertex2d_t, tex))
             .set_attribi(3, 1, GL_UNSIGNED_INT, offsetof(vertex2d_t, color));
     }
 };
