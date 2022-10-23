@@ -267,7 +267,7 @@ public:
     }
 
     explicit batch2d_t()
-    : indices(GL_ELEMENT_ARRAY_BUFFER), vertex_array(vertices.id, indices.id, 6000, sizeof(vertex2d_t)) {  
+    : indices(GL_ELEMENT_ARRAY_BUFFER), vertex_array(vertices.id, indices.id, Count, sizeof(vertex2d_t)) {  
         set_indices();
 
         vertex_array
@@ -275,6 +275,68 @@ public:
             .set_attrib(1, 2, GL_FLOAT, offsetof(vertex2d_t, uv))
             .set_attribi(2, 1, GL_UNSIGNED_INT, offsetof(vertex2d_t, tex))
             .set_attribi(3, 1, GL_UNSIGNED_INT, offsetof(vertex2d_t, color));
+    }
+
+    static constexpr char* const get_fs_shader() {
+        return R"fs(#version 460 core
+out vec4 FragColor;
+
+in vec2 voPos;
+in vec2 voUV;
+flat in uint voTexture;
+flat in uint voColor;
+
+uniform sampler2D uTextures[32];
+
+void main() {
+    uint is_font = voTexture & (1 << 30);
+    uint actual_texture = voTexture & ~(1<<30);
+    bool is_texture = actual_texture < 32 && actual_texture >= 0;
+    // opt use mix
+    vec4 color = (is_texture) ? 
+        texture(uTextures[actual_texture], voUV) : 
+        vec4(1.0);
+   
+    if (is_font != 0) {
+        color = color.rrrr;
+        color.a = step(0.5, color.a);
+    }
+
+    color *= vec4(
+        float( voColor&0xff),
+        float((voColor&0xff00)>>8),
+        float((voColor&0xff0000)>>16),
+        float((voColor&0xff000000)>>24))/255.0;
+
+    FragColor.rgb = pow(color.rgb, vec3(2.2));
+    FragColor.a = clamp(color.a, 0.0, 1.0);
+
+    if (FragColor.a < 0.01) {
+        discard;
+    }
+})fs";
+    }
+    static constexpr char* const get_vs_shader() {
+        return R"vs(#version 460 core
+
+#include <batch.glsl>
+
+out vec2 voPos;
+out vec2 voUV;
+flat out uint voTexture;
+flat out uint voColor;
+
+uniform vec2 uZoom; // export 1.0
+
+void main()
+{
+    voUV = aUV.xy;
+    voTexture = aTex;
+    voColor = aColor;
+    voPos = aPos.xy * 2.0 - 1.0;
+        
+    gl_Position = vec4(voPos * uZoom, 0.00001 , 1);
+})vs";
     }
 };
 

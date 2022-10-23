@@ -15,8 +15,6 @@
 #include "Util/exceptions.hpp"
 #endif
 
-
-
 // will not call destructor/constructor
 struct stack_allocator_t {
     using stack_marker_t = size_t;
@@ -59,6 +57,14 @@ struct stack_allocator_t {
         return std::distance(start, top);
     }
 
+    size_t bytes_used() const {
+        return std::distance(start, top);
+    }
+
+    bool can_alloc(const size_t bytes) const {
+        return abs(std::distance(top, end)) > bytes;
+    }
+
     void pop(stack_marker_t marker) {
         top = start + marker;
     }
@@ -94,36 +100,37 @@ struct double_stack_allocator_t {
 
 template <typename T>
 struct pool_allocator_t {
-    explicit pool_allocator_t(size_t count) {
-        top = start = reinterpret_cast<T*>(malloc(sizeof(T)*count));
-        end = start + count;
+    explicit pool_allocator_t(size_t count) 
+        : stack(count * sizeof(T))
+    {
     }
 
     virtual ~pool_allocator_t() {
-        free(start);
     }
 
-
-    T* alloc(size_t count) {
-        T* res = top;
-        top += count;
-
-        return res;
+    T* alloc(size_t count = 1) {
+        return stack.alloc<T>(count);
     }
 
     template<typename ... Args>
     T& emplace(Args&& ... args) {
-        T* t = new (top++) T(std::forward(args)...); 
+        T* t = alloc(1);
+        new (t) T(std::forward(args)...);
+
         return *t;
     }
 
+    bool can_alloc(size_t count = 1) const {
+        return stack.can_alloc(count * sizeof(T));
+    }
+
+    void clear() {
+        stack.clear();
+    }
+
 private:
-    T* start{nullptr};
-    T* top{nullptr};
-    T* end{nullptr};
+    stack_allocator_t stack;
 };
-
-
 
 
 

@@ -15,6 +15,7 @@
 #include "types.hpp"
 
 struct key_event_t;           
+struct char_event_t;           
 struct console_t {
     struct command_t {
         std::function<void(void*, std::vector<std::string>&)> fn = [](auto g, auto& args){};
@@ -85,7 +86,7 @@ struct console_t {
         aabb_t<v2f> input_box = window_box;
         input_box.min += v2f{5.0f};
         input_box.max -= v2f{5.0f};
-        input_box.min.y = text_start.y - 3.0f - font.get_glyph(0,0,'L').screen.size().y;
+        input_box.min.y = text_start.y - 3.0f - font.get_glyph(0,0,'L').screen.size().y * open;
 
         aabb_t<v2f> messages_box = window_box;
         messages_box.max.y -= input_box.size().y * 2.0f;
@@ -117,17 +118,20 @@ struct console_t {
         gfx.draw(theme.border_color, bg_box);
     }
 
+    
     void on_enter(void* game) {
         if (!is_open()) return;
+        run_command(input_text, game);
+        input_text.clear();
+    }
 
-        
-
+    void run_command(const std::string& input, void* data) {
         color32 text_color = color::rgba::red;
 
-        const size_t command_index = input_text.find_first_of(' ');
+        const size_t command_index = input.find_first_of(' ');
         sid_t command_id = save_string(command_index != std::string::npos ?
-            input_text.substr(0, command_index) : 
-            input_text
+            input.substr(0, command_index) : 
+            input
         );
 
         logger_t::info(sid_to_string(command_id));
@@ -137,25 +141,24 @@ struct console_t {
                 std::vector<std::string> args;
                 if (command_index != std::string::npos) {
                     auto start = command_index + 1;
-                    auto end = input_text.find(' ', start);
+                    auto end = input.find(' ', start);
                     while(end != std::string::npos) {
-                        args.push_back(std::string(input_text.substr(start, end-start)));
+                        args.push_back(std::string(input.substr(start, end-start)));
                         logger_t::info(args.back());
                         start = end + 1;
-                        end = input_text.find(' ', start);
+                        end = input.find(' ', start);
                     }
                     if (start != end) {
-                        args.push_back(input_text.substr(start, end));
+                        args.push_back(input.substr(start, end));
                     }
                 }
-                command.fn(game, args);
+                command.fn(data, args);
                 text_color = color::rgba::green;
                 break;
             }
         } 
 
-        log(input_text, text_color);
-        input_text.clear();
+        log(input, text_color);
     }
 
     void log(const std::string& text, color32 color = color::rgba::white) {
@@ -183,12 +186,13 @@ struct console_t {
     static console_t& get();
 
     bool on_key_event(const key_event_t&);
+    bool on_char_event(const char_event_t& e);     
 
     explicit console_t() {
         commands.push_back(console_t::command_t{"help", 
             [&](void* _d, auto& args) {
                 for (const auto& cmd: commands) {
-                    log(fmt::format("    {}", sid_to_string(cmd.name)), color::rgba::purple);
+                    log(fmt::format("    {}", sid_to_string(cmd.name)), color::rgba::white);
                 }
         }});
 

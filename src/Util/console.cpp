@@ -21,6 +21,15 @@ console_t& console_t::get() {
     return *internal::console;
 }
 
+bool console_t::on_char_event(const char_event_t& e) {
+    if (is_open()) {
+        if (e.codepoint == '[' || e.codepoint == ']' || e.codepoint == '`') return false;
+        input_text += static_cast<char>(e.codepoint);
+        return true;
+    }
+    return false;
+}
+
 bool console_t::on_key_event(const key_event_t& e) {
     switch(e.key) {
         case GLFW_KEY_BACKSPACE:
