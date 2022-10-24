@@ -112,7 +112,7 @@ load_results_t load_obj(std::string_view path, std::string_view asset_dir) {
 std::vector<material_mesh_pair_t> get_mesh_names(std::string_view path, std::string_view asset_dir) {
     Assimp::Importer importer;
     const aiScene* scene = importer.ReadFile(fmt::format("{}{}", asset_dir, path), 
-        aiProcess_);
+        0);
 
     if(!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
         throw runtime_error_x(importer.GetErrorString());
