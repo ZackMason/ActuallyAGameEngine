@@ -67,10 +67,6 @@ struct static_mesh_t : drawable_i {
         buffer_object(std::move(p_vertices)), 
         vertex_array(buffer_object.id, index_buffer->id, buffer_object.size(), sizeof(static_vertex_t)), aabb{}
     { 
-        //vertex_array.bind();
-        //buffer_object.bind();
-        //index_buffer.emplace(std::move(p_indices), GL_ELEMENT_ARRAY_BUFFER);
-        //index_buffer->bind();
         vertex_array
             .set_attrib(0, 3, GL_FLOAT, offsetof(static_vertex_t, position))
             .set_attrib(1, 3, GL_FLOAT, offsetof(static_vertex_t, normal))
