@@ -126,8 +126,19 @@ shader_stage_t::shader_stage_t(const std::string& path, const std::string& asset
     if (!success) {
         char infoLog[512];
         glGetShaderInfoLog(shader_slot, 512, NULL, infoLog);
+        
+        int t, line_number;
+        sscanf(infoLog, "%d(%d)", &t, &line_number);
+        
+        size_t error_index = 0;
+        
+        while(line_number>0) {
+            error_index = shader_code.find_first_of('\n', error_index) + 1;
+            line_number--;
+        }
         //throw runtime_error_x(fmt::format("Shader stage error: {} - {} - {}", path, type, infoLog));
         logger_t::error(fmt::format("Shader stage error: {} - {} - {}", path, type, infoLog));
+        logger_t::error(fmt::format("Shader code: {}", shader_code.substr(error_index, shader_code.find_first_of('\n'))));
         id = -1;
     } else {
         id = shader_slot;

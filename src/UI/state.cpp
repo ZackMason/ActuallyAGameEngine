@@ -48,6 +48,7 @@ namespace zui {
 
         panel.id = id;
 
+        return true;
 
     }
     void end_panel();

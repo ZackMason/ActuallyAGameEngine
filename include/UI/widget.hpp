@@ -8,9 +8,10 @@
 #include "types.hpp"
 #include "Util/color.hpp"
 
+#include "Graphics/texture2d.hpp"
 #include "Engine/resource_handle.hpp"
 
-#include "Graphics/texture2d.hpp"
+#include "Util/string.hpp"
 
 #include "UI/theme.hpp"
 
@@ -22,7 +23,7 @@ namespace zui {
         v2f padding{};
         v2f margin{};
 
-        resource_handle_t<texture2d_t> texture;
+        texture2d_t* texture;
 
         enum struct type_e {
             BUTTON, CHECKBOX, 
@@ -44,14 +45,14 @@ namespace zui {
 
         [[nodiscard]] v2f size() const {
             if (has_texture()) {
-                return texture.get().get_image_size() + padding * 2.0f + margin * 2.0f;
+                return texture->get_image_size() + padding * 2.0f + margin * 2.0f;
             } else {
                 return padding + margin;                
             }
         }
 
         [[nodiscard]] bool has_texture() const {
-            return texture.valid();
+            return texture;//.valid();
         }
 
         virtual ~widget_t() = default;
