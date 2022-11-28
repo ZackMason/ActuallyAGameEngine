@@ -51,6 +51,7 @@ struct asset_loader_t {
     }
 
     std::string asset_dir = ASSETS_PATH;
+    explicit asset_loader_t(const char* path) : asset_dir{path} {}
 
     template <typename Res>
     using cache_t = std::unordered_map<std::string, cache_resource_t<Res>>;

@@ -171,7 +171,7 @@ struct console_t {
 
     struct theme_t {
         color32 bg_color{color::rgba::dark_gray};
-        color32 border_color{color::to_color32(color::str_to_rgba("#55fa22dd"))};
+        color32 border_color{color::to_color32(color::str_to_rgba(std::string("#55fa22dd")))};
         color32 text_color{color::rgba::white};
         int open_style{1};
         f32 border_size{1.0f};
